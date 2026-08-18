@@ -2,7 +2,7 @@ function NavBar() {
     return (
         <nav className="border-b border-gray-200 bg-white">
             {/* Mobile Navbar */}
-            <div className="md:hidden">
+            <div className="lg:hidden">
                 {/* Top Row */}
                 <div className="flex h-16 items-center justify-between px-4">
                     {/* Left: Hamburger + Logo */}
@@ -46,7 +46,7 @@ function NavBar() {
             </div>
 
             {/* Desktop Navbar */}
-            <div className="relative hidden h-16 items-center justify-between px-6 md:flex lg:px-8">
+            <div className="relative hidden h-16 items-center justify-between px-6 lg:flex lg:px-8">
 
                 {/* Logo */}
                 <div className="shrink-0">
