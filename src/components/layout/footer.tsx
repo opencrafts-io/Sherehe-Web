@@ -66,7 +66,7 @@ function Footer() {
                     {/* Copyright Section */}
                     <div className="mx-auto flex max-w-7xl items-center gap-2 text-sm">
                         <FontAwesomeIcon icon={faCopyright} />
-                        <span>2024 Opencrafts. All rights reserved</span>
+                        <span>{new Date().getFullYear()} Open Crafts Interactive. All rights reserved</span>
                     </div>
                 </div>
 
