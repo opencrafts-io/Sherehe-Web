@@ -1,4 +1,15 @@
+import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+    faBars,
+    faXmark,
+    faCompass,
+    faTicket,
+    faGaugeHigh,
+} from "@fortawesome/free-solid-svg-icons";
+
 function NavBar() {
+    const [drawerOpen, setDrawerOpen] = useState(false);
     return (
         <nav className="border-b border-gray-200 bg-white">
             {/* Mobile Navbar */}
@@ -10,9 +21,10 @@ function NavBar() {
                         {/* Hamburger */}
                         <button
                             type="button"
+                            onClick={() => setDrawerOpen(true)}
                             className="flex h-10 w-10 items-center justify-center rounded-lg text-gray-700 transition hover:bg-gray-100"
                         >
-                            ☰
+                            <FontAwesomeIcon icon={faBars} />
                         </button>
                         {/* Logo */}
                         <span className="text-2xl font-bold tracking-tight text-gray-900">
@@ -44,6 +56,109 @@ function NavBar() {
                     </button>
                 </div>
             </div>
+
+            {/* Mobile Drawer  */}
+
+            {drawerOpen && (
+                <div className="fixed inset-0 z-50 lg:hidden">
+
+                    {/* Backdrop */}
+                    <div
+                        className={`absolute inset-0 bg-black/40 transition-opacity duration-500 ${drawerOpen
+                                ? "opacity-100"
+                                : "pointer-events-none opacity-0"
+                            }`}
+                        onClick={() => setDrawerOpen(false)}
+                    />
+
+                    {/* Drawer */}
+                    <aside
+                        className={`relative h-full w-4/5 max-w-sm bg-white shadow-xl transition-transform duration-500 ease-in-out ${drawerOpen
+                                ? "translate-x-0"
+                                : "-translate-x-full"
+                            }`}
+                    >
+
+                        {/* Drawer Header */}
+                        <div className="flex h-16 items-center justify-between px-5">
+
+                            <span className="text-2xl font-bold tracking-tight text-gray-900">
+                                Sherehe
+                            </span>
+
+                            <button
+                                type="button"
+                                onClick={() => setDrawerOpen(false)}
+                                className="flex h-10 w-10 items-center justify-center rounded-lg text-gray-600 transition hover:bg-gray-100 hover:text-gray-900"
+                                aria-label="Close navigation menu"
+                            >
+                                <FontAwesomeIcon
+                                    icon={faXmark}
+                                    className="text-xl"
+                                />
+                            </button>
+
+                        </div>
+
+                        {/* Divider */}
+                        <hr className="border-gray-200" />
+
+                        {/* Navigation */}
+                        <div className="flex flex-col p-4">
+
+                            {/* Explore */}
+                            <a
+                                href="#"
+                                onClick={() => setDrawerOpen(false)}
+                                className="flex items-center gap-4 rounded-lg px-4 py-3 text-gray-700 transition hover:bg-gray-100 hover:text-gray-900"
+                            >
+                                <FontAwesomeIcon
+                                    icon={faCompass}
+                                    className="w-5 text-gray-500"
+                                />
+
+                                <span className="font-medium">
+                                    Explore
+                                </span>
+                            </a>
+
+                            {/* My Tickets */}
+                            <a
+                                href="#"
+                                onClick={() => setDrawerOpen(false)}
+                                className="flex items-center gap-4 rounded-lg px-4 py-3 text-gray-700 transition hover:bg-gray-100 hover:text-gray-900"
+                            >
+                                <FontAwesomeIcon
+                                    icon={faTicket}
+                                    className="w-5 text-gray-500"
+                                />
+
+                                <span className="font-medium">
+                                    My Tickets
+                                </span>
+                            </a>
+
+                            {/* Dashboard */}
+                            <a
+                                href="#"
+                                onClick={() => setDrawerOpen(false)}
+                                className="flex items-center gap-4 rounded-lg px-4 py-3 text-gray-700 transition hover:bg-gray-100 hover:text-gray-900"
+                            >
+                                <FontAwesomeIcon
+                                    icon={faGaugeHigh}
+                                    className="w-5 text-gray-500"
+                                />
+
+                                <span className="font-medium">
+                                    Dashboard
+                                </span>
+                            </a>
+
+                        </div>
+
+                    </aside>
+                </div>
+            )}
 
             {/* Desktop Navbar */}
             <div className="relative hidden h-16 items-center justify-between px-6 lg:flex lg:px-8">
