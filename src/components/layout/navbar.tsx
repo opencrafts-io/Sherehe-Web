@@ -1,17 +1,63 @@
 function NavBar() {
     return (
         <nav className="border-b border-gray-200 bg-white">
-            <div className="relative flex h-16 items-center justify-between px-6">
+            {/* Mobile Navbar */}
+            <div className="md:hidden">
+                {/* Top Row */}
+                <div className="flex h-16 items-center justify-between px-4">
+                    {/* Left: Hamburger + Logo */}
+                    <div className="flex items-center gap-3">
+                        {/* Hamburger */}
+                        <button
+                            type="button"
+                            className="flex h-10 w-10 items-center justify-center rounded-lg text-gray-700 transition hover:bg-gray-100"
+                        >
+                            ☰
+                        </button>
+                        {/* Logo */}
+                        <span className="text-2xl font-bold tracking-tight text-gray-900">
+                            Sherehe
+                        </span>
+                    </div>
+                    {/* Profile */}
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-900 text-sm font-semibold text-white">
+                        EW
+                    </div>
+                </div>
+                {/* Bottom Row */}
+                <div className="flex gap-3 px-4 pb-4">
+
+                    {/* Sign In */}
+                    <button
+                        type="button"
+                        className="flex-1 rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-100"
+                    >
+                        Sign In
+                    </button>
+
+                    {/* Create Event */}
+                    <button
+                        type="button"
+                        className="flex-1 rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-800"
+                    >
+                        Create Event
+                    </button>
+                </div>
+            </div>
+
+            {/* Desktop Navbar */}
+            <div className="relative hidden h-16 items-center justify-between px-6 md:flex lg:px-8">
 
                 {/* Logo */}
                 <div className="shrink-0">
-                    <span className="text-2xl font-bold tracking-tight text-black-900">
+                    <span className="text-2xl font-bold tracking-tight text-gray-900">
                         Sherehe
                     </span>
                 </div>
 
-                {/* Navigation Links - Center */}
-                <div className="absolute left-1/2 flex -translate-x-1/2 items-center gap-8">
+                {/* Desktop Navigation */}
+                <div className="absolute left-1/2 flex -translate-x-1/2 items-center gap-6 lg:gap-8">
+
                     <a
                         href="#"
                         className="text-sm font-medium text-gray-600 transition hover:text-gray-900"
@@ -32,13 +78,14 @@ function NavBar() {
                     >
                         Dashboard
                     </a>
+
                 </div>
 
                 {/* Right Section */}
-                <div className="ml-auto flex shrink-0 items-center gap-5">
+                <div className="ml-auto flex items-center gap-4 lg:gap-5">
 
                     {/* Full Name */}
-                    <div className="text-sm font-medium text-grey-700">
+                    <div className="hidden text-sm font-medium text-gray-700 xl:block">
                         eugene wachira
                     </div>
 
@@ -47,8 +94,8 @@ function NavBar() {
                         EW
                     </div>
 
-                    {/* Vertical Separator */}
-                    <div className="h-6 w-px bg-gray-300" />
+                    {/* Separator */}
+                    <div className="hidden h-6 w-px bg-gray-300 lg:block" />
 
                     {/* Sign In */}
                     <button
@@ -61,12 +108,12 @@ function NavBar() {
                     {/* Create Event */}
                     <button
                         type="button"
-                        className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-800"
+                        className="hidden rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-800 lg:block"
                     >
                         Create Event
                     </button>
-                </div>
 
+                </div>
             </div>
         </nav>
     );
