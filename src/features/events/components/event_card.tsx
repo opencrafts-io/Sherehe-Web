@@ -12,7 +12,7 @@ function EventCard(event: EventModel) {
     return (
         <>
             <Link to={`/events/${event.id}`}
-            className="block w-full max-w-sm"
+                className="block w-full max-w-sm"
             >
                 <div className="w-full max-w-sm overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
                     {/* Event Image */}
