@@ -46,14 +46,15 @@ function EventDetails() {
         <>
             <div className="pb-8">
                 {/* Event Banner */}
-                <div className="w-full">
+                {/* Will use aspect ratio, the height for large is temporary */}
+                <div className="h-aspect-16/9 lg:h-160">
                     <img
-                        src={event.event_banner_image || "/images/basketball-game-concept.jpg"}
+                        src={event.event_banner_image || "/images/inferno10.jpeg"}
                         alt={event.event_name}
-                        className="h-56 w-full object-cover"
+                        className="h-full w-full object-cover"
                     />
+                    <div className="hidden absolute lg:inset-0 lg:bg-black/30" />
                 </div>
-
                 <div className="flex flex-col lg:flex-row lg:p-4 lg:gap-4  lg:items-start">
                     {/* First Row */}
                     <div className="flex flex-col flex-2 lg:gap-5">
@@ -178,7 +179,7 @@ function EventDetails() {
 
                         {/* Fixed Bottom Action  Mobile*/}
                         <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white p-4 lg:hidden">
-                            <button className="w-full rounded-xl bg-black py-3.5 text-sm font-semibold text-white transition-colors hover: bg-gray-800">
+                            <button className="w-full rounded-xl bg-black py-3.5 text-sm font-semibold text-white transition-colors hover:bg-gray-800">
                                 I'm Going
                             </button>
                         </div>
