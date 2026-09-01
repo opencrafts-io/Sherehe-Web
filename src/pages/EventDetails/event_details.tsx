@@ -4,7 +4,7 @@ import {
     faLocationDot,
     faCalendarDays,
 } from "@fortawesome/free-solid-svg-icons";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 //Hardcoded for now
 const attendees = [
@@ -28,7 +28,12 @@ const attendees = [
 
 function EventDetails() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const event = events.find((event) => event.id === id);
+
+    const handleBooking = () => {
+        navigate("booking");
+    };
 
     if (!event) {
         return (
@@ -146,7 +151,7 @@ function EventDetails() {
                     <div className="flex flex-col flex-1 lg:gap-5">
                         {/* Fixed Bottom Action  Web*/}
                         <div className="hidden lg:flex lg:border lg:border-gray-200 lg:rounded-lg lg:bg-white lg:p-4 ">
-                            <button className="w-full rounded-xl bg-black py-3.5 text-sm font-semibold text-white transition-colors hover: bg-gray-800">
+                            <button onClick={handleBooking} className="w-full rounded-xl bg-black py-3.5 text-sm font-semibold text-white transition-colors hover: bg-gray-800">
                                 I'm Going
                             </button>
                         </div>
@@ -179,7 +184,7 @@ function EventDetails() {
 
                         {/* Fixed Bottom Action  Mobile*/}
                         <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white p-4 lg:hidden">
-                            <button className="w-full rounded-xl bg-black py-3.5 text-sm font-semibold text-white transition-colors hover:bg-gray-800">
+                            <button onClick={handleBooking} className="w-full rounded-xl bg-black py-3.5 text-sm font-semibold text-white transition-colors hover:bg-gray-800">
                                 I'm Going
                             </button>
                         </div>

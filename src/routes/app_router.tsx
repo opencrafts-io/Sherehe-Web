@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import EventDetails from "../pages/EventDetails/event_details";
 import AppLayout from "./app_layout";
 import EventListing from "../pages/EventListing/event_listing";
+import EventBooking from "../pages/EventBooking/event_booking";
 
 export const router = createBrowserRouter([
     {
@@ -15,6 +16,10 @@ export const router = createBrowserRouter([
             {
                 path: "/events/:id",
                 element: <EventDetails />,
+            },
+            {
+                path: "events/:id/booking",
+                element: <EventBooking />,
             },
         ],
     },
