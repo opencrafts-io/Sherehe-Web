@@ -1,4 +1,4 @@
-import { events } from "../models/event";
+import { events } from "../../models/event";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faLocationDot,

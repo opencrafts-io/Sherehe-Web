@@ -5,8 +5,8 @@ import {
     faClock,
     faUsers,
 } from "@fortawesome/free-solid-svg-icons";
-import type { EventModel } from "../models/event";
 import { Link } from "react-router";
+import type { EventModel } from "../../../models/event";
 
 function EventCard(event: EventModel) {
     return (

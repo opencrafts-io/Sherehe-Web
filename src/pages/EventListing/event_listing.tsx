@@ -1,5 +1,6 @@
-import EventCard from "../components/event_card";
-import { events } from "../models/event";
+import { events } from "../../models/event";
+import EventCard from "./components/event_card";
+
 
 function EventListing() {
     return (
