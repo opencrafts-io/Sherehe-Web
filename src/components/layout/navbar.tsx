@@ -7,9 +7,14 @@ import {
     faTicket,
     faGaugeHigh,
 } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 
 function NavBar() {
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const navigate = useNavigate();
+    const navigateCreateEvent = () => {
+        navigate("create-event");
+    };
     return (
         <nav className="border-b border-gray-200 bg-white">
             {/* Mobile Navbar */}
@@ -27,7 +32,7 @@ function NavBar() {
                             <FontAwesomeIcon icon={faBars} />
                         </button>
                         {/* Logo */}
-                        <span className="text-2xl font-bold tracking-tight text-gray-900">
+                        <span className="text-2xl font-bold tracking-tight text-primary">
                             Sherehe
                         </span>
                     </div>
@@ -42,7 +47,7 @@ function NavBar() {
                     {/* Sign In */}
                     <button
                         type="button"
-                        className="flex-1 rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-100"
+                        className="flex-1 rounded-lg border border-primary px-4 py-2.5 text-sm font-semibold text-primary transition active:bg-primary-95"
                     >
                         Sign In
                     </button>
@@ -50,7 +55,8 @@ function NavBar() {
                     {/* Create Event */}
                     <button
                         type="button"
-                        className="flex-1 rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-800"
+                        onClick={navigateCreateEvent}
+                        className="flex-1 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white transition active:bg-purple-700"
                     >
                         Create Event
                     </button>
@@ -65,8 +71,8 @@ function NavBar() {
                     {/* Backdrop */}
                     <div
                         className={`absolute inset-0 bg-black/40 transition-opacity duration-500 ${drawerOpen
-                                ? "opacity-100"
-                                : "pointer-events-none opacity-0"
+                            ? "opacity-100"
+                            : "pointer-events-none opacity-0"
                             }`}
                         onClick={() => setDrawerOpen(false)}
                     />
@@ -74,8 +80,8 @@ function NavBar() {
                     {/* Drawer */}
                     <aside
                         className={`relative h-full w-4/5 max-w-sm bg-white shadow-xl transition-transform duration-500 ease-in-out ${drawerOpen
-                                ? "translate-x-0"
-                                : "-translate-x-full"
+                            ? "translate-x-0"
+                            : "-translate-x-full"
                             }`}
                     >
 
@@ -165,7 +171,7 @@ function NavBar() {
 
                 {/* Logo */}
                 <div className="shrink-0">
-                    <span className="text-2xl font-bold tracking-tight text-gray-900">
+                    <span className="text-2xl font-bold tracking-tight text-primary">
                         Sherehe
                     </span>
                 </div>
@@ -215,7 +221,7 @@ function NavBar() {
                     {/* Sign In */}
                     <button
                         type="button"
-                        className="text-sm font-medium text-gray-700 transition hover:text-gray-900"
+                        className="rounded-lg border border-primary px-4 py-2 font-medium text-primary transition hover:bg-primary-95"
                     >
                         Sign In
                     </button>
@@ -223,7 +229,8 @@ function NavBar() {
                     {/* Create Event */}
                     <button
                         type="button"
-                        className="hidden rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-800 lg:block"
+                        onClick={navigateCreateEvent}
+                        className="hidden rounded-lg bg-primary  px-4 py-2 text-sm font-semibold text-white transition hover:bg-purple-700 lg:block"
                     >
                         Create Event
                     </button>
