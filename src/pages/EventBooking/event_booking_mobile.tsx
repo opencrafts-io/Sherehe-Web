@@ -1,6 +1,10 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { EventBookingProps } from "./event_booking";
-import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { useState } from "react";
+import type { Steps } from "./models/booking_stepper";
+import BookingStepper from "./components/booking_stepper";
+import TicketSelection from "./steps/ticket_selection";
+import OrderSummary from "./steps/order_summary";
+import TicketPayment from "./steps/ticket_payment";
 
 function EventBookingMobile({
     event,
@@ -8,123 +12,69 @@ function EventBookingMobile({
     quantity,
     selectedTicket,
     total,
+    phoneNumber,
+    setPhoneNumber,
     increaseQuantity,
     decreaseQuantity,
     chooseTicket,
 }: EventBookingProps) {
+    const [currentPage, setCurrentPage] = useState(1);
+    const steps: Steps[] = [
+        {
+            id: 1,
+            title: 'Ticket Summary',
+        },
+        {
+            id: 2,
+            title: 'Summary',
+        },
+        {
+            id: 3,
+            title: 'Payment',
+        },
+    ];
+    const nextPage = () => {
+        if (currentPage < steps.length && selectedTicket != null && quantity != 0) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+    const previousPage = () => {
+        if (currentPage >= 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
     return (
         <>
-            <div className="p-4 gap-4">
-                <div className="h-aspect-16/9">
-                    <img
-                        src={event.event_banner_image || "/images/inferno10.jpeg"}
-                        alt={event.event_name}
-                        className="h-full w-full object-cover"
+            <div className="p-4 my-2 gap-4">
+                <BookingStepper currentStep={currentPage} steps={steps} />
+
+                {currentPage === 1 && (
+                    <TicketSelection event={event} tickets={tickets}
+                        selectedTicket={selectedTicket}
+                        quantity={quantity}
+                        chooseTicket={chooseTicket}
+                        increaseQuantity={increaseQuantity}
+                        decreaseQuantity={decreaseQuantity}
+                        nextPage={nextPage}
+                        total={total}
                     />
-                </div>
-                <div className="mt-4">
-                    <h1 className="text-3xl font-bold leading-tight text-gray-900 lg:text-4xl">
-                        {event.event_name}
-                    </h1>
-                </div>
-                <hr className="my-3" />
-                <div>
-                    <h1 className="text-xl font-bold">
-                        Select Tickets
-                    </h1>
-
-                    <div className="mt-4 flex flex-col gap-3">
-                        {tickets.map((ticket) => {
-                            const isSelected = selectedTicket?.id === ticket.id;
-
-                            return (
-                                <div
-                                    key={ticket.id}
-                                    className={`rounded-lg border p-4 transition ${isSelected
-                                        ? "border-purple-600 bg-purple-50"
-                                        : "border-gray-200 bg-white"
-                                        }`}
-                                >
-                                    {/* Ticket information */}
-                                    <label className="flex cursor-pointer items-center justify-between">
-                                        <div>
-                                            <h2 className="text-lg font-semibold">
-                                                {ticket.ticketName}
-                                            </h2>
-
-                                            <p className="mt-1 text-sm text-gray-600">
-                                                Ksh {ticket.price}
-                                            </p>
-                                        </div>
-
-                                        {/* Radio */}
-                                        <input
-                                            type="radio"
-                                            name="ticket"
-                                            value={ticket.id}
-                                            checked={isSelected}
-                                            onChange={() => chooseTicket(ticket)}
-                                            className="h-5 w-5 accent-purple-600"
-                                        />
-                                    </label>
-
-                                    {/* Quantity */}
-                                    {isSelected && (
-                                        <div className="mt-4 flex items-center justify-between border-t border-purple-200 pt-4">
-                                            <p className="text-sm font-semibold">
-                                                Select Quantity
-                                            </p>
-
-                                            <div className="flex w-40 items-center justify-between border border-gray-200 bg-white py-3 px-2">
-                                                <button
-                                                    type="button"
-                                                    onClick={decreaseQuantity}
-                                                    disabled={quantity === 1}
-                                                    className="text-gray-600 hover:text-black disabled:cursor-not-allowed disabled:opacity-40"
-                                                >
-                                                    <FontAwesomeIcon icon={faMinus} />
-                                                </button>
-
-                                                <span className="min-w-5 text-center text-xl font-medium">
-                                                    {quantity}
-                                                </span>
-
-                                                <button
-                                                    type="button"
-                                                    onClick={increaseQuantity}
-                                                    className="text-gray-600 hover:text-black"
-                                                >
-                                                    <FontAwesomeIcon icon={faPlus} />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-                <div className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-between border-t border-gray-200 bg-white p-4">
-
-                    {/* Total */}
-                    <div className="flex flex-col">
-                        <p className="text-sm text-gray-500">
-                            Total
-                        </p>
-
-                        <p className="text-2xl font-bold text-gray-900">
-                            Ksh {total}
-                        </p>
-                    </div>
-
-                    {/* Continue Button */}
-                    <button
-                        type="button"
-                        className="rounded-xl bg-primary px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-purple-700"
-                    >
-                        Continue
-                    </button>
-                </div>
+                )}
+                {currentPage === 2 && (
+                    <OrderSummary selectedTicket={selectedTicket}
+                        nextPage={nextPage}
+                        previousPage={previousPage}
+                        quantity={quantity}
+                        total={total}
+                    />
+                )}
+                {currentPage === 3 && (
+                    <TicketPayment
+                        total={total}
+                        phoneNumber={phoneNumber}
+                        setPhoneNumber={setPhoneNumber}
+                        previousPage={previousPage}
+                    />
+                )}
             </div>
 
         </>
