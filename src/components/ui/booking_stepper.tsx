@@ -1,4 +1,13 @@
-import type { BookingStepperModel } from "../models/booking_stepper";
+export interface BookingStepperModel {
+    currentStep : number;
+    steps : Steps[];
+
+}
+
+export interface Steps {
+    id: number;
+    title: string;
+}
 
 function BookingStepper({ currentStep, steps }: BookingStepperModel) {
     return (
