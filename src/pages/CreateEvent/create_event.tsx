@@ -1,10 +1,13 @@
 import { useState } from "react";
 import BookingStepper, { type Steps } from "../../components/ui/booking_stepper";
-import { MenuItem, TextField, type SxProps, type Theme } from "@mui/material";
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { type SxProps, type Theme } from "@mui/material";
+import AboutEvent from "./steps/about_event";
 
+export interface EventVisibility {
+    id: string;
+    value: string;
+    label: string;
+}
 
 function CreateEvent() {
     const [currentPage, setCurrentPage] = useState(1);
@@ -30,7 +33,7 @@ function CreateEvent() {
             title: 'Payment',
         },
     ];
-    const eventVisibilityOptions = [
+    const eventVisibilityOptions: EventVisibility[] = [
         {
             id: "1",
             value: "public",
@@ -73,110 +76,34 @@ function CreateEvent() {
     };
     return (
         <>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <div className="flex flex-col my-6 mx-10 gap-3 border border-gray-200 rounded-lg">
-                    <div className="flex flex-col p-6 gap-3 border border-gray-200 bg-gray-100 ">
-                        <h1 className="font-bold text-3xl">Create Event</h1>
-                        <BookingStepper currentStep={currentPage} steps={steps} />
-                    </div>
-                    <div className="flex flex-col p-6">
-                        <form action="submit">
-                            <label
-                                htmlFor="eventName"
-                                className="font-bold block my-2"
-                            >
-                                Event Name
-                            </label>
-                            <TextField
-                                id="eventName"
-                                type="text"
-                                fullWidth
-                                placeholder="eg Summer Music Festival"
-                                required
-                                sx={sxVariable}
-                            />
-                            <label
-                                htmlFor="startDateTime"
-                                className="font-bold block my-2"
-                            >
-                                Start Date & Time
-                            </label>
-                            <DateTimePicker
-                                slotProps={{
-                                    textField: {
-                                        id: "endDateTime",
-                                        fullWidth: true,
-                                    },
-                                }}
-                            />
-                            <label
-                                htmlFor="endDateTime"
-                                className="font-bold block my-2"
-                            >
-                                End Date & Time
-                            </label>
-                            <DateTimePicker
-                                slotProps={{
-                                    textField: {
-                                        id: "endDateTime",
-                                        fullWidth: true,
-                                    },
-                                }}
-                            />
-                            <label
-                                htmlFor="eventLocation"
-                                className="font-bold block my-2"
-                            >
-                                Location
-                            </label>
-                            <TextField
-                                id="eventLocation"
-                                type="text"
-                                fullWidth
-                                placeholder="eg Summer Music Festival"
-                                required
-                                sx={sxVariable}
-                            />
-                            <label
-                                htmlFor="eventVisibility"
-                                className="font-bold block my-2"
-                            >
-                                Event Visibility
-                            </label>
-                            <TextField
-                                id="eventVisibility"
-                                select
-                                fullWidth
-                                placeholder="Select Event Scope"
-                                required
-                                sx={sxVariable}
-                                defaultValue="public"
-                            >
-                                {eventVisibilityOptions.map((option) => (
-                                    <MenuItem key={option.id} value={option.value}>
-                                        {option.label}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
-                        </form>
-                    </div>
-                    <div className="flex justify-between p-6 border border-gray-200 bg-gray-100">
-                        <button
-                            type="button"
-                            className={currentPage === 1 ? "hidden" : "rounded-md border border-primary px-4 py-3 font-medium text-primary transition hover:bg-primary-95"}
-                        >
-                            Previous
-                        </button>
-                        <button
-                            type="button"
-                            className="ml-auto rounded-md bg-primary px-4 py-3 font-medium text-white transition hover:bg-purple-700"
-                        >
-                            Continue
-                        </button>
-                    </div>
-
+            <div className="flex flex-col my-6 mx-10 gap-3 border border-gray-200 rounded-lg">
+                <div className="flex flex-col p-6 gap-3 border border-gray-200 bg-gray-100 ">
+                    <h1 className="font-bold text-3xl">Create Event</h1>
+                    <BookingStepper currentStep={currentPage} steps={steps} />
                 </div>
-            </LocalizationProvider>
+                <div className="flex flex-col p-6">
+                    {currentPage === 1 && (
+                        <AboutEvent sxVariable={sxVariable} eventVisibilityOptions={eventVisibilityOptions} />
+                    )}
+                </div>
+                <div className="flex justify-between p-6 border border-gray-200 bg-gray-100">
+                    <button
+                        type="button"
+                        onClick={previousPage}
+                        className={currentPage === 1 ? "hidden" : "rounded-md border border-primary px-4 py-3 font-medium text-primary transition hover:bg-primary-95"}
+                    >
+                        Previous
+                    </button>
+                    <button
+                        type="button"
+                        onClick={nextPage}
+                        className="ml-auto rounded-md bg-primary px-4 py-3 font-medium text-white transition hover:bg-purple-700"
+                    >
+                        Continue
+                    </button>
+                </div>
+
+            </div>
 
         </>
     );
