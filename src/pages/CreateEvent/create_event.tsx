@@ -2,6 +2,7 @@ import { useState } from "react";
 import BookingStepper, { type Steps } from "../../components/ui/booking_stepper";
 import { type SxProps, type Theme } from "@mui/material";
 import AboutEvent from "./steps/about_event";
+import EventDescription from "./steps/event_description";
 
 export interface EventVisibility {
     id: string;
@@ -74,6 +75,62 @@ function CreateEvent() {
         },
 
     };
+    const eventGenres: string[] = [
+        'Meetup',
+        'Party',
+        'Official',
+        'Physical',
+        'Social',
+        'Sports',
+        'Conference',
+        'Workshop',
+        'Seminar',
+        'Webinar',
+        'Festival',
+        'Exhibition',
+        'Charity',
+        'Gaming',
+        'Music',
+        'Arts & Culture',
+        'Food & Drink',
+        'Networking',
+        'Education',
+        'Technology',
+        'Health & Wellness',
+        'Other',
+    ];
+    const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+    const [tempGenres, setTempGenres] = useState<string[]>([]);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const chooseGenres = (genre: string) => {
+        setTempGenres((currentGenres) => {
+            if (currentGenres.includes(genre)) {
+                return currentGenres.filter((item) => item !== genre);
+            }
+
+            return [...currentGenres, genre];
+        });
+    };
+    const openDialogue = () => {
+        setTempGenres(selectedGenres);
+        setDialogOpen(true);
+    };
+    const applyGenres = () => {
+        setSelectedGenres(tempGenres);
+        setDialogOpen(false);
+    };
+    const clearGenres = () => {
+        setTempGenres([]);
+    };
+    const removeGenre = (genre: string) => {
+        setSelectedGenres((currentGenres) =>
+            currentGenres.filter((item) => item !== genre)
+        );
+    };
+    const closeDialogue = () => {
+        setDialogOpen(false);
+    };
+
     return (
         <>
             <div className="flex flex-col my-6 mx-10 gap-3 border border-gray-200 rounded-lg">
@@ -83,7 +140,24 @@ function CreateEvent() {
                 </div>
                 <div className="flex flex-col p-6">
                     {currentPage === 1 && (
-                        <AboutEvent sxVariable={sxVariable} eventVisibilityOptions={eventVisibilityOptions} />
+                        <AboutEvent
+                            sxVariable={sxVariable}
+                            eventVisibilityOptions={eventVisibilityOptions}
+                        />
+                    )}
+                    {currentPage === 2 && (
+                        <EventDescription
+                            selectedGenre={selectedGenres}
+                            chooseGenres={chooseGenres}
+                            eventGenres={eventGenres}
+                            removeGenre={removeGenre}
+                            dialogOpen={dialogOpen}
+                            closeDialogue={closeDialogue}
+                            clearGenres={clearGenres}
+                            applyGenres={applyGenres}
+                            openDialogue={openDialogue}
+                            tempGenres={tempGenres}
+                        />
                     )}
                 </div>
                 <div className="flex justify-between p-6 border border-gray-200 bg-gray-100">
