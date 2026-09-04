@@ -5,10 +5,22 @@ import AboutEvent from "./steps/about_event";
 import EventDescription from "./steps/event_description";
 import ImageUpload from "./steps/image_upload";
 
+//will replace with a union
 export interface EventVisibility {
     id: string;
     value: string;
     label: string;
+}
+
+export type EventTicketType = 'free' | 'paid';
+
+export interface TicketInfo {
+    ticketName: string;
+    ticketPrice: number;
+    ticketQuantity: number;
+    ticketType: string;
+    ticketScope: string;
+    ticketValidity: number;
 }
 
 function CreateEvent() {
@@ -35,23 +47,7 @@ function CreateEvent() {
             title: 'Payment',
         },
     ];
-    const eventVisibilityOptions: EventVisibility[] = [
-        {
-            id: "1",
-            value: "public",
-            label: "Public - Anyone Can View"
-        },
-        {
-            id: "2",
-            value: "institution",
-            label: "Institution - Specific Instituitions"
-        },
-        {
-            id: "3",
-            value: "private",
-            label: "Private - Exclusive"
-        },
-    ];
+
     const nextPage = () => {
         if (currentPage < steps.length) {
             setCurrentPage(currentPage + 1);
@@ -76,6 +72,25 @@ function CreateEvent() {
         },
 
     };
+    //Event Details Stepper
+    const eventVisibilityOptions: EventVisibility[] = [
+        {
+            id: "1",
+            value: "public",
+            label: "Public - Anyone Can View"
+        },
+        {
+            id: "2",
+            value: "institution",
+            label: "Institution - Specific Instituitions"
+        },
+        {
+            id: "3",
+            value: "private",
+            label: "Private - Exclusive"
+        },
+    ];
+    //Event Genre Stepper
     const eventGenres: string[] = [
         'Meetup',
         'Party',
@@ -132,6 +147,21 @@ function CreateEvent() {
         setDialogOpen(false);
     };
 
+    //Ticket Types Stepper
+    //Will Continue
+
+    // const [eventTicketType, setEventTicketType] = useState<EventTicketType | null>(null);
+    // const [ticketAdded, setTicketAdded] = useState<TicketInfo[]>([]);
+
+    // const chooseEventTicketType = () => {
+    //     setEventTicketType(eventTicketType);
+    // };
+
+    // const AddTicket = (ticket: TicketInfo) => {
+    //     setTicketAdded(ticketAdded);
+    // };
+
+
     return (
         <>
             <div className="flex flex-col my-6 mx-10 gap-3 border border-gray-200 rounded-lg">
@@ -164,6 +194,9 @@ function CreateEvent() {
                     {currentPage === 3 && (
                         <ImageUpload />
                     )}
+                    {/* {currentPage === 4 && (
+                        <TicketTypes />
+                    )} */}
                 </div>
                 <div className="flex justify-between p-6 border border-gray-200 bg-gray-100">
                     <button

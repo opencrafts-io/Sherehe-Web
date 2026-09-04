@@ -4,6 +4,7 @@ import AppLayout from "./app_layout";
 import EventListing from "../pages/EventListing/event_listing";
 import EventBooking from "../pages/EventBooking/event_booking";
 import CreateEvent from "../pages/CreateEvent/create_event";
+import LoginScreen from "../pages/Login/login_screen";
 
 export const router = createBrowserRouter([
     {
@@ -26,6 +27,10 @@ export const router = createBrowserRouter([
                 path: "create-event",
                 element: <CreateEvent />,
             },
+            {
+                path: "login",
+                element: < LoginScreen />
+            }
         ],
     },
 ]);

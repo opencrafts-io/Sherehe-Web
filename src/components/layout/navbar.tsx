@@ -7,7 +7,7 @@ import {
     faTicket,
     faGaugeHigh,
 } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function NavBar() {
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -15,6 +15,15 @@ function NavBar() {
     const navigateCreateEvent = () => {
         navigate("create-event");
     };
+    const navigateSignIn = () => {
+        navigate("login");
+    };
+    const location = useLocation();
+
+    if (location.pathname === "/login") {
+        return null;
+    }
+
     return (
         <nav className="border-b border-gray-200 bg-white">
             {/* Mobile Navbar */}
@@ -221,6 +230,7 @@ function NavBar() {
                     {/* Sign In */}
                     <button
                         type="button"
+                        onClick={navigateSignIn}
                         className="rounded-lg border border-primary px-4 py-2 font-medium text-primary transition hover:bg-primary-95"
                     >
                         Sign In
