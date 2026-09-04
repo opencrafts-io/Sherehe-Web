@@ -3,6 +3,7 @@ import BookingStepper, { type Steps } from "../../components/ui/booking_stepper"
 import { type SxProps, type Theme } from "@mui/material";
 import AboutEvent from "./steps/about_event";
 import EventDescription from "./steps/event_description";
+import ImageUpload from "./steps/image_upload";
 
 export interface EventVisibility {
     id: string;
@@ -157,7 +158,11 @@ function CreateEvent() {
                             applyGenres={applyGenres}
                             openDialogue={openDialogue}
                             tempGenres={tempGenres}
+                            sxVariable={sxVariable}
                         />
+                    )}
+                    {currentPage === 3 && (
+                        <ImageUpload />
                     )}
                 </div>
                 <div className="flex justify-between p-6 border border-gray-200 bg-gray-100">

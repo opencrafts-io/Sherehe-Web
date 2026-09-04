@@ -8,7 +8,7 @@ function AboutEvent({ sxVariable, eventVisibilityOptions }: { sxVariable: SxProp
     return (
         <>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <h1 className='text-4xl my-2 font-bold'>Event Details</h1>
+                <h2 className='text-4xl my-2 font-bold'>Event Details</h2>
                 <form action="submit">
                     <label
                         htmlFor="eventName"
