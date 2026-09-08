@@ -20,7 +20,7 @@ function NavBar() {
     };
     const location = useLocation();
 
-    if (location.pathname === "/login") {
+    if (location.pathname === "/login" || location.pathname === "/auth/callback") {
         return null;
     }
 

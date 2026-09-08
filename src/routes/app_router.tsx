@@ -5,6 +5,7 @@ import EventListing from "../pages/EventListing/event_listing";
 import EventBooking from "../pages/EventBooking/event_booking";
 import CreateEvent from "../pages/CreateEvent/create_event";
 import LoginScreen from "../pages/Login/login_screen";
+import AuthCallBack from "../pages/AuthCallBack/auth_call_back";
 
 export const router = createBrowserRouter([
     {
@@ -30,7 +31,11 @@ export const router = createBrowserRouter([
             {
                 path: "login",
                 element: < LoginScreen />
-            }
+            },
+            {
+                path: "auth/callback",
+                element: < AuthCallBack />
+            },
         ],
     },
 ]);
