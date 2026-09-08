@@ -46,7 +46,7 @@ function NavBar() {
                         </span>
                     </div>
                     {/* Profile */}
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-900 text-sm font-semibold text-white">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
                         EW
                     </div>
                 </div>
@@ -215,12 +215,12 @@ function NavBar() {
                 <div className="ml-auto flex items-center gap-4 lg:gap-5">
 
                     {/* Full Name */}
-                    <div className="hidden text-sm font-medium text-gray-700 xl:block">
+                    <div className="hidden text-sm font-medium text-primary xl:block">
                         eugene wachira
                     </div>
 
                     {/* Avatar */}
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-900 text-sm font-semibold text-white">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
                         EW
                     </div>
 
