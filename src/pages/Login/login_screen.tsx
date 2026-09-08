@@ -7,8 +7,21 @@ import {
     faCalendarDays,
     faTicket,
 } from "@fortawesome/free-solid-svg-icons";
+import useAuthStore from "../../stores/auth_store";
 
 function LoginScreen() {
+    const loginWithGoogle = useAuthStore(
+        (state) => state.loginWithGoogle
+    );
+    const loginWithApple = useAuthStore(
+        (state) => state.loginWithApple
+    );
+
+    const loadingProvider = useAuthStore(
+        (state) => state.loadingProvider
+    );
+    const isLoading = loadingProvider != null;
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
             <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 rounded-2xl overflow-hidden border border-gray-200 bg-white shadow-sm">
@@ -91,27 +104,47 @@ function LoginScreen() {
                         {/* Google */}
                         <button
                             type="button"
-                            className="w-full flex items-center justify-center gap-3 rounded-lg border border-gray-300 px-4 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+                            onClick={loginWithGoogle}
+                            disabled={isLoading}
+                            className="w-full flex items-center justify-center gap-3 rounded-lg border border-gray-300 px-4 py-3 text-sm font-semibold text-gray-700 transition hover:border-gray-800 disabled:cursor-not-allowed disabled:opacity-60"
                         >
-                            <FontAwesomeIcon
-                                icon={faGoogle}
-                                className="text-lg"
-                            />
-
-                            Continue with Google
+                            {loadingProvider === "google" ? (
+                                <>
+                                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-gray-400 border-t-gray-800" />
+                                    Signing in...
+                                </>
+                            ) : (
+                                <>
+                                    <FontAwesomeIcon
+                                        icon={faGoogle}
+                                        className="text-lg"
+                                    />
+                                    Continue with Google
+                                </>
+                            )}
                         </button>
 
                         {/* Apple */}
                         <button
                             type="button"
-                            className="w-full mt-3 flex items-center justify-center gap-3 rounded-lg border border-gray-300 bg-gray-800 px-4 py-3 text-sm font-semibold text-white transition hover:bg-gray-700"
+                            onClick={loginWithApple}
+                            disabled={isLoading}
+                            className="w-full mt-3 flex items-center justify-center gap-3 rounded-lg border border-gray-300 bg-gray-800 px-4 py-3 text-sm font-semibold text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-60"
                         >
-                            <FontAwesomeIcon
-                                icon={faApple}
-                                className="text-lg"
-                            />
-
-                            Continue with Apple
+                            {loadingProvider === "apple" ? (
+                                <>
+                                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-white" />
+                                    Signing in...
+                                </>
+                            ) : (
+                                <>
+                                    <FontAwesomeIcon
+                                        icon={faApple}
+                                        className="text-lg"
+                                    />
+                                    Continue with Apple
+                                </>
+                            )}
                         </button>
 
                     </div>
