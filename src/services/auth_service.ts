@@ -7,7 +7,7 @@ class AuthService {
         const redirectUri = `${window.location.origin}/auth/callback`;
 
         const url =
-            `${VERISAFE_BASE_URL}/auth/${provider}?deep_link=${encodeURIComponent(redirectUri)}`;
+            `${VERISAFE_BASE_URL}/auth/${provider}?platform=mobile&deep_link=${encodeURIComponent(redirectUri)}`;
 
         window.location.href = url;
     }
@@ -22,7 +22,7 @@ class AuthService {
 
     async exchangeCode(code: string): Promise<TokenResponse> {
         const response = await verisafeApi.post<TokenResponseDto>(
-            "/auth/exchange",
+            "/auth/token/exchange",
             { code, },
         );
 
