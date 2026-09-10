@@ -14,6 +14,7 @@ interface AuthState {
     exchangeCode: (code: string) => Promise<boolean>;
     tokenRefresh: (refreshToken: string) => Promise<boolean>;
     initializeAuth: () => Promise<void>;
+    logOut: () => Promise<boolean>;
 }
 
 const useAuthStore = create<AuthState>((set, get) => ({
@@ -78,11 +79,9 @@ const useAuthStore = create<AuthState>((set, get) => ({
                 isLoading: false,
                 isAuthenticated: true,
             });
-            console.log("is authenticated is ", get().isAuthenticated);
 
             return true;
         } catch (error) {
-            console.log(`Error is ${error}`);
             set({
                 isLoading: false,
                 isAuthenticated: false,
@@ -120,6 +119,38 @@ const useAuthStore = create<AuthState>((set, get) => ({
                 isInitializing: false,
             });
         }
+    },
+    logOut: async () => {
+        try {
+            set({
+                isLoading: true,
+                error: null,
+            });
+
+            const refreshToken = tokenStorage.getRefreshToken();
+
+            if (refreshToken) {
+                await authService.revokeTokens(refreshToken);
+            }
+
+
+            tokenStorage.clearTokens();
+
+            set({
+                isLoading: false,
+                isAuthenticated: false,
+            });
+
+            return true;
+        } catch (error) {
+            set({
+                isLoading: false,
+                error: "Failed to Log out. Please try again",
+            });
+            
+            return false;
+        }
+
     },
 }));
 

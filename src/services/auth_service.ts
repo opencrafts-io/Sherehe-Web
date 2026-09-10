@@ -1,6 +1,6 @@
 import { VERISAFE_BASE_URL } from "../config/env";
 import type { TokenResponse, TokenResponseDto } from "../models/token_response";
-import verisafeApi from "./api";
+import { verisafeApi, verisafeLoggedInApi } from "./api";
 
 class AuthService {
     loginWithProvider(provider: "google" | "apple") {
@@ -46,6 +46,13 @@ class AuthService {
             accessExpiresAt: response.data.access_expires_at,
             refreshExpiresAt: response.data.refresh_expires_at,
         };
+    }
+
+    async revokeTokens(refreshToken: string) {
+        await verisafeLoggedInApi.post(
+            "/auth/token/revoke",
+            { "refresh_token": refreshToken },
+        );
     }
 }
 

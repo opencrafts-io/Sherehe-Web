@@ -1,11 +1,19 @@
 import axios from "axios";
 import { VERISAFE_BASE_URL } from "../config/env";
+import { attachAuthInterceptor } from "./axios_interceptor";
 
-const verisafeApi = axios.create({
+export const verisafeApi = axios.create({
     baseURL: VERISAFE_BASE_URL,
     headers: {
         'Content-Type': 'application/json',
     },
 });
 
-export default verisafeApi;
+export const verisafeLoggedInApi = axios.create({
+    baseURL: VERISAFE_BASE_URL,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
+
+attachAuthInterceptor(verisafeLoggedInApi);
