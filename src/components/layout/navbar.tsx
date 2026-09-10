@@ -7,7 +7,8 @@ import {
     faTicket,
     faGaugeHigh,
 } from "@fortawesome/free-solid-svg-icons";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import useAuthStore from "../../stores/auth_store";
 
 function NavBar() {
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -18,11 +19,9 @@ function NavBar() {
     const navigateSignIn = () => {
         navigate("login");
     };
-    const location = useLocation();
-
-    if (location.pathname === "/login" || location.pathname === "/auth/callback") {
-        return null;
-    }
+    const isAuthenticated = useAuthStore(
+        (state) => state.isAuthenticated
+    );
 
     return (
         <nav className="border-b border-gray-200 bg-white">
@@ -54,12 +53,17 @@ function NavBar() {
                 <div className="flex gap-3 px-4 pb-4">
 
                     {/* Sign In */}
-                    <button
-                        type="button"
-                        className="flex-1 rounded-lg border border-primary px-4 py-2.5 text-sm font-semibold text-primary transition active:bg-primary-95"
-                    >
-                        Sign In
-                    </button>
+                    {
+                        !isAuthenticated && (
+                            <button
+                                type="button"
+                                onClick={navigateSignIn}
+                                className="flex-1 rounded-lg border border-primary px-4 py-2.5 text-sm font-semibold text-primary transition active:bg-primary-95"
+                            >
+                                Sign In
+                            </button>)
+                    }
+
 
                     {/* Create Event */}
                     <button
@@ -228,13 +232,17 @@ function NavBar() {
                     <div className="hidden h-6 w-px bg-gray-300 lg:block" />
 
                     {/* Sign In */}
-                    <button
-                        type="button"
-                        onClick={navigateSignIn}
-                        className="rounded-lg border border-primary px-4 py-2 font-medium text-primary transition hover:bg-primary-95"
-                    >
-                        Sign In
-                    </button>
+                    {
+                        !isAuthenticated && (
+                            <button
+                                type="button"
+                                onClick={navigateSignIn}
+                                className="rounded-lg border border-primary px-4 py-2 font-medium text-primary transition hover:bg-primary-95"
+                            >
+                                Sign In
+                            </button>
+                        )
+                    }
 
                     {/* Create Event */}
                     <button

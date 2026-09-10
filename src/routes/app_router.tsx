@@ -6,14 +6,14 @@ import EventBooking from "../pages/EventBooking/event_booking";
 import CreateEvent from "../pages/CreateEvent/create_event";
 import LoginScreen from "../pages/Login/login_screen";
 import AuthCallBack from "../pages/AuthCallBack/auth_call_back";
+import AuthLoadingScreen from "../pages/AuthLoading/auth_loading_screen";
 
 export const router = createBrowserRouter([
     {
-        path: "/",
         element: <AppLayout />,
         children: [
             {
-                index: true,
+                path: "dashboard",
                 element: <EventListing />,
             },
             {
@@ -28,14 +28,19 @@ export const router = createBrowserRouter([
                 path: "create-event",
                 element: <CreateEvent />,
             },
-            {
-                path: "login",
-                element: < LoginScreen />
-            },
-            {
-                path: "auth/callback",
-                element: < AuthCallBack />
-            },
+
         ],
+    },
+    {
+        path: "/",
+        element: <AuthLoadingScreen />,
+    },
+    {
+        path: "login",
+        element: < LoginScreen />
+    },
+    {
+        path: "auth/callback",
+        element: < AuthCallBack />
     },
 ]);

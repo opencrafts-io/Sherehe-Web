@@ -35,7 +35,7 @@ function AuthCallBack() {
             const success = await exchangeCode(code);
 
             if (success) {
-                navigate("/", { replace: true });
+                navigate("/dashboard", { replace: true });
             }
         };
 

@@ -26,10 +26,6 @@ function Footer() {
         },
     ];
 
-    if (location.pathname === "/auth/callback") {
-        return null;
-    }
-
     return (
         <>
             <footer className="border-t border-gray-200 bg-slate-50">

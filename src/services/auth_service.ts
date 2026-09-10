@@ -33,6 +33,20 @@ class AuthService {
             refreshExpiresAt: response.data.refresh_expires_at,
         };
     }
+
+    async tokenRefresh(refreshToken: string): Promise<TokenResponse> {
+        const response = await verisafeApi.post<TokenResponseDto>(
+            "/auth/token/refresh",
+            { "refresh_token": refreshToken },
+        );
+
+        return {
+            accessToken: response.data.access_token,
+            refreshToken: response.data.refresh_token,
+            accessExpiresAt: response.data.access_expires_at,
+            refreshExpiresAt: response.data.refresh_expires_at,
+        };
+    }
 }
 
 export default new AuthService();
