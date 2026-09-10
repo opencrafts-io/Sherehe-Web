@@ -109,7 +109,7 @@ export function attachAuthInterceptor(api: AxiosInstance) {
 }
 
 async function handleAuthenticationFailure() {
-    await useAuthStore.getState().logOut();
+    await useAuthStore.getState().logout();
 
     window.location.href = "/login";
 }

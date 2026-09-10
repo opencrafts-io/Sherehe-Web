@@ -6,6 +6,9 @@ import {
     faCompass,
     faTicket,
     faGaugeHigh,
+    faChevronDown,
+    faUser,
+    faRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../stores/auth_store";
@@ -21,6 +24,12 @@ function NavBar() {
     };
     const isAuthenticated = useAuthStore(
         (state) => state.isAuthenticated
+    );
+
+    const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+
+    const logOut = useAuthStore(
+        (state) => state.logout
     );
 
     return (
@@ -218,37 +227,116 @@ function NavBar() {
                 {/* Right Section */}
                 <div className="ml-auto flex items-center gap-4 lg:gap-5">
 
-                    {/* Full Name */}
-                    <div className="hidden text-sm font-medium text-primary xl:block">
-                        eugene wachira
-                    </div>
+                    {/* Profile */}
+                    {isAuthenticated && (
+                        <div className="relative">
 
-                    {/* Avatar */}
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
-                        EW
-                    </div>
-
-                    {/* Separator */}
-                    <div className="hidden h-6 w-px bg-gray-300 lg:block" />
-
-                    {/* Sign In */}
-                    {
-                        !isAuthenticated && (
+                            {/* Profile Button */}
                             <button
                                 type="button"
-                                onClick={navigateSignIn}
-                                className="rounded-lg border border-primary px-4 py-2 font-medium text-primary transition hover:bg-primary-95"
+                                onClick={() =>
+                                    setProfileDropdownOpen(!profileDropdownOpen)
+                                }
+                                className="flex items-center gap-3 rounded-lg p-1 transition hover:bg-primary-95"
                             >
-                                Sign In
+
+                                {/* Full Name */}
+                                <div className="hidden text-right xl:block">
+
+                                    <p className="text-sm font-semibold text-gray-800">
+                                        Eugene Wachira
+                                    </p>
+
+                                    <p className="text-xs text-gray-500">
+                                        My Account
+                                    </p>
+
+                                </div>
+
+                                {/* Avatar */}
+                                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
+                                    EW
+                                </div>
+
+                                {/* Dropdown Arrow */}
+                                <FontAwesomeIcon
+                                    icon={faChevronDown}
+                                    className={`hidden text-xs text-gray-500 transition-transform lg:block ${profileDropdownOpen ? "rotate-180" : ""
+                                        }`}
+                                />
+
                             </button>
-                        )
-                    }
+
+
+                            {/* Dropdown Menu */}
+                            {profileDropdownOpen && (
+                                <div className="absolute right-0 top-full z-50 mt-3 w-52 overflow-hidden rounded-xl border border-gray-100 bg-white py-2 shadow-xl">
+
+                                    {/* View Profile */}
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setProfileDropdownOpen(false);
+                                            navigate("/profile");
+                                        }}
+                                        className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-700 transition hover:bg-primary-95"
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={faUser}
+                                            className="text-primary"
+                                        />
+
+                                        View Profile
+                                    </button>
+
+
+                                    {/* Divider */}
+                                    <div className="my-2 border-t border-gray-100" />
+
+
+                                    {/* Logout */}
+                                    <button
+                                        type="button"
+                                        onClick={async () => {
+                                            setProfileDropdownOpen(false);
+
+                                            const success = await logOut();
+
+                                            if (success) {
+                                                navigate("/login");
+                                            }
+                                        }}
+                                        className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-red-600 transition hover:bg-red-50"
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={faRightFromBracket}
+                                        />
+
+                                        Logout
+                                    </button>
+
+                                </div>
+                            )}
+
+                        </div>
+                    )}
+
+                    {/* Sign In */}
+                    {!isAuthenticated && (
+                        <button
+                            type="button"
+                            onClick={navigateSignIn}
+                            className="rounded-lg border border-primary px-4 py-2 font-medium text-primary transition hover:bg-primary-95"
+                        >
+                            Sign In
+                        </button>
+                    )}
 
                     {/* Create Event */}
                     <button
                         type="button"
                         onClick={navigateCreateEvent}
-                        className="hidden rounded-lg bg-primary  px-4 py-2 text-sm font-semibold text-white transition hover:bg-purple-700 lg:block"
+                        className="hidden rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-purple-700 lg:block"
                     >
                         Create Event
                     </button>

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import authService from "../services/auth_service";
 import tokenStorage from "../utils/token_storage";
+import userStorage from "../utils/user_storage";
 
 interface AuthState {
     loadingProvider: "google" | "apple" | null;
@@ -14,7 +15,7 @@ interface AuthState {
     exchangeCode: (code: string) => Promise<boolean>;
     tokenRefresh: (refreshToken: string) => Promise<boolean>;
     initializeAuth: () => Promise<void>;
-    logOut: () => Promise<boolean>;
+    logout: () => Promise<boolean>;
 }
 
 const useAuthStore = create<AuthState>((set, get) => ({
@@ -100,8 +101,6 @@ const useAuthStore = create<AuthState>((set, get) => ({
 
             const refreshToken = tokenStorage.getRefreshToken();
 
-            console.log("Refresh token is" + refreshToken);
-
             // User has no saved session
             if (!refreshToken) {
                 set({
@@ -120,11 +119,10 @@ const useAuthStore = create<AuthState>((set, get) => ({
             });
         }
     },
-    logOut: async () => {
+    logout: async () => {
         try {
             set({
                 isLoading: true,
-                error: null,
             });
 
             const refreshToken = tokenStorage.getRefreshToken();
@@ -135,6 +133,7 @@ const useAuthStore = create<AuthState>((set, get) => ({
 
 
             tokenStorage.clearTokens();
+            userStorage.deleteUser();
 
             set({
                 isLoading: false,
@@ -143,11 +142,14 @@ const useAuthStore = create<AuthState>((set, get) => ({
 
             return true;
         } catch (error) {
+            tokenStorage.clearTokens();
+            userStorage.deleteUser();
+
             set({
                 isLoading: false,
-                error: "Failed to Log out. Please try again",
+                isAuthenticated: false,
             });
-            
+
             return false;
         }
 
