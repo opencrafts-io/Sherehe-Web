@@ -2,16 +2,14 @@ import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faBars,
-    faXmark,
-    faCompass,
-    faTicket,
-    faGaugeHigh,
     faChevronDown,
-    faUser,
-    faRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../stores/authStore";
+import useUserStore from "../../stores/userStore";
+import type { User } from "../../models/user";
+import ShereheDrawer from "./shereheDrawer";
+import ProfileDropdown from "./profileDropdown";
 
 function NavBar() {
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -25,8 +23,56 @@ function NavBar() {
     const isAuthenticated = useAuthStore(
         (state) => state.isAuthenticated
     );
+    const user = useUserStore(
+        (state) => state.user
+    );
+
+    const openDrawer = () => {
+        setDrawerOpen(true);
+    };
+
+    const closeDrawer = () => {
+        setDrawerOpen(false);
+    };
+
+    const getUserNameAndInitials = (user: User | null) => {
+        if (!user) {
+            return {
+                name: "Guest",
+                initials: "G"
+            }
+        }
+
+        return {
+            name: user.name,
+            initials: getInitials(user.name)
+        };
+    };
+
+    const getInitials = (name: string): string => {
+        const names = name.trim().split(/\s+/);
+
+        if (names.length === 1) {
+            return names[0].charAt(0).toUpperCase();
+        }
+
+        return (
+            names[0].charAt(0) +
+            names[1].charAt(0)
+        ).toUpperCase();
+    };
+
+    const { name, initials } = getUserNameAndInitials(user);
 
     const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+
+    const closeProfile = () => {
+        setProfileDropdownOpen(false);
+    };
+
+    const toggleProfile = () => {
+        setProfileDropdownOpen((previousValue) => !previousValue);
+    };
 
     const logOut = useAuthStore(
         (state) => state.logout
@@ -55,7 +101,7 @@ function NavBar() {
                     </div>
                     {/* Profile */}
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
-                        EW
+                        {initials}
                     </div>
                 </div>
                 {/* Bottom Row */}
@@ -88,104 +134,13 @@ function NavBar() {
             {/* Mobile Drawer  */}
 
             {drawerOpen && (
-                <div className="fixed inset-0 z-50 lg:hidden">
-
-                    {/* Backdrop */}
-                    <div
-                        className={`absolute inset-0 bg-black/40 transition-opacity duration-500 ${drawerOpen
-                            ? "opacity-100"
-                            : "pointer-events-none opacity-0"
-                            }`}
-                        onClick={() => setDrawerOpen(false)}
-                    />
-
-                    {/* Drawer */}
-                    <aside
-                        className={`relative h-full w-4/5 max-w-sm bg-white shadow-xl transition-transform duration-500 ease-in-out ${drawerOpen
-                            ? "translate-x-0"
-                            : "-translate-x-full"
-                            }`}
-                    >
-
-                        {/* Drawer Header */}
-                        <div className="flex h-16 items-center justify-between px-5">
-
-                            <span className="text-2xl font-bold tracking-tight text-gray-900">
-                                Sherehe
-                            </span>
-
-                            <button
-                                type="button"
-                                onClick={() => setDrawerOpen(false)}
-                                className="flex h-10 w-10 items-center justify-center rounded-lg text-gray-600 transition hover:bg-gray-100 hover:text-gray-900"
-                                aria-label="Close navigation menu"
-                            >
-                                <FontAwesomeIcon
-                                    icon={faXmark}
-                                    className="text-xl"
-                                />
-                            </button>
-
-                        </div>
-
-                        {/* Divider */}
-                        <hr className="border-gray-200" />
-
-                        {/* Navigation */}
-                        <div className="flex flex-col p-4">
-
-                            {/* Explore */}
-                            <a
-                                href="#"
-                                onClick={() => setDrawerOpen(false)}
-                                className="flex items-center gap-4 rounded-lg px-4 py-3 text-gray-700 transition hover:bg-gray-100 hover:text-gray-900"
-                            >
-                                <FontAwesomeIcon
-                                    icon={faCompass}
-                                    className="w-5 text-gray-500"
-                                />
-
-                                <span className="font-medium">
-                                    Explore
-                                </span>
-                            </a>
-
-                            {/* My Tickets */}
-                            <a
-                                href="#"
-                                onClick={() => setDrawerOpen(false)}
-                                className="flex items-center gap-4 rounded-lg px-4 py-3 text-gray-700 transition hover:bg-gray-100 hover:text-gray-900"
-                            >
-                                <FontAwesomeIcon
-                                    icon={faTicket}
-                                    className="w-5 text-gray-500"
-                                />
-
-                                <span className="font-medium">
-                                    My Tickets
-                                </span>
-                            </a>
-
-                            {/* Dashboard */}
-                            <a
-                                href="#"
-                                onClick={() => setDrawerOpen(false)}
-                                className="flex items-center gap-4 rounded-lg px-4 py-3 text-gray-700 transition hover:bg-gray-100 hover:text-gray-900"
-                            >
-                                <FontAwesomeIcon
-                                    icon={faGaugeHigh}
-                                    className="w-5 text-gray-500"
-                                />
-
-                                <span className="font-medium">
-                                    Dashboard
-                                </span>
-                            </a>
-
-                        </div>
-
-                    </aside>
-                </div>
+                <ShereheDrawer
+                    drawerOpen={drawerOpen}
+                    openDrawer={openDrawer}
+                    closeDrawer={closeDrawer}
+                    navigate={navigate}
+                    logOut={logOut}
+                />
             )}
 
             {/* Desktop Navbar */}
@@ -228,98 +183,53 @@ function NavBar() {
                 <div className="ml-auto flex items-center gap-4 lg:gap-5">
 
                     {/* Profile */}
-                    {isAuthenticated && (
-                        <div className="relative">
 
-                            {/* Profile Button */}
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    setProfileDropdownOpen(!profileDropdownOpen)
-                                }
-                                className="flex items-center gap-3 rounded-lg p-1 transition hover:bg-primary-95"
-                            >
+                    <div className="relative">
 
-                                {/* Full Name */}
-                                <div className="hidden text-right xl:block">
+                        {/* Profile Button */}
+                        <button
+                            type="button"
+                            onClick={toggleProfile}
+                            disabled={!isAuthenticated}
+                            className={`flex items-center gap-3 rounded-lg p-1 transition ${isAuthenticated} ? "hover:bg-primary-95"`}
+                        >
 
-                                    <p className="text-sm font-semibold text-gray-800">
-                                        Eugene Wachira
-                                    </p>
+                            {/* Full Name */}
+                            <div className="hidden text-right xl:block">
 
-                                    <p className="text-xs text-gray-500">
-                                        My Account
-                                    </p>
+                                <p className="text-sm font-semibold text-gray-800">
+                                    {name}
+                                </p>
 
-                                </div>
+                                <p className="text-xs text-gray-500">
+                                    {isAuthenticated ? "My Account" : "Guest Account"}
+                                </p>
 
-                                {/* Avatar */}
-                                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
-                                    EW
-                                </div>
+                            </div>
 
-                                {/* Dropdown Arrow */}
+                            {/* Avatar */}
+                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
+                                {initials}
+                            </div>
+
+                            {/* Dropdown Arrow */}
+                            {isAuthenticated && (
                                 <FontAwesomeIcon
                                     icon={faChevronDown}
                                     className={`hidden text-xs text-gray-500 transition-transform lg:block ${profileDropdownOpen ? "rotate-180" : ""
                                         }`}
                                 />
-
-                            </button>
-
-
-                            {/* Dropdown Menu */}
-                            {profileDropdownOpen && (
-                                <div className="absolute right-0 top-full z-50 mt-3 w-52 overflow-hidden rounded-xl border border-gray-100 bg-white py-2 shadow-xl">
-
-                                    {/* View Profile */}
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            setProfileDropdownOpen(false);
-                                            navigate("/profile");
-                                        }}
-                                        className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-700 transition hover:bg-primary-95"
-                                    >
-                                        <FontAwesomeIcon
-                                            icon={faUser}
-                                            className="text-primary"
-                                        />
-
-                                        View Profile
-                                    </button>
-
-
-                                    {/* Divider */}
-                                    <div className="my-2 border-t border-gray-100" />
-
-
-                                    {/* Logout */}
-                                    <button
-                                        type="button"
-                                        onClick={async () => {
-                                            setProfileDropdownOpen(false);
-
-                                            const success = await logOut();
-
-                                            if (success) {
-                                                navigate("/login");
-                                            }
-                                        }}
-                                        className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-red-600 transition hover:bg-red-50"
-                                    >
-                                        <FontAwesomeIcon
-                                            icon={faRightFromBracket}
-                                        />
-
-                                        Logout
-                                    </button>
-
-                                </div>
                             )}
+                        </button>
 
-                        </div>
-                    )}
+
+                        {/* Dropdown Menu */}
+                        {profileDropdownOpen && (
+                            <ProfileDropdown closeProfile={closeProfile} logOut={logOut} navigate={navigate} />
+                        )}
+
+                    </div>
+
 
                     {/* Sign In */}
                     {!isAuthenticated && (
