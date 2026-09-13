@@ -6,7 +6,7 @@ import {
     faArrowLeft,
     faShieldHalved,
 } from "@fortawesome/free-solid-svg-icons";
-import useAuthStore from "../../stores/auth_store";
+import useAuthStore from "../../stores/authStore";
 
 function AuthCallBack() {
     const [searchParams] = useSearchParams();

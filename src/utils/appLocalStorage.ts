@@ -1,6 +1,7 @@
-import type { TokenResponse } from "../models/token_response";
+import type { TokenResponse } from "../models/tokenResponse";
+import type { User } from "../models/user";
 
-class TokenStorage {
+class AppLocalStorage {
     saveTokens(tokens: TokenResponse) {
         localStorage.setItem(
             "accessToken",
@@ -37,6 +38,29 @@ class TokenStorage {
         localStorage.removeItem("accessExpiresAt");
         localStorage.removeItem("refreshExpiresAt");
     }
+
+    private readonly USER_KEY = "user";
+
+    saveUser(user: User): void {
+        localStorage.setItem(
+            this.USER_KEY,
+            JSON.stringify(user)
+        );
+    }
+
+    saveIsAuthenticated(isAuthenticated: boolean): void {
+        localStorage.setItem("isAuthenticated", isAuthenticated.toString());
+    }
+
+    getIsAuthenticated(): boolean | null {
+        const isAuthenticated = localStorage.getItem("isAuthenticated");
+        if (!isAuthenticated) return null;
+        return isAuthenticated === "true";
+    }
+
+    clearIsAuthenticated(): void {
+        localStorage.removeItem("isAuthenticated");
+    }
 }
 
-export default new TokenStorage();
+export default new AppLocalStorage();

@@ -4,7 +4,7 @@ import {
     faShieldHalved,
     faHandSparkles
 } from "@fortawesome/free-solid-svg-icons";
-import useAuthStore from "../../stores/auth_store";
+import useAuthStore from "../../stores/authStore";
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 

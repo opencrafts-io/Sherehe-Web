@@ -4,8 +4,8 @@ import {
     type InternalAxiosRequestConfig,
 } from "axios";
 
-import tokenStorage from "../utils/token_storage";
-import useAuthStore from "../stores/auth_store";
+import useAuthStore from "../stores/authStore";
+import appLocalStorage from "../utils/appLocalStorage";
 
 interface RetryableRequestConfig extends InternalAxiosRequestConfig {
     _retry?: boolean;
@@ -18,7 +18,7 @@ export function attachAuthInterceptor(api: AxiosInstance) {
     // Request interceptor
     api.interceptors.request.use((config) => {
 
-        const accessToken = tokenStorage.getAccessToken();
+        const accessToken = appLocalStorage.getAccessToken();
 
         if (accessToken) {
             config.headers.Authorization = `Bearer ${accessToken}`;
@@ -50,7 +50,7 @@ export function attachAuthInterceptor(api: AxiosInstance) {
             originalRequest._retry = true;
 
             const refreshToken =
-                tokenStorage.getRefreshToken();
+                appLocalStorage.getRefreshToken();
 
             // No refresh token then logout
             if (!refreshToken) {
@@ -82,7 +82,7 @@ export function attachAuthInterceptor(api: AxiosInstance) {
                 }
 
                 const newAccessToken =
-                    tokenStorage.getAccessToken();
+                    appLocalStorage.getAccessToken();
 
                 if (!newAccessToken) {
                     handleAuthenticationFailure();

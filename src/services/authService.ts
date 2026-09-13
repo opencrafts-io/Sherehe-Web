@@ -1,5 +1,5 @@
 import { VERISAFE_BASE_URL } from "../config/env";
-import type { TokenResponse, TokenResponseDto } from "../models/token_response";
+import type { TokenResponse, TokenResponseDto } from "../models/tokenResponse";
 import { verisafeApi, verisafeLoggedInApi } from "./api";
 
 class AuthService {

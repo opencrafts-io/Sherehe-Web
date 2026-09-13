@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { events } from "../../models/event";
-import EventBookingDesktop from "./event_booking_desktop";
-import EventBookingMobile from "./event_booking_mobile";
+import EventBookingDesktop from "./eventBookingDesktop";
+import EventBookingMobile from "./eventBookingMobile";
 
 export interface Ticket {
     id: string,

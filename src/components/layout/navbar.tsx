@@ -11,7 +11,7 @@ import {
     faRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import useAuthStore from "../../stores/auth_store";
+import useAuthStore from "../../stores/authStore";
 
 function NavBar() {
     const [drawerOpen, setDrawerOpen] = useState(false);

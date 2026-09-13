@@ -1,10 +1,10 @@
-import type { EventBookingProps } from "./event_booking";
+import type { EventBookingProps } from "./eventBooking";
 import { useState } from "react";
-import TicketSelection from "./steps/ticket_selection";
-import OrderSummary from "./steps/order_summary";
-import TicketPayment from "./steps/ticket_payment";
-import type { Steps } from "../../components/ui/booking_stepper";
-import BookingStepper from "../../components/ui/booking_stepper";
+import TicketSelection from "./steps/ticketSelection";
+import OrderSummary from "./steps/orderSummary";
+import TicketPayment from "./steps/ticketPayment";
+import type { Steps } from "../../components/ui/bookingStepper";
+import BookingStepper from "../../components/ui/bookingStepper";
 
 function EventBookingMobile({
     event,

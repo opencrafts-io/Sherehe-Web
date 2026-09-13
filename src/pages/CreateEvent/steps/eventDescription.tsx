@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShapes, faPenToSquare, faXmark, faPlus } from "@fortawesome/free-solid-svg-icons";
-import GenreDialog from "../components/genre_dialog";
+import GenreDialog from "../components/genreDialog";
 import { TextField, type SxProps, type Theme } from "@mui/material";
 
 

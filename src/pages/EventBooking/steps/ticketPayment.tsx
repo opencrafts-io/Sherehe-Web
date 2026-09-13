@@ -1,6 +1,6 @@
 import { faCircleInfo, faMobile, faPhone } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import PaymentButtons from "../components/payment_buttons";
+import PaymentButtons from "../components/paymentButtons";
 
 function TicketPayment({ total, phoneNumber, setPhoneNumber, previousPage, }: {
     total: number,

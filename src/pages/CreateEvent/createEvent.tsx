@@ -1,9 +1,9 @@
 import { useState } from "react";
-import BookingStepper, { type Steps } from "../../components/ui/booking_stepper";
+import BookingStepper, { type Steps } from "../../components/ui/bookingStepper";
 import { type SxProps, type Theme } from "@mui/material";
-import AboutEvent from "./steps/about_event";
-import EventDescription from "./steps/event_description";
-import ImageUpload from "./steps/image_upload";
+import AboutEvent from "./steps/aboutEvent";
+import EventDescription from "./steps/eventDescription";
+import ImageUpload from "./steps/imageUpload";
 
 //will replace with a union
 export interface EventVisibility {

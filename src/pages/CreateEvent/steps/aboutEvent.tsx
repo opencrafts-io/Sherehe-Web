@@ -2,7 +2,7 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { MenuItem, TextField, type SxProps, type Theme } from '@mui/material';
-import type { EventVisibility } from '../create_event';
+import type { EventVisibility } from '../createEvent';
 
 function AboutEvent({ sxVariable, eventVisibilityOptions }: { sxVariable: SxProps<Theme>, eventVisibilityOptions: EventVisibility[] }) {
     return (

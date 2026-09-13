@@ -1,9 +1,9 @@
 import { mapUserDtoToUser, type User, type UserDto } from "../models/user";
-import { verisafeApi } from "./api";
+import { verisafeLoggedInApi } from "./api";
 
 class UserService {
     async getUserData(): Promise<User> {
-        const response = await verisafeApi.get<UserDto>("/accounts/me");
+        const response = await verisafeLoggedInApi.get<UserDto>("/accounts/me");
 
         return mapUserDtoToUser(response.data);
     }

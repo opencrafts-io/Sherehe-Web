@@ -1,12 +1,12 @@
 import { createBrowserRouter } from "react-router-dom";
-import EventDetails from "../pages/EventDetails/event_details";
-import AppLayout from "./app_layout";
-import EventListing from "../pages/EventListing/event_listing";
-import EventBooking from "../pages/EventBooking/event_booking";
-import CreateEvent from "../pages/CreateEvent/create_event";
-import LoginScreen from "../pages/Login/login_screen";
-import AuthCallBack from "../pages/AuthCallBack/auth_call_back";
-import AuthLoadingScreen from "../pages/AuthLoading/auth_loading_screen";
+import EventDetails from "../pages/EventDetails/eventDetails";
+import AppLayout from "./appLayout";
+import EventListing from "../pages/EventListing/eventListing";
+import EventBooking from "../pages/EventBooking/eventBooking";
+import CreateEvent from "../pages/CreateEvent/createEvent";
+import LoginScreen from "../pages/Login/loginScreen";
+import AuthCallBack from "../pages/AuthCallBack/authCallBack";
+import AuthLoadingScreen from "../pages/AuthLoading/authLoadingScreen";
 
 export const router = createBrowserRouter([
     {

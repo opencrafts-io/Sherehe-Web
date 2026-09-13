@@ -5,8 +5,8 @@ import {
     faPhone,
     faCircleInfo,
 } from "@fortawesome/free-solid-svg-icons";
-import type { EventBookingProps } from "./event_booking";
-import PaymentButtons from "./components/payment_buttons";
+import type { EventBookingProps } from "./eventBooking";
+import PaymentButtons from "./components/paymentButtons";
 
 function EventBookingDesktop({
     event,

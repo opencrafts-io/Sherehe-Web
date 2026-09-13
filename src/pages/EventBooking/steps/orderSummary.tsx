@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import type { Ticket } from "../event_booking";
+import type { Ticket } from "../eventBooking";
 import { faCalendarDays } from "@fortawesome/free-solid-svg-icons";
 
 function OrderSummary({ selectedTicket,
