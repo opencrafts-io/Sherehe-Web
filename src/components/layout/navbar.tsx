@@ -17,6 +17,9 @@ function NavBar() {
     const navigateCreateEvent = () => {
         navigate("create-event");
     };
+    const navigateProfile = () => {
+        navigate("profile");
+    };
     const navigateSignIn = () => {
         navigate("login");
     };
@@ -100,9 +103,18 @@ function NavBar() {
                         </span>
                     </div>
                     {/* Profile */}
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
-                        {initials}
-                    </div>
+                    {user?.avatarUrl ? (
+                        <img
+                            src={user.avatarUrl}
+                            onClick={navigateProfile}
+                            alt={`${user.name}'s avatar`}
+                            className="h-9 w-9 rounded-full object-cover "
+                        />
+                    ) : (
+                        <div onClick={navigateProfile} className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
+                            {initials}
+                        </div>
+                    )}
                 </div>
                 {/* Bottom Row */}
                 <div className="flex gap-3 px-4 pb-4">
@@ -207,10 +219,18 @@ function NavBar() {
 
                             </div>
 
-                            {/* Avatar */}
-                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
-                                {initials}
-                            </div>
+                            {user?.avatarUrl ? (
+                                <img
+                                    src={user.avatarUrl}
+                                    alt={`${user.name}'s avatar`}
+                                    className="h-9 w-9 rounded-full"
+                                />
+                            ) : (
+                                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
+                                    {initials}
+                                </div>
+                            )}
+
 
                             {/* Dropdown Arrow */}
                             {isAuthenticated && (

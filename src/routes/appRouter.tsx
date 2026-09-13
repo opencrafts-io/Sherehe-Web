@@ -7,6 +7,7 @@ import CreateEvent from "../pages/CreateEvent/createEvent";
 import LoginScreen from "../pages/Login/loginScreen";
 import AuthCallBack from "../pages/AuthCallBack/authCallBack";
 import AuthLoadingScreen from "../pages/AuthLoading/authLoadingScreen";
+import Profile from "../pages/Profile/profile";
 
 export const router = createBrowserRouter([
     {
@@ -27,6 +28,10 @@ export const router = createBrowserRouter([
             {
                 path: "create-event",
                 element: <CreateEvent />,
+            },
+            {
+                path: "profile",
+                element: <Profile />,
             },
 
         ],

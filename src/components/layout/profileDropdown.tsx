@@ -11,7 +11,7 @@ function ProfileDropdown({ closeProfile, logOut, navigate }: { closeProfile: () 
                 <button
                     type="button"
                     onClick={() => {
-                        closeProfile;
+                        closeProfile();
                         navigate("/profile");
                     }}
                     className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-700 transition hover:bg-primary-95"
@@ -33,7 +33,7 @@ function ProfileDropdown({ closeProfile, logOut, navigate }: { closeProfile: () 
                 <button
                     type="button"
                     onClick={async () => {
-                        closeProfile;
+                        closeProfile();
 
                         const success = await logOut();
 
