@@ -4,7 +4,7 @@ import {
     faBars,
     faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import useAuthStore from "../../stores/authStore";
 import useUserStore from "../../stores/userStore";
 import type { User } from "../../models/user";
@@ -81,6 +81,12 @@ function NavBar() {
         (state) => state.logout
     );
 
+    const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+        `text-sm font-medium transition ${isActive
+            ? "text-primary border-b-2 border-primary pb-1"
+            : "text-gray-600 hover:text-gray-900"
+        }`;
+
     return (
         <nav className="border-b border-gray-200 bg-white">
             {/* Mobile Navbar */}
@@ -150,8 +156,6 @@ function NavBar() {
                     drawerOpen={drawerOpen}
                     openDrawer={openDrawer}
                     closeDrawer={closeDrawer}
-                    navigate={navigate}
-                    logOut={logOut}
                 />
             )}
 
@@ -160,34 +164,25 @@ function NavBar() {
 
                 {/* Logo */}
                 <div className="shrink-0">
-                    <span className="text-2xl font-bold tracking-tight text-primary">
+                    <Link to="/dashboard" className="text-2xl font-bold tracking-tight text-primary">
                         Sherehe
-                    </span>
+                    </Link>
                 </div>
 
                 {/* Desktop Navigation */}
                 <div className="absolute left-1/2 flex -translate-x-1/2 items-center gap-6 lg:gap-8">
 
-                    <a
-                        href="#"
-                        className="text-sm font-medium text-gray-600 transition hover:text-gray-900"
-                    >
+                    <NavLink to="/dashboard" className={navLinkClass}>
                         Explore
-                    </a>
+                    </NavLink>
 
-                    <a
-                        href="#"
-                        className="whitespace-nowrap text-sm font-medium text-gray-600 transition hover:text-gray-900"
-                    >
+                    <NavLink to="/my-tickets" className={navLinkClass}>
                         My Tickets
-                    </a>
+                    </NavLink>
 
-                    <a
-                        href="#"
-                        className="text-sm font-medium text-gray-600 transition hover:text-gray-900"
-                    >
-                        Dashboard
-                    </a>
+                    <NavLink to="/my-organized-events" className={navLinkClass}>
+                        My Organized Events
+                    </NavLink>
 
                 </div>
 

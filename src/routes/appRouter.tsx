@@ -8,6 +8,8 @@ import LoginScreen from "../pages/Login/loginScreen";
 import AuthCallBack from "../pages/AuthCallBack/authCallBack";
 import AuthLoadingScreen from "../pages/AuthLoading/authLoadingScreen";
 import Profile from "../pages/Profile/profile";
+import MyTickets from "../pages/MyTickets/myTickets";
+import MyOrganizedEvents from "../pages/MyOrganizedEvents/myOrganizedEvents";
 
 export const router = createBrowserRouter([
     {
@@ -33,7 +35,14 @@ export const router = createBrowserRouter([
                 path: "profile",
                 element: <Profile />,
             },
-
+            {
+                path: "my-tickets",
+                element: <MyTickets />,
+            },
+            {
+                path: "my-organized-events",
+                element: <MyOrganizedEvents />,
+            },
         ],
     },
     {

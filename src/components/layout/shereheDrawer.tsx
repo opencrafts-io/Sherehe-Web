@@ -1,54 +1,46 @@
 import { faCompass, faGaugeHigh, faRightFromBracket, faTicket, faUser, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import type { NavigateFunction } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import useAuthStore from "../../stores/authStore";
 
 function ShereheDrawer({
     drawerOpen,
     openDrawer,
     closeDrawer,
-    navigate,
-    logOut,
 }:
     {
         drawerOpen: boolean,
         openDrawer: () => void,
         closeDrawer: () => void,
-        navigate: NavigateFunction,
-        logOut: () => Promise<boolean>,
     }) {
-    const drawerItems = [
-        {
-            name: "Explore",
-            onDrawerClick: () => { },
-            icon: faCompass,
-        },
-        {
-            name: "My Tickets",
-            onDrawerClick: () => { },
-            icon: faTicket,
-        },
-        {
-            name: "Dashboard",
-            onDrawerClick: () => { },
-            icon: faGaugeHigh,
-        },
-        {
-            name: "Profile",
-            onDrawerClick: () => { },
-            icon: faUser,
-        },
-        {
-            name: "Logout",
-            onDrawerClick: async () => {
-                const success = await logOut();
+    const navigate = useNavigate();
 
-                if (success) {
-                    navigate("/login");
-                }
-            },
-            icon: faRightFromBracket,
+    const navLinkClass = "flex items-center gap-4 rounded-lg px-4 py-3 text-gray-700 transition hover:bg-gray-100 hover:text-gray-900";
+
+    const fontAwesomeClass = "w-5 text-gray-500";
+
+    const logout = useAuthStore(
+        (state) => state.logout
+    );
+
+    const isLoading = useAuthStore(
+        (state) => state.isLoading
+    );
+
+    const onLogout = async () => {
+        if (isLoading) return;
+
+        const success = await logout();
+
+        if (success) {
+            closeDrawer();
+            navigate("/login");
         }
-    ];
+    };
+
+    const isAuthenticated = useAuthStore(
+        (state) => state.isAuthenticated
+    );
 
     return (
         <>
@@ -60,7 +52,7 @@ function ShereheDrawer({
                         ? "opacity-100"
                         : "pointer-events-none opacity-0"
                         }`}
-                    onClick={() => openDrawer}
+                    onClick={openDrawer}
                 />
 
                 {/* Drawer */}
@@ -97,25 +89,67 @@ function ShereheDrawer({
 
                     {/* Navigation */}
                     <div className="flex flex-col p-4">
-                        {drawerItems.map((item) => (
-                            <a
-                                key={item.name}
-                                onClick={async() => {
-                                    closeDrawer();
-                                    await item.onDrawerClick();
-                                }}
-                                className="flex items-center gap-4 rounded-lg px-4 py-3 text-gray-700 transition hover:bg-gray-100 hover:text-gray-900"
-                            >
-                                <FontAwesomeIcon
-                                    icon={item.icon}
-                                    className="w-5 text-gray-500"
-                                />
+                        <NavLink to="/dashboard" className={navLinkClass} onClick={closeDrawer} >
+                            <FontAwesomeIcon
+                                icon={faCompass}
+                                className={fontAwesomeClass}
+                            />
+                            <span className="font-medium">
+                                Explore
+                            </span>
 
+                        </NavLink>
+                        <NavLink to="/my-tickets" className={navLinkClass} onClick={closeDrawer}>
+                            <FontAwesomeIcon
+                                icon={faTicket}
+                                className={fontAwesomeClass}
+                            />
+                            <span className="font-medium">
+                                My Tickets
+                            </span>
+                        </NavLink>
+                        <NavLink to="/my-organized-events" className={navLinkClass} onClick={closeDrawer}>
+                            <FontAwesomeIcon
+                                icon={faGaugeHigh}
+                                className={fontAwesomeClass}
+                            />
+                            <span className="font-medium">
+                                My Organized Events
+                            </span>
+                        </NavLink>
+                        {isAuthenticated && (
+                            <NavLink to="/profile" className={navLinkClass} onClick={closeDrawer}>
+                                <FontAwesomeIcon
+                                    icon={faUser}
+                                    className={fontAwesomeClass}
+                                />
                                 <span className="font-medium">
-                                    {item.name}
+                                    Profile
                                 </span>
-                            </a>
-                        ))}
+                            </NavLink>
+                        )}
+                        {isLoading ? (
+                            <div className={navLinkClass}>
+                                <span
+                                    className="h-4 w-4 animate-spin rounded-full border-2 border-red-200 border-t-red-600"
+                                    aria-hidden="true"
+                                />
+                                <p className="font-medium">
+                                    Signing out...
+                                </p>
+
+                            </div>
+                        ) : (
+                            <button disabled={isLoading} className={navLinkClass} onClick={onLogout}>
+                                <FontAwesomeIcon
+                                    icon={faRightFromBracket}
+                                    className={fontAwesomeClass}
+                                />
+                                <span className="font-medium">
+                                    Logout
+                                </span>
+                            </button>
+                        )}
                     </div>
 
                 </aside>
