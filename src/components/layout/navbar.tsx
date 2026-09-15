@@ -13,6 +13,7 @@ import ProfileDropdown from "./profileDropdown";
 
 function NavBar() {
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const [avatarError, setAvatarError] = useState(false);
     const navigate = useNavigate();
     const navigateCreateEvent = () => {
         navigate("create-event");
@@ -109,12 +110,13 @@ function NavBar() {
                         </span>
                     </div>
                     {/* Profile */}
-                    {user?.avatarUrl ? (
+                    {user?.avatarUrl && !avatarError ? (
                         <img
                             src={user.avatarUrl}
                             onClick={navigateProfile}
                             alt={`${user.name}'s avatar`}
-                            className="h-9 w-9 rounded-full object-cover "
+                            className="h-9 w-9 rounded-full object-cover"
+                            onError={() => setAvatarError(true)}
                         />
                     ) : (
                         <div onClick={navigateProfile} className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
@@ -214,11 +216,12 @@ function NavBar() {
 
                             </div>
 
-                            {user?.avatarUrl ? (
+                            {user?.avatarUrl && !avatarError ? (
                                 <img
                                     src={user.avatarUrl}
                                     alt={`${user.name}'s avatar`}
                                     className="h-9 w-9 rounded-full"
+                                    onError={() => setAvatarError(true)}
                                 />
                             ) : (
                                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
