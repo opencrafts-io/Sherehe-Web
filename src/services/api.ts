@@ -1,5 +1,5 @@
 import axios from "axios";
-import { VERISAFE_BASE_URL } from "../config/env";
+import { SHEREHE_BASE_URL, VERISAFE_BASE_URL } from "../config/env";
 import { attachAuthInterceptor } from "./axiosInterceptor";
 
 export const verisafeApi = axios.create({
@@ -16,4 +16,9 @@ export const verisafeLoggedInApi = axios.create({
     },
 });
 
+export const shereheApis = axios.create({
+    baseURL: SHEREHE_BASE_URL,
+});
+
 attachAuthInterceptor(verisafeLoggedInApi);
+attachAuthInterceptor(shereheApis);

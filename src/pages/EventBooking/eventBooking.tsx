@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { events } from "../../models/event";
 import EventBookingDesktop from "./eventBookingDesktop";
 import EventBookingMobile from "./eventBookingMobile";
+import useEventsStore from "../../stores/eventsStore";
 
 export interface Ticket {
     id: string,
@@ -36,7 +36,10 @@ function EventBooking() {
 
     const { id } = useParams();
 
-    const event = events.find((event) => event.id === id);
+    const paginatedEvents = useEventsStore(
+        (state) => state.paginatedEvents
+    );
+    const event = paginatedEvents?.data.find((event) => event.id === id);
 
     const tickets: Ticket[] = [
         {
@@ -65,7 +68,7 @@ function EventBooking() {
 
     const total = selectedTicket ? Number(selectedTicket.price) * quantity : 0;
 
-    const bookingProps : EventBookingProps = {
+    const bookingProps: EventBookingProps = {
         event,
         tickets,
         quantity,

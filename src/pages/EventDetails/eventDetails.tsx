@@ -1,10 +1,10 @@
-import { events } from "../../models/event";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faLocationDot,
     faCalendarDays,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useParams } from "react-router-dom";
+import useEventsStore from "../../stores/eventsStore";
 
 //Hardcoded for now
 const attendees = [
@@ -29,7 +29,10 @@ const attendees = [
 function EventDetails() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const event = events.find((event) => event.id === id);
+    const paginatedEvents = useEventsStore(
+        (state) => state.paginatedEvents
+    );
+    const event = paginatedEvents?.data.find((event) => event.id === id);
 
     const handleBooking = () => {
         navigate("booking");
@@ -54,8 +57,8 @@ function EventDetails() {
                 {/* Will use aspect ratio, the height for large is temporary */}
                 <div className="h-aspect-16/9 lg:h-160">
                     <img
-                        src={event.event_banner_image || "/images/inferno10.jpeg"}
-                        alt={event.event_name}
+                        src={event.eventBannerImage || "/images/inferno10.jpeg"}
+                        alt={event.eventName}
                         className="h-full w-full object-cover"
                     />
                     <div className="hidden absolute lg:inset-0 lg:bg-black/30" />
@@ -66,7 +69,7 @@ function EventDetails() {
                         <div className="flex flex-col p-4 md:p-5 lg:p-6 lg:border rounded-lg lg:border-gray-200">
                             {/* Event Genres*/}
                             <div className="flex flex-wrap gap-3 lg:gap-4">
-                                {event.event_genre?.map((genre) => (
+                                {event.eventGenre?.map((genre) => (
                                     <span
                                         key={genre}
                                         className="rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-700"
@@ -79,7 +82,7 @@ function EventDetails() {
                             {/* Event Name */}
                             <div className="mt-4">
                                 <h1 className="text-3xl font-bold leading-tight text-gray-900 lg:text-4xl">
-                                    {event.event_name}
+                                    {event.eventName}
                                 </h1>
                             </div>
 
@@ -97,7 +100,7 @@ function EventDetails() {
                                                 </p>
 
                                                 <p className="mt-1 text-sm text-gray-600">
-                                                    {event.event_location}
+                                                    {event.eventLocation}
                                                 </p>
                                             </div>
 
@@ -142,7 +145,7 @@ function EventDetails() {
                             </h2>
 
                             <p className="mt-3 text-sm leading-7 text-gray-600">
-                                {event.event_description}
+                                {event.eventDescription}
                             </p>
                         </div>
                     </div>
