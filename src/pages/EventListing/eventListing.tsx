@@ -62,7 +62,7 @@ function EventListing() {
         <>
             <div className="mx-auto px-4 py-6 md:px-8 lg:px-8 lg:py-12">
                 <h1 className="text-3xl font-bold mb-3">Upcoming Events</h1>
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 ">
                     {paginatedEvents?.data.map((event) => (
                         <EventCard
                             key={event.id}

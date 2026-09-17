@@ -1,20 +1,38 @@
-export function convertEventDateTime(dateString: string) {
-    const date = new Date(dateString);
+export function formatEventDateTime(startDate: string, endDate: string) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
 
-    const datePart = date.toLocaleDateString(undefined, {
-        day: "2-digit",
+    const dateOptions: Intl.DateTimeFormatOptions = {
         month: "short",
-        year: "numeric"
-    });
+        day: "numeric",
+        year: "numeric",
+    };
 
-    const timePart = date.toLocaleTimeString(undefined, {
-        hour: "2-digit",
+    const timeOptions: Intl.DateTimeFormatOptions = {
+        hour: "numeric",
         minute: "2-digit",
-        hour12: false,
-    });
+        hour12: true,
+    };
 
     return {
-        date: datePart,
-        time: timePart,
-    }
+        startDate: start.toLocaleDateString(undefined, dateOptions),
+        endDate: end.toLocaleDateString(undefined, dateOptions),
+        startTime: start.toLocaleTimeString(undefined, timeOptions),
+        endTime: end.toLocaleTimeString(undefined, timeOptions),
+    };
+}
+
+export function isEventMultiday(
+    startDate: string,
+    endDate: string
+): boolean {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    const differenceInMilliseconds =
+        end.getTime() - start.getTime();
+
+    const twentyFourHours = 24 * 60 * 60 * 1000;
+
+    return differenceInMilliseconds >= twentyFourHours;
 }

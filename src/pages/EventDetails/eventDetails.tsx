@@ -5,6 +5,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useParams } from "react-router-dom";
 import useEventsStore from "../../stores/eventsStore";
+import EventGenre from "../../components/ui/eventGenre";
+import { formatEventDateTime, isEventMultiday } from "../../utils/EventsUtils/eventUtils";
 
 //Hardcoded for now
 const attendees = [
@@ -37,7 +39,6 @@ function EventDetails() {
     const handleBooking = () => {
         navigate("booking");
     };
-
     if (!event) {
         return (
             <>
@@ -50,6 +51,10 @@ function EventDetails() {
             </>
         )
     }
+    const { startDate, startTime, endDate, endTime } = formatEventDateTime(event.startDate, event.endDate);
+
+    const isMultidayEvent = isEventMultiday(event.startDate, event.endDate);
+
     return (
         <>
             <div className="pb-8">
@@ -70,12 +75,7 @@ function EventDetails() {
                             {/* Event Genres*/}
                             <div className="flex flex-wrap gap-3 lg:gap-4">
                                 {event.eventGenre?.map((genre) => (
-                                    <span
-                                        key={genre}
-                                        className="rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-700"
-                                    >
-                                        {genre}
-                                    </span>
+                                    <EventGenre key={genre} genre={genre} />
                                 ))}
                             </div>
 
@@ -124,13 +124,36 @@ function EventDetails() {
                                                     Date & Time
                                                 </p>
 
-                                                <p className="mt-1 text-sm text-gray-600">
-                                                    Sat, Apr 11 2026
-                                                </p>
+                                                {isMultidayEvent ? (
+                                                    <div className="mt-1 grid grid-cols-[1fr_auto_1fr] items-center gap-2 text-sm text-gray-600">
+                                                        {/* Start */}
+                                                        <div className="text-left">
+                                                            <p>{startDate}</p>
+                                                            <p className="mt-1">{startTime}</p>
+                                                        </div>
 
-                                                <p className="mt-1 text-sm text-gray-600">
-                                                    10:00 AM - 6:00 PM
-                                                </p>
+                                                        {/* Separator */}
+                                                        <span className="text-base font-semibold text-gray-400">
+                                                            -
+                                                        </span>
+
+                                                        {/* End */}
+                                                        <div className="text-right">
+                                                            <p>{endDate}</p>
+                                                            <p className="mt-1">{endTime}</p>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <>
+                                                        <p className="mt-1 text-sm text-gray-600">
+                                                            {startDate}
+                                                        </p>
+
+                                                        <p className="mt-1 text-sm text-gray-600">
+                                                            {startTime} - {endTime}
+                                                        </p>
+                                                    </>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
@@ -154,7 +177,7 @@ function EventDetails() {
                     <div className="flex flex-col flex-1 lg:gap-5">
                         {/* Fixed Bottom Action  Web*/}
                         <div className="hidden lg:flex lg:border lg:border-gray-200 lg:rounded-lg lg:bg-white lg:p-4 ">
-                            <button onClick={handleBooking} className="w-full rounded-xl bg-black py-3.5 text-sm font-semibold text-white transition-colors hover: bg-gray-800">
+                            <button onClick={handleBooking} className="w-full rounded-xl bg-gray-800 py-3.5 text-sm font-semibold text-white transition-colors hover: bg-gray-800">
                                 I'm Going
                             </button>
                         </div>
