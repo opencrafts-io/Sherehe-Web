@@ -3,15 +3,29 @@ import {
     faLocationDot,
     faCalendarDays,
     faClock,
-    faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router";
 import type { EventModel } from "../../../models/event";
 import { formatEventDateTime } from "../../../utils/EventsUtils/eventUtils";
 import EventGenre from "../../../components/ui/eventGenre";
+import useAttendeesStore from "../../../stores/attendeeStore";
+import { useShallow } from "zustand/react/shallow";
+import { useEffect } from "react";
+import AttendeesSection from "./attendeesSection";
 
 function EventCard(event: EventModel) {
     const { startDate, startTime } = formatEventDateTime(event.startDate, event.endDate);
+
+    const { eventAttendees, getAttendees } = useAttendeesStore(
+        useShallow((state) => ({
+            eventAttendees: state.attendeesByEventId[event.id],
+            getAttendees: state.getAttendeesByEventId,
+        }))
+    );
+
+    useEffect(() => {
+        getAttendees(1, event.id, 4);
+    }, [getAttendees, event.id]);
 
     return (
         <>
@@ -66,27 +80,11 @@ function EventCard(event: EventModel) {
                         )}
 
                         {/* Attendees */}
-                        <div className="mt-5 flex items-center justify-between">
-                            <div className="flex items-center">
-                                {/* Attendee initials */}
-                                <div className="flex -space-x-2">
-                                    <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-primary-95 text-xs font-semibold text-primary">
-                                        C
-                                    </div>
-                                    <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-primary-95 text-xs font-semibold text-primary">
-                                        Z
-                                    </div>
-                                </div>
+                        <AttendeesSection
+                            isLoading={eventAttendees?.isLoading ?? true}
+                            attendees={eventAttendees?.attendees ?? []}
+                        />
 
-                                <span className="ml-3 text-sm text-gray-500">
-                                    are attending
-                                </span>
-                            </div>
-                            <FontAwesomeIcon
-                                icon={faUsers}
-                                className="text-primary"
-                            />
-                        </div>
                     </div>
                 </div>
             </Link>

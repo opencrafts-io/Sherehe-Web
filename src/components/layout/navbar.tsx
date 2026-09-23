@@ -10,6 +10,7 @@ import useUserStore from "../../stores/userStore";
 import type { User } from "../../models/user";
 import ShereheDrawer from "./shereheDrawer";
 import ProfileDropdown from "./profileDropdown";
+import { getInitials } from "../../utils/utils";
 
 function NavBar() {
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -51,19 +52,6 @@ function NavBar() {
             name: user.name,
             initials: getInitials(user.name)
         };
-    };
-
-    const getInitials = (name: string): string => {
-        const names = name.trim().split(/\s+/);
-
-        if (names.length === 1) {
-            return names[0].charAt(0).toUpperCase();
-        }
-
-        return (
-            names[0].charAt(0) +
-            names[1].charAt(0)
-        ).toUpperCase();
     };
 
     const { name, initials } = getUserNameAndInitials(user);
