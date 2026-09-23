@@ -7,26 +7,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import useEventsStore from "../../stores/eventsStore";
 import EventGenre from "../../components/ui/eventGenre";
 import { formatEventDateTime, isEventMultiday } from "../../utils/EventsUtils/eventUtils";
-
-//Hardcoded for now
-const attendees = [
-    {
-        id: 1,
-        username: "Eugene",
-    },
-    {
-        id: 2,
-        username: "John",
-    },
-    {
-        id: 3,
-        username: "Alice",
-    },
-    {
-        id: 4,
-        username: "Mary",
-    },
-];
+import useAttendeesStore from "../../stores/attendeeStore";
+import AttendeesListing from "./components/attendeesListing";
 
 function EventDetails() {
     const { id } = useParams();
@@ -54,6 +36,10 @@ function EventDetails() {
     const { startDate, startTime, endDate, endTime } = formatEventDateTime(event.startDate, event.endDate);
 
     const isMultidayEvent = isEventMultiday(event.startDate, event.endDate);
+
+    const eventAttendees = useAttendeesStore(
+        (state) => state.attendeesByEventId[event.id]
+    );
 
     return (
         <>
@@ -177,7 +163,7 @@ function EventDetails() {
                     <div className="flex flex-col flex-1 lg:gap-5">
                         {/* Fixed Bottom Action  Web*/}
                         <div className="hidden lg:flex lg:border lg:border-gray-200 lg:rounded-lg lg:bg-white lg:p-4 ">
-                            <button onClick={handleBooking} className="w-full rounded-xl bg-gray-800 py-3.5 text-sm font-semibold text-white transition-colors hover: bg-gray-800">
+                            <button onClick={handleBooking} className="cursor-pointer w-full rounded-xl bg-primary py-3.5 text-sm font-semibold text-white transition-colors hover:bg-primary-70">
                                 I'm Going
                             </button>
                         </div>
@@ -188,29 +174,15 @@ function EventDetails() {
                                 Who's attending
                             </h2>
 
-                            <div className="mt-4 grid grid-cols-1 gap-3">
-                                {attendees.map((attendee) => (
-                                    <div key={attendee.id} className="flex items-center gap-5 rounded-xl border border-gray-200 bg-white p-3">
-                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-purple-100 font-semibold text-purple-700">
-                                            {attendee.username.charAt(0).toUpperCase()}
-                                        </div>
-                                        <div className="flex flex-col gap-2">
-                                            <span className="truncate text-sm font-bold text-gray-800">
-                                                {attendee.username}
-                                            </span>
-                                            <p className="text-sm font-medium text-gray-800">
-                                                Attending
-                                            </p>
-                                        </div>
-
-                                    </div>
-                                ))}
-                            </div>
+                            <AttendeesListing
+                                isLoading={eventAttendees?.isLoading ?? true}
+                                attendees={eventAttendees?.attendees ?? []}
+                            />
                         </div>
 
                         {/* Fixed Bottom Action  Mobile*/}
                         <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white p-4 lg:hidden">
-                            <button onClick={handleBooking} className="w-full rounded-xl bg-black py-3.5 text-sm font-semibold text-white transition-colors hover:bg-gray-800">
+                            <button onClick={handleBooking} className="w-full rounded-xl bg-primary py-3.5 text-sm font-semibold text-white transition-colors hover:bg-primary-70">
                                 I'm Going
                             </button>
                         </div>
