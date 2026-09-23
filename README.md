@@ -76,15 +76,15 @@ npm ci
 
 The application uses Vite environment variables.
 
-Create the appropriate environment file in the project root.
+Create the appropriate environment files in the project root:
 
-For example:
-
-```bash
+```text
 .env
+.env.development
+.env.production
 ```
 
-Environment variables used by the application should follow the Vite naming convention:
+Environment variables exposed to the frontend must follow the Vite naming convention:
 
 ```text
 VITE_VARIABLE_NAME=value
@@ -98,11 +98,190 @@ VITE_API_BASE_URL=https://api.example.com
 
 Only variables prefixed with `VITE_` are exposed to the client-side application.
 
+### Environment-specific configuration
+
+Vite automatically selects the appropriate environment file based on the command being executed.
+
+#### Development
+
+When running:
+
+```bash
+npm run dev
+```
+
+Vite runs in `development` mode and loads:
+
+```text
+.env
+.env.development
+```
+
+If the same variable exists in both files, the value in `.env.development` takes precedence.
+
+For example:
+
+```env
+# .env
+VITE_API_BASE_URL=https://api.example.com
+```
+
+```env
+# .env.development
+VITE_API_BASE_URL=https://dev-api.example.com
+```
+
+Running:
+
+```bash
+npm run dev
+```
+
+will use:
+
+```text
+https://dev-api.example.com
+```
+
+#### Production
+
+When running:
+
+```bash
+npm run build
+```
+
+Vite runs in `production` mode and loads:
+
+```text
+.env
+.env.production
+```
+
+If the same variable exists in both files, the value in `.env.production` takes precedence.
+
+For example:
+
+```env
+# .env
+VITE_API_BASE_URL=https://api.example.com
+```
+
+```env
+# .env.production
+VITE_API_BASE_URL=https://prod-api.example.com
+```
+
+Running:
+
+```bash
+npm run build
+```
+
+will use:
+
+```text
+https://prod-api.example.com
+```
+
+### Environment file priority
+
+For this project, the configuration can be thought of as:
+
+```text
+                    npm run dev
+                         |
+                         v
+                  development mode
+                         |
+                  ┌──────┴──────┐
+                  │             │
+               .env       .env.development
+                  │             │
+                  └──────┬──────┘
+                         |
+                         v
+              .env.development wins
+              when variables overlap
+```
+
+And for production:
+
+```text
+                   npm run build
+                         |
+                         v
+                   production mode
+                         |
+                  ┌──────┴──────┐
+                  │             │
+               .env        .env.production
+                  │             │
+                  └──────┬──────┘
+                         |
+                         v
+               .env.production wins
+               when variables overlap
+```
+
+Therefore, shared/default configuration can be placed in:
+
+```text
+.env
+```
+
+Development-specific configuration should be placed in:
+
+```text
+.env.development
+```
+
+Production-specific configuration should be placed in:
+
+```text
+.env.production
+```
+
 ### Important
 
 Do not place passwords, private keys, database credentials, or other secrets in `VITE_` environment variables.
 
 Vite variables are embedded into the frontend bundle during the build process and are therefore accessible to users of the application.
+
+For example, if:
+
+```env
+VITE_API_BASE_URL=https://api.example.com
+```
+
+is used during:
+
+```bash
+npm run build
+```
+
+the value becomes part of the generated frontend application.
+
+### Docker and environment variables
+
+Because Vite environment variables are resolved during the build process, the required environment configuration must be available when the Docker image is built.
+
+For example:
+
+```text
+.env.production
+       |
+       v
+npm run build
+       |
+       v
+dist/
+       |
+       v
+Docker image
+```
+
+Changing the `.env.production` values after the application has already been built will not automatically change the values inside the generated frontend bundle. A new build is required.
 
 ---
 
