@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import type { Ticket } from "../eventBooking";
 import { faCalendarDays } from "@fortawesome/free-solid-svg-icons";
+import type { TicketModel } from "../../../models/ticket";
 
 function OrderSummary({ selectedTicket,
     nextPage,
@@ -8,7 +8,7 @@ function OrderSummary({ selectedTicket,
     quantity,
     total,
 }: {
-    selectedTicket: Ticket | null,
+    selectedTicket: TicketModel | null,
     nextPage: () => void,
     previousPage: () => void,
     quantity: number,
@@ -36,7 +36,7 @@ function OrderSummary({ selectedTicket,
                     <div className="flex flex-col gap-2 mt-2">
                         <div className="flex items-center justify-between">
                             <p className="text-xl">{selectedTicket?.ticketName}</p>
-                            <p className="text-xl font-bold">Ksh {selectedTicket?.price}</p>
+                            <p className="text-xl font-bold">Ksh {selectedTicket?.ticketPrice}</p>
                         </div>
                         <div className="flex items-center justify-between">
                             <p className="text-xl">Quantity</p>

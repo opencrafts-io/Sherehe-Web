@@ -3,24 +3,18 @@ import { useParams } from "react-router-dom";
 import EventBookingDesktop from "./eventBookingDesktop";
 import EventBookingMobile from "./eventBookingMobile";
 import useEventsStore from "../../stores/eventsStore";
-
-export interface Ticket {
-    id: string,
-    ticketName: string,
-    price: string,
-}
+import type { TicketModel } from "../../models/ticket";
 
 export interface EventBookingProps {
     event: any;
-    tickets: Ticket[];
     quantity: number;
-    selectedTicket: Ticket | null;
+    selectedTicket: TicketModel | null;
     total: number;
     phoneNumber: string;
     setPhoneNumber: (value: string) => void;
     increaseQuantity: () => void;
     decreaseQuantity: () => void;
-    chooseTicket: (ticket: Ticket) => void;
+    chooseTicket: (ticket: TicketModel) => void;
 }
 
 function EventBooking() {
@@ -41,36 +35,17 @@ function EventBooking() {
     );
     const event = paginatedEvents?.data.find((event) => event.id === id);
 
-    const tickets: Ticket[] = [
-        {
-            id: '1',
-            ticketName: 'Early Bird',
-            price: '300',
-        },
-        {
-            id: '2',
-            ticketName: 'General Admission',
-            price: '400',
-        },
-        {
-            id: '3',
-            ticketName: 'VIP Experience',
-            price: '500',
-        },
-    ];
-
-    const [selectedTicket, setSelectTicket] = useState<Ticket | null>(null);
-    const chooseTicket = (ticket: Ticket) => {
+    const [selectedTicket, setSelectTicket] = useState<TicketModel | null>(null);
+    const chooseTicket = (ticket: TicketModel) => {
         setSelectTicket(ticket);
     };
 
     const [phoneNumber, setPhoneNumber] = useState("");
 
-    const total = selectedTicket ? Number(selectedTicket.price) * quantity : 0;
+    const total = selectedTicket ? Number(selectedTicket.ticketPrice) * quantity : 0;
 
     const bookingProps: EventBookingProps = {
         event,
-        tickets,
         quantity,
         selectedTicket,
         total,

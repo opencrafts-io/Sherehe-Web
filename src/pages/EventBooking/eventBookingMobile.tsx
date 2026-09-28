@@ -8,7 +8,6 @@ import BookingStepper from "../../components/ui/bookingStepper";
 
 function EventBookingMobile({
     event,
-    tickets,
     quantity,
     selectedTicket,
     total,
@@ -49,7 +48,8 @@ function EventBookingMobile({
                 <BookingStepper currentStep={currentPage} steps={steps} />
 
                 {currentPage === 1 && (
-                    <TicketSelection event={event} tickets={tickets}
+                    <TicketSelection
+                        event={event}
                         selectedTicket={selectedTicket}
                         quantity={quantity}
                         chooseTicket={chooseTicket}

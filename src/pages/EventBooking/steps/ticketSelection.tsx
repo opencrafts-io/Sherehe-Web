@@ -1,10 +1,14 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import type { Ticket } from "../eventBooking";
 import { faCalendarDays, faLocationDot, faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import useTicketStore from "../../../stores/ticketStore";
+import { useShallow } from "zustand/react/shallow";
+import { useEffect } from "react";
+import { CircularProgress } from "@mui/material";
+import type { TicketModel } from "../../../models/ticket";
+import TicketErrorSection from "../components/ticketErrorSection";
 
 function TicketSelection({
     event,
-    tickets,
     quantity,
     selectedTicket,
     increaseQuantity,
@@ -14,15 +18,31 @@ function TicketSelection({
     nextPage,
 }: {
     event: any,
-    tickets: Ticket[],
     quantity: number,
-    selectedTicket: Ticket | null,
+    selectedTicket: TicketModel | null,
     increaseQuantity: () => void,
     decreaseQuantity: () => void,
-    chooseTicket: (ticket: Ticket) => void,
+    chooseTicket: (ticket: TicketModel) => void,
     total: number,
     nextPage: () => void,
 }) {
+    const { isLoading, tickets, error, getTicketsByEventId } = useTicketStore(
+        useShallow((state) => ({
+            isLoading: state.isLoading,
+            tickets: state.tickets,
+            error: state.error,
+            getTicketsByEventId: state.getTicketsByEventId,
+        }))
+    );
+
+    const loadTickets = () => {
+        getTicketsByEventId(event?.id);
+    };
+
+    useEffect(() => {
+        loadTickets();
+    }, [getTicketsByEventId]);
+
     return (
         <>
             <div className="h-aspect-16/9">
@@ -57,6 +77,23 @@ function TicketSelection({
                     Select Tickets
                 </h1>
 
+                {error && (
+                    <TicketErrorSection
+                        height={50}
+                        eventId={event?.id}
+                    />
+                )}
+
+                {isLoading && (
+                    <div className="flex h-50 justify-center items-center">
+                        <CircularProgress sx={
+                            {
+                                color: "var(--color-primary)",
+                            }
+                        } />
+                    </div>
+                )}
+
                 <div className="mt-4 flex flex-col gap-3">
                     {tickets.map((ticket) => {
                         const isSelected = selectedTicket?.id === ticket.id;
@@ -86,7 +123,7 @@ function TicketSelection({
                                         </h2>
 
                                         <p className="mt-1 text-sm text-gray-600">
-                                            Ksh {ticket.price}
+                                            Ksh {ticket.ticketPrice}
                                         </p>
                                     </div>
 

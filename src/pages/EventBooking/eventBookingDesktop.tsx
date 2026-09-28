@@ -7,10 +7,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import type { EventBookingProps } from "./eventBooking";
 import PaymentButtons from "./components/paymentButtons";
+import useTicketStore from "../../stores/ticketStore";
+import { useEffect } from "react";
+import { useShallow } from "zustand/react/shallow";
+import { CircularProgress } from "@mui/material";
+import TicketErrorSection from "./components/ticketErrorSection";
 
 function EventBookingDesktop({
     event,
-    tickets,
     quantity,
     selectedTicket,
     total,
@@ -20,6 +24,23 @@ function EventBookingDesktop({
     decreaseQuantity,
     chooseTicket,
 }: EventBookingProps) {
+    const { isLoading, tickets, error, getTicketsByEventId } = useTicketStore(
+        useShallow((state) => ({
+            isLoading: state.isLoading,
+            tickets: state.tickets,
+            error: state.error,
+            getTicketsByEventId: state.getTicketsByEventId,
+        }))
+    );
+
+    const loadTickets = () => {
+        getTicketsByEventId(event?.id);
+    };
+
+    useEffect(() => {
+        loadTickets();
+    }, [getTicketsByEventId]);
+
     return (
         <>
             <div className="p-4 my-10 gap-3">
@@ -34,28 +55,50 @@ function EventBookingDesktop({
                     <div className="flex flex-col gap-5 flex-2">
                         <h2 className="font-bold text-2xl">1. Select Tickets</h2>
                         <hr />
+
+                        {isLoading && (
+                            <div className="flex h-100 justify-center items-center">
+                                <CircularProgress sx={
+                                    {
+                                        color: "var(--color-primary)",
+                                    }
+                                } />
+                            </div>
+                        )}
+
+                        {error && (
+                            <TicketErrorSection 
+                            height={100}
+                            eventId={event?.id}
+                            />
+                        )}
+
                         {tickets.map((t) => (
                             <div key={t.id} onClick={() => chooseTicket(t)} className={`cursor-pointer border rounded-lg p-3 ${selectedTicket?.id === t.id ? "border-purple-600 bg-purple-100" : "border-gray-200"
                                 }`}>
                                 <h2 className="text-lg font-semibold">{t.ticketName}</h2>
-                                <p>Ksh {t.price}</p>
+                                <p>Ksh {t.ticketPrice}</p>
                             </div>
+
                         ))}
-                        {/* Quantity Selector */}
-                        <div className="flex justify-between items-center border border-gray-200 p-3">
-                            <p className="text-sm font-semibold">Select Quantity</p>
-                            <div className="flex justify-between items-center border border-gray-200 w-40 py-3 px-2 gap-4">
-                                <button type="button" onClick={decreaseQuantity} disabled={quantity === 1} className="text-gray-600 hover:text-black disabled:cursor-not-allowed disabled:opacity-40">
-                                    <FontAwesomeIcon icon={faMinus} />
-                                </button>
-                                <span className="min-w-5 text-center text-xl font-medium">
-                                    {quantity}
-                                </span>
-                                <button type="button" onClick={increaseQuantity} className="text-gray-600 hover:text-black">
-                                    <FontAwesomeIcon icon={faPlus} />
-                                </button>
+
+                        {tickets.length > 0 && (
+                            < div className="flex justify-between items-center border border-gray-200 p-3">
+                                <p className="text-sm font-semibold">Select Quantity</p>
+                                <div className="flex justify-between items-center border border-gray-200 w-40 py-3 px-2 gap-4">
+                                    <button type="button" onClick={decreaseQuantity} disabled={quantity === 1} className="text-gray-600 hover:text-black disabled:cursor-not-allowed disabled:opacity-40">
+                                        <FontAwesomeIcon icon={faMinus} />
+                                    </button>
+                                    <span className="min-w-5 text-center text-xl font-medium">
+                                        {quantity}
+                                    </span>
+                                    <button type="button" onClick={increaseQuantity} className="text-gray-600 hover:text-black">
+                                        <FontAwesomeIcon icon={faPlus} />
+                                    </button>
+                                </div>
                             </div>
-                        </div>
+                        )}
+
                     </div>
                     {/* Order Summary & Total */}
                     <div className="flex flex-col flex-1 p-4 gap-2 border border-gray-200 rounded-lg">
@@ -65,7 +108,7 @@ function EventBookingDesktop({
                             <div className="flex flex-col gap-2 mt-2">
                                 <div className="flex items-center justify-between">
                                     <p className="text-lg">{selectedTicket?.ticketName}</p>
-                                    <p className="text-lg font-bold">Ksh {selectedTicket?.price}</p>
+                                    <p className="text-lg font-bold">Ksh {selectedTicket?.ticketPrice}</p>
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <p className="text-lg">Quantity</p>
@@ -129,7 +172,7 @@ function EventBookingDesktop({
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
         </>
     );
 }
