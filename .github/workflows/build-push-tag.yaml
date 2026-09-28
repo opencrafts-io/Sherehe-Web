@@ -1,4 +1,4 @@
-name: Build, Push, and Update leophorio Backend
+name: Build, Push, and Update websherehe Backend
 
 on:
   push:
@@ -11,7 +11,7 @@ jobs:
     runs-on: blacksmith-4vcpu-ubuntu-2404
 
     steps:
-      - name: Checkout leophorio Repo
+      - name: Checkout websherehe Repo
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -106,11 +106,11 @@ jobs:
           git config user.email "actions@github.com"
           
           if [ "${{ github.ref_name }}" = "main" ] || [ "${{ github.ref_name }}" = "master" ]; then
-            FILE="services/leophorio/deployment.yaml"
+            FILE="services/websherehe/deployment.yaml"
           else
-            FILE="qaservices/leophorio/deployment.yaml"
+            FILE="qaservices/websherehe/deployment.yaml"
           fi
           
           git add "$FILE"
-          git commit -m "chore: update leophorio image to $IMAGE (${{ github.ref_name }})"
+          git commit -m "chore: update websherehe image to $IMAGE (${{ github.ref_name }})"
           git push origin main
