@@ -45,6 +45,11 @@ function TicketSelection({
         }))
     );
 
+    const isFreeEvent =
+        tickets.length === 1 && tickets[0].ticketPrice === 0;
+
+    const freeTicket = isFreeEvent ? tickets[0] : null;
+
     const loadTickets = () => {
         getTicketsByEventId(event.id);
     };
@@ -52,6 +57,15 @@ function TicketSelection({
     useEffect(() => {
         loadTickets();
     }, [getTicketsByEventId]);
+
+    useEffect(() => {
+        if (
+            isFreeEvent &&
+            selectedTicket === null
+        ) {
+            chooseTicket(tickets[0]);
+        }
+    }, [tickets, selectedTicket, chooseTicket]);
 
     return (
         <>
@@ -85,7 +99,7 @@ function TicketSelection({
 
                     <DateLocationComponent event={event} />
 
-                    
+
                 </div>
             </section>
 
@@ -127,8 +141,33 @@ function TicketSelection({
                 )}
 
                 {/* Tickets */}
-                {!isLoading && tickets.length > 0 && (
-                    <div className="flex flex-col gap-3">
+                {isFreeEvent ? (
+                    // Free event
+                    <div className="rounded-2xl border border-primary bg-primary/5 p-4">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h3 className="font-semibold text-gray-900">
+                                    {freeTicket?.ticketName}
+                                </h3>
+
+                                <p className="mt-1 text-sm text-gray-500">
+                                    Free entry
+                                </p>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                                <span className="font-bold text-gray-900">
+                                    Free
+                                </span>
+
+                                <div className="flex h-5 w-5 items-center justify-center rounded-full border border-primary bg-primary">
+                                    <div className="h-2 w-2 rounded-full bg-white" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                   <div className="flex flex-col gap-3">
                         {tickets.map((ticket) => {
                             const isSelected =
                                 selectedTicket?.id === ticket.id;
@@ -171,7 +210,7 @@ function TicketSelection({
                                                 </h3>
 
                                                 <p className="mt-1 text-sm text-gray-500">
-                                                    Entry ticket
+                                                    {ticket.ticketFor} person
                                                 </p>
                                             </div>
                                         </div>
@@ -242,7 +281,7 @@ function TicketSelection({
                                 </div>
                             );
                         })}
-                    </div>
+                    </div> 
                 )}
 
                 {/* Empty state */}

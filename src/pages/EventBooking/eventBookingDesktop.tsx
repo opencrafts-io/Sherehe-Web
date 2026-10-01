@@ -33,6 +33,11 @@ function EventBookingDesktop({
         }))
     );
 
+    const isFreeEvent =
+        tickets.length === 1 && tickets[0].ticketPrice === 0;
+
+    const freeTicket = isFreeEvent ? tickets[0] : null;
+
     const loadTickets = () => {
         getTicketsByEventId(event.id);
     };
@@ -40,6 +45,15 @@ function EventBookingDesktop({
     useEffect(() => {
         loadTickets();
     }, [getTicketsByEventId]);
+
+    useEffect(() => {
+        if (
+            isFreeEvent &&
+            selectedTicket === null
+        ) {
+            chooseTicket(tickets[0]);
+        }
+    }, [tickets, selectedTicket, chooseTicket]);
 
     return (
         <>
@@ -108,54 +122,82 @@ function EventBookingDesktop({
                                 )}
 
                                 {/* Tickets */}
-                                <div className="flex flex-col gap-3">
-                                    {tickets.map((ticket) => {
-                                        const isSelected =
-                                            selectedTicket?.id === ticket.id;
+                                {isFreeEvent ? (
+                                    // Free event
+                                    <div className="rounded-2xl border border-primary bg-primary/5 p-4">
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <h3 className="font-semibold text-gray-900">
+                                                    {freeTicket?.ticketName}
+                                                </h3>
 
-                                        return (
-                                            <button
-                                                key={ticket.id}
-                                                type="button"
-                                                onClick={() => chooseTicket(ticket)}
-                                                className={`flex w-full cursor-pointer items-center justify-between rounded-xl border p-4 text-left transition-all ${isSelected
-                                                    ? "border-primary bg-primary/5 ring-1 ring-primary"
-                                                    : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50"
-                                                    }`}
-                                            >
-                                                <div>
-                                                    <h3 className="font-semibold text-gray-900">
-                                                        {ticket.ticketName}
-                                                    </h3>
+                                                <p className="mt-1 text-sm text-gray-500">
+                                                    Free entry
+                                                </p>
+                                            </div>
 
-                                                    <p className="mt-1 text-sm text-gray-500">
-                                                        Entry ticket
-                                                    </p>
+                                            <div className="flex items-center gap-3">
+                                                <span className="font-bold text-gray-900">
+                                                    Free
+                                                </span>
+
+                                                <div className="flex h-5 w-5 items-center justify-center rounded-full border border-primary bg-primary">
+                                                    <div className="h-2 w-2 rounded-full bg-white" />
                                                 </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    // Paid event
+                                    <div className="flex flex-col gap-3">
+                                        {tickets.map((ticket) => {
+                                            const isSelected =
+                                                selectedTicket?.id === ticket.id;
 
-                                                <div className="flex items-center gap-3">
-                                                    <span className="font-bold text-gray-900">
-                                                        Ksh {ticket.ticketPrice}
-                                                    </span>
+                                            return (
+                                                <button
+                                                    key={ticket.id}
+                                                    type="button"
+                                                    onClick={() => chooseTicket(ticket)}
+                                                    className={`flex w-full cursor-pointer items-center justify-between rounded-xl border p-4 text-left transition-all ${isSelected
+                                                        ? "border-primary bg-primary/5 ring-1 ring-primary"
+                                                        : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50"
+                                                        }`}
+                                                >
+                                                    <div>
+                                                        <h3 className="font-semibold text-gray-900">
+                                                            {ticket.ticketName}
+                                                        </h3>
 
-                                                    <div
-                                                        className={`flex h-5 w-5 items-center justify-center rounded-full border ${isSelected
-                                                            ? "border-primary bg-primary"
-                                                            : "border-gray-300"
-                                                            }`}
-                                                    >
-                                                        {isSelected && (
-                                                            <div className="h-2 w-2 rounded-full bg-white" />
-                                                        )}
+                                                        <p className="mt-1 text-sm text-gray-500">
+                                                            {ticket.ticketFor} person
+                                                        </p>
                                                     </div>
-                                                </div>
-                                            </button>
-                                        );
-                                    })}
-                                </div>
+
+                                                    <div className="flex items-center gap-3">
+                                                        <span className="font-bold text-gray-900">
+                                                            Ksh {ticket.ticketPrice}
+                                                        </span>
+
+                                                        <div
+                                                            className={`flex h-5 w-5 items-center justify-center rounded-full border ${isSelected
+                                                                ? "border-primary bg-primary"
+                                                                : "border-gray-300"
+                                                                }`}
+                                                        >
+                                                            {isSelected && (
+                                                                <div className="h-2 w-2 rounded-full bg-white" />
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                )}
 
                                 {/* Quantity */}
-                                {tickets.length > 0 && (
+                                {tickets.length > 0 && selectedTicket && (
                                     <div className="mt-6 flex items-center justify-between rounded-xl bg-gray-50 p-4">
                                         <div>
                                             <p className="font-semibold text-gray-900">
