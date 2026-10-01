@@ -1,11 +1,16 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarDays, faLocationDot, faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+    faMinus,
+    faPlus,
+} from "@fortawesome/free-solid-svg-icons";
 import useTicketStore from "../../../stores/ticketStore";
 import { useShallow } from "zustand/react/shallow";
 import { useEffect } from "react";
 import { CircularProgress } from "@mui/material";
 import type { TicketModel } from "../../../models/ticket";
 import TicketErrorSection from "../components/ticketErrorSection";
+import type { EventModel } from "../../../models/event";
+import DateLocationComponent from "../components/dateLocationComponent";
 
 function TicketSelection({
     event,
@@ -17,16 +22,21 @@ function TicketSelection({
     total,
     nextPage,
 }: {
-    event: any,
-    quantity: number,
-    selectedTicket: TicketModel | null,
-    increaseQuantity: () => void,
-    decreaseQuantity: () => void,
-    chooseTicket: (ticket: TicketModel) => void,
-    total: number,
-    nextPage: () => void,
+    event: EventModel;
+    quantity: number;
+    selectedTicket: TicketModel | null;
+    increaseQuantity: () => void;
+    decreaseQuantity: () => void;
+    chooseTicket: (ticket: TicketModel) => void;
+    total: number;
+    nextPage: () => void;
 }) {
-    const { isLoading, tickets, error, getTicketsByEventId } = useTicketStore(
+    const {
+        isLoading,
+        tickets,
+        error,
+        getTicketsByEventId,
+    } = useTicketStore(
         useShallow((state) => ({
             isLoading: state.isLoading,
             tickets: state.tickets,
@@ -36,7 +46,7 @@ function TicketSelection({
     );
 
     const loadTickets = () => {
-        getTicketsByEventId(event?.id);
+        getTicketsByEventId(event.id);
     };
 
     useEffect(() => {
@@ -45,149 +55,238 @@ function TicketSelection({
 
     return (
         <>
-            <div className="h-aspect-16/9">
-                <img
-                    src={event.event_banner_image || "/images/inferno10.jpeg"}
-                    alt={event.event_name}
-                    className="h-full w-full object-cover"
-                />
-            </div>
-            <div className="flex flex-col gap-2 mt-4">
-                <h1 className="text-3xl font-bold leading-tight text-gray-900 lg:text-4xl">
-                    {event.event_name}
-                </h1>
-                <div className="flex items-center gap-1">
-                    <FontAwesomeIcon
-                        icon={faCalendarDays}
-                        className="text-gray-400"
-                    />
-                    <p className="text-sm">Oct 28th, 2024</p>
-                </div>
-                <div className="flex items-center gap-1">
-                    <FontAwesomeIcon
-                        icon={faLocationDot}
-                        className="text-gray-400"
-                    />
-                    <p className="text-sm">{event.event_location}</p>
-                </div>
-            </div>
-            <hr className="my-3" />
-            <div>
-                <h1 className="text-xl font-bold">
-                    Select Tickets
-                </h1>
 
+            {/* Event Information */}
+            <section className="mx-auto w-full max-w-3xl px-4 pt-4 sm:px-6 md:px-8">
+
+                {/* Banner */}
+                <div className={`relative aspect-video w-full overflow-hidden rounded-2xl shadow-sm ${!event?.eventBannerImage
+                    ? "bg-linear-to-br from-primary via-primary-60 to-primary-70"
+                    : ""
+                    }`}>
+                    {event.eventBannerImage && (
+                        <img
+                            src={
+                                event.eventBannerImage
+                            }
+                            alt={event.eventName}
+                            className="absolute w-full object-cover"
+                        />
+                    )}
+
+                </div>
+
+                {/* Event details */}
+                <div className="mt-5">
+
+                    <h1 className="text-2xl font-bold leading-tight text-gray-900 sm:text-3xl">
+                        {event.eventName}
+                    </h1>
+
+                    <DateLocationComponent event={event} />
+
+                    
+                </div>
+            </section>
+
+            {/* Ticket Selection */}
+            <section className="mx-auto mt-8 w-full max-w-3xl px-4 sm:px-6 md:px-8">
+
+                {/* Heading */}
+                <div className="mb-5">
+                    <p className="text-sm font-medium text-primary">
+                        STEP 1
+                    </p>
+
+                    <h2 className="mt-1 text-2xl font-bold text-gray-900">
+                        Select Tickets
+                    </h2>
+
+                    <p className="mt-1 text-sm text-gray-500">
+                        Choose the ticket type and quantity you'd like.
+                    </p>
+                </div>
+
+                {/* Error */}
                 {error && (
                     <TicketErrorSection
                         height={50}
-                        eventId={event?.id}
+                        eventId={event?.id ?? ''}
                     />
                 )}
 
+                {/* Loading */}
                 {isLoading && (
-                    <div className="flex h-50 justify-center items-center">
-                        <CircularProgress sx={
-                            {
+                    <div className="flex h-52 items-center justify-center">
+                        <CircularProgress
+                            sx={{
                                 color: "var(--color-primary)",
-                            }
-                        } />
+                            }}
+                        />
                     </div>
                 )}
 
-                <div className="mt-4 flex flex-col gap-3">
-                    {tickets.map((ticket) => {
-                        const isSelected = selectedTicket?.id === ticket.id;
+                {/* Tickets */}
+                {!isLoading && tickets.length > 0 && (
+                    <div className="flex flex-col gap-3">
+                        {tickets.map((ticket) => {
+                            const isSelected =
+                                selectedTicket?.id === ticket.id;
 
-                        return (
-                            <div
-                                key={ticket.id}
-                                className={`rounded-lg border p-4 transition ${isSelected
-                                    ? "border-purple-600 bg-purple-50"
-                                    : "border-gray-200 bg-white"
-                                    }`}
-                            >
-                                {/* Ticket information */}
-                                <label className="flex cursor-pointer items-center gap-5">
-                                    {/* Radio */}
-                                    <input
-                                        type="radio"
-                                        name="ticket"
-                                        value={ticket.id}
-                                        checked={isSelected}
-                                        onChange={() => chooseTicket(ticket)}
-                                        className="h-5 w-5 accent-purple-600"
-                                    />
-                                    <div>
-                                        <h2 className="text-lg font-semibold">
-                                            {ticket.ticketName}
-                                        </h2>
+                            return (
+                                <div
+                                    key={ticket.id}
+                                    className={`overflow-hidden rounded-2xl border bg-white transition-all ${isSelected
+                                        ? "border-primary ring-1 ring-primary/30"
+                                        : "border-gray-200 hover:border-gray-300"
+                                        }`}
+                                >
+                                    {/* Ticket */}
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            chooseTicket(ticket)
+                                        }
+                                        className="flex w-full cursor-pointer items-center justify-between gap-4 p-4 text-left sm:p-5"
+                                    >
+                                        {/* Left */}
+                                        <div className="flex min-w-0 items-center gap-3">
 
-                                        <p className="mt-1 text-sm text-gray-600">
-                                            Ksh {ticket.ticketPrice}
-                                        </p>
-                                    </div>
-
-
-                                </label>
-
-                                {/* Quantity */}
-                                {isSelected && (
-                                    <div className="mt-4 flex items-center justify-between border-t border-purple-200 pt-4">
-                                        <p className="text-sm font-semibold">
-                                            Select Quantity
-                                        </p>
-
-                                        <div className="flex w-40 items-center justify-between border border-gray-200 bg-white py-3 px-2">
-                                            <button
-                                                type="button"
-                                                onClick={decreaseQuantity}
-                                                disabled={quantity === 1}
-                                                className="text-gray-600 hover:text-black disabled:cursor-not-allowed disabled:opacity-40"
+                                            {/* Radio */}
+                                            <div
+                                                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition ${isSelected
+                                                    ? "border-primary"
+                                                    : "border-gray-300"
+                                                    }`}
                                             >
-                                                <FontAwesomeIcon icon={faMinus} />
-                                            </button>
+                                                {isSelected && (
+                                                    <div className="h-2.5 w-2.5 rounded-full bg-primary" />
+                                                )}
+                                            </div>
 
-                                            <span className="min-w-5 text-center text-xl font-medium">
-                                                {quantity}
-                                            </span>
+                                            {/* Ticket information */}
+                                            <div className="min-w-0">
+                                                <h3 className="truncate text-base font-semibold text-gray-900 sm:text-lg">
+                                                    {ticket.ticketName}
+                                                </h3>
 
-                                            <button
-                                                type="button"
-                                                onClick={increaseQuantity}
-                                                className="text-gray-600 hover:text-black"
-                                            >
-                                                <FontAwesomeIcon icon={faPlus} />
-                                            </button>
+                                                <p className="mt-1 text-sm text-gray-500">
+                                                    Entry ticket
+                                                </p>
+                                            </div>
                                         </div>
-                                    </div>
-                                )}
-                            </div>
-                        );
-                    })}
+
+                                        {/* Price */}
+                                        <div className="shrink-0 text-right">
+                                            <p className="text-base font-bold text-gray-900 sm:text-lg">
+                                                Ksh{" "}
+                                                {ticket.ticketPrice}
+                                            </p>
+                                        </div>
+                                    </button>
+
+                                    {/* Quantity */}
+                                    {isSelected && (
+                                        <div className="border-t border-gray-100 bg-primary/5 px-4 py-4 sm:px-5">
+                                            <div className="flex items-center justify-between gap-4">
+
+                                                <div>
+                                                    <p className="text-sm font-semibold text-gray-900">
+                                                        Quantity
+                                                    </p>
+
+                                                    <p className="mt-0.5 text-xs text-gray-500">
+                                                        Number of tickets
+                                                    </p>
+                                                </div>
+
+                                                {/* Quantity control */}
+                                                <div className="flex shrink-0 items-center overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+
+                                                    <button
+                                                        type="button"
+                                                        onClick={
+                                                            decreaseQuantity
+                                                        }
+                                                        disabled={
+                                                            quantity === 1
+                                                        }
+                                                        className="flex h-10 w-10 cursor-pointer items-center justify-center text-gray-500 transition hover:bg-gray-50 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-40"
+                                                    >
+                                                        <FontAwesomeIcon
+                                                            icon={faMinus}
+                                                            className="text-xs"
+                                                        />
+                                                    </button>
+
+                                                    <span className="flex h-10 min-w-10 items-center justify-center border-x border-gray-200 px-2 text-sm font-semibold text-gray-900">
+                                                        {quantity}
+                                                    </span>
+
+                                                    <button
+                                                        type="button"
+                                                        onClick={
+                                                            increaseQuantity
+                                                        }
+                                                        className="flex h-10 w-10 cursor-pointer items-center justify-center text-gray-500 transition hover:bg-gray-50 hover:text-gray-900"
+                                                    >
+                                                        <FontAwesomeIcon
+                                                            icon={faPlus}
+                                                            className="text-xs"
+                                                        />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
+
+                {/* Empty state */}
+                {!isLoading &&
+                    !error &&
+                    tickets.length === 0 && (
+                        <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center">
+                            <p className="font-medium text-gray-700">
+                                No tickets available
+                            </p>
+
+                            <p className="mt-1 text-sm text-gray-500">
+                                Tickets for this event are currently
+                                unavailable.
+                            </p>
+                        </div>
+                    )}
+            </section>
+
+            {/* Fixed Bottom Checkout Bar */}
+            <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white/95 px-4 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] backdrop-blur-sm sm:px-6 md:px-8">
+                <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-4">
+
+                    {/* Total */}
+                    <div className="min-w-0">
+                        <p className="text-xs font-medium text-gray-500 sm:text-sm">
+                            Total
+                        </p>
+
+                        <p className="truncate text-xl font-bold text-gray-900 sm:text-2xl">
+                            Ksh {total}
+                        </p>
+                    </div>
+
+                    {/* Continue */}
+                    <button
+                        type="button"
+                        onClick={nextPage}
+                        disabled={selectedTicket === null}
+                        className="min-w-32 cursor-pointer rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-50 sm:min-w-36 sm:px-8"
+                    >
+                        Continue
+                    </button>
                 </div>
-            </div>
-            <div className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-between border-t border-gray-200 bg-white p-4" >
-
-                {/* Total */}
-                <div className="flex flex-col">
-                    <p className="text-sm text-gray-500">
-                        Total
-                    </p>
-
-                    <p className="text-2xl font-bold text-gray-900">
-                        Ksh {total}
-                    </p>
-                </div>
-
-                {/* Continue Button */}
-                <button
-                    type="button"
-                    onClick={nextPage}
-                    disabled={selectedTicket === null}
-                    className="rounded-xl bg-primary px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                    Continue
-                </button>
             </div>
         </>
     );

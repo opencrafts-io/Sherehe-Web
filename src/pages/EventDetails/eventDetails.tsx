@@ -12,6 +12,7 @@ import {
 } from "../../utils/EventsUtils/eventUtils";
 import useAttendeesStore from "../../stores/attendeeStore";
 import AttendeesListing from "./components/attendeesListing";
+import DateLocationComponent from "../EventBooking/components/dateLocationComponent";
 
 function EventDetails() {
     const { id } = useParams();
@@ -150,44 +151,7 @@ function EventDetails() {
                                 Event Date & Location
                             </h2>
 
-                            <div className="flex items-center gap-2">
-                                <FontAwesomeIcon
-                                    icon={faLocationDot}
-                                    className="text-gray-600"
-                                />
-
-                                <span className="text-gray-600">
-                                    {event.eventLocation}
-                                </span>
-                            </div>
-
-                            <div className="flex items-start gap-2">
-                                <FontAwesomeIcon
-                                    icon={faCalendarDays}
-                                    className="mt-0.5 text-gray-600"
-                                />
-
-                                {isMultidayEvent ? (
-                                    <div className="flex flex-wrap text-base items-center gap-1">
-                                        <span className="text-sm text-gray-600">
-                                            {startDate} {startTime}
-                                        </span>
-
-                                        <span className="text-gray-600 text-sm">
-                                            -
-                                        </span>
-
-                                        <span className="text-sm text-gray-600">
-                                            {endDate} {endTime}
-                                        </span>
-                                    </div>
-                                ) : (
-                                    <span className="text-gray-600 text-sm">
-                                        {startDate} · {startTime} -{" "}
-                                        {endTime}
-                                    </span>
-                                )}
-                            </div>
+                            <DateLocationComponent event={event} />
 
                         </div>
                         {/* About */}

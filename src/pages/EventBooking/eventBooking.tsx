@@ -4,9 +4,10 @@ import EventBookingDesktop from "./eventBookingDesktop";
 import EventBookingMobile from "./eventBookingMobile";
 import useEventsStore from "../../stores/eventsStore";
 import type { TicketModel } from "../../models/ticket";
+import type { EventModel } from "../../models/event";
 
 export interface EventBookingProps {
-    event: any;
+    event: EventModel;
     quantity: number;
     selectedTicket: TicketModel | null;
     total: number;
@@ -34,6 +35,16 @@ function EventBooking() {
         (state) => state.paginatedEvents
     );
     const event = paginatedEvents?.data.find((event) => event.id === id);
+
+    if (!event) {
+        return (
+            <div className="flex min-h-screen items-center justify-center px-4">
+                <p className="text-gray-600">
+                    Event not found
+                </p>
+            </div>
+        );
+    }
 
     const [selectedTicket, setSelectTicket] = useState<TicketModel | null>(null);
     const chooseTicket = (ticket: TicketModel) => {

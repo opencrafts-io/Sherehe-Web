@@ -44,7 +44,7 @@ function EventBookingMobile({
     };
     return (
         <>
-            <div className="p-4 my-2 gap-4">
+            <div className="p-4 flex flex-col my-2 gap-8 min-h-screen bg-gray-50 mb-24">
                 <BookingStepper currentStep={currentPage} steps={steps} />
 
                 {currentPage === 1 && (
