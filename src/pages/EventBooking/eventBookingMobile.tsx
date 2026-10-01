@@ -12,6 +12,11 @@ function EventBookingMobile({
     selectedTicket,
     total,
     phoneNumber,
+    isLoading,
+    tickets,
+    error,
+    isFreeEvent,
+    freeTicket,
     setPhoneNumber,
     increaseQuantity,
     decreaseQuantity,
@@ -52,15 +57,21 @@ function EventBookingMobile({
                         event={event}
                         selectedTicket={selectedTicket}
                         quantity={quantity}
+                        total={total}
+                        isLoading={isLoading}
+                        tickets={tickets}
+                        error={error}
+                        isFreeEvent={isFreeEvent}
+                        freeTicket={freeTicket}
                         chooseTicket={chooseTicket}
                         increaseQuantity={increaseQuantity}
                         decreaseQuantity={decreaseQuantity}
                         nextPage={nextPage}
-                        total={total}
                     />
                 )}
                 {currentPage === 2 && (
-                    <OrderSummary selectedTicket={selectedTicket}
+                    <OrderSummary
+                        selectedTicket={selectedTicket}
                         nextPage={nextPage}
                         previousPage={previousPage}
                         quantity={quantity}

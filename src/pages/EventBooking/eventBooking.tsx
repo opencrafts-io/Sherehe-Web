@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import EventBookingDesktop from "./eventBookingDesktop";
 import EventBookingMobile from "./eventBookingMobile";
 import useEventsStore from "../../stores/eventsStore";
 import type { TicketModel } from "../../models/ticket";
 import type { EventModel } from "../../models/event";
+import useTicketStore from "../../stores/ticketStore";
+import { useShallow } from "zustand/react/shallow";
 
 export interface EventBookingProps {
     event: EventModel;
@@ -12,6 +14,11 @@ export interface EventBookingProps {
     selectedTicket: TicketModel | null;
     total: number;
     phoneNumber: string;
+    isLoading: boolean;
+    tickets: TicketModel[];
+    error: string | null;
+    isFreeEvent: boolean;
+    freeTicket: TicketModel | null;
     setPhoneNumber: (value: string) => void;
     increaseQuantity: () => void;
     decreaseQuantity: () => void;
@@ -53,7 +60,38 @@ function EventBooking() {
 
     const [phoneNumber, setPhoneNumber] = useState("");
 
-    const total = selectedTicket ? Number(selectedTicket.ticketPrice) * quantity : 0;
+    const total = selectedTicket ? selectedTicket.ticketPrice * quantity : 0;
+
+    const { isLoading, tickets, error, getTicketsByEventId } = useTicketStore(
+        useShallow((state) => ({
+            isLoading: state.isLoading,
+            tickets: state.tickets,
+            error: state.error,
+            getTicketsByEventId: state.getTicketsByEventId,
+        }))
+    );
+
+    const isFreeEvent =
+        tickets.length === 1 && tickets[0].ticketPrice === 0;
+
+    const freeTicket = isFreeEvent ? tickets[0] : null;
+
+    const loadTickets = () => {
+        getTicketsByEventId(event.id);
+    };
+
+    useEffect(() => {
+        loadTickets();
+    }, [getTicketsByEventId]);
+
+    useEffect(() => {
+        if (
+            isFreeEvent &&
+            selectedTicket === null
+        ) {
+            chooseTicket(tickets[0]);
+        }
+    }, [tickets, selectedTicket, chooseTicket]);
 
     const bookingProps: EventBookingProps = {
         event,
@@ -61,6 +99,11 @@ function EventBooking() {
         selectedTicket,
         total,
         phoneNumber,
+        isLoading,
+        tickets,
+        error,
+        isFreeEvent,
+        freeTicket,
         setPhoneNumber,
         increaseQuantity,
         decreaseQuantity,

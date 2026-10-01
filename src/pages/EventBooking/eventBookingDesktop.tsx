@@ -7,9 +7,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import type { EventBookingProps } from "./eventBooking";
 import PaymentButtons from "./components/paymentButtons";
-import useTicketStore from "../../stores/ticketStore";
-import { useEffect } from "react";
-import { useShallow } from "zustand/react/shallow";
 import { CircularProgress } from "@mui/material";
 import TicketErrorSection from "./components/ticketErrorSection";
 
@@ -19,41 +16,17 @@ function EventBookingDesktop({
     selectedTicket,
     total,
     phoneNumber,
+    isLoading,
+    tickets,
+    error,
+    isFreeEvent,
+    freeTicket,
     setPhoneNumber,
     increaseQuantity,
     decreaseQuantity,
     chooseTicket,
 }: EventBookingProps) {
-    const { isLoading, tickets, error, getTicketsByEventId } = useTicketStore(
-        useShallow((state) => ({
-            isLoading: state.isLoading,
-            tickets: state.tickets,
-            error: state.error,
-            getTicketsByEventId: state.getTicketsByEventId,
-        }))
-    );
-
-    const isFreeEvent =
-        tickets.length === 1 && tickets[0].ticketPrice === 0;
-
-    const freeTicket = isFreeEvent ? tickets[0] : null;
-
-    const loadTickets = () => {
-        getTicketsByEventId(event.id);
-    };
-
-    useEffect(() => {
-        loadTickets();
-    }, [getTicketsByEventId]);
-
-    useEffect(() => {
-        if (
-            isFreeEvent &&
-            selectedTicket === null
-        ) {
-            chooseTicket(tickets[0]);
-        }
-    }, [tickets, selectedTicket, chooseTicket]);
+    
 
     return (
         <>

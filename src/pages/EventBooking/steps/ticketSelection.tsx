@@ -3,9 +3,6 @@ import {
     faMinus,
     faPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import useTicketStore from "../../../stores/ticketStore";
-import { useShallow } from "zustand/react/shallow";
-import { useEffect } from "react";
 import { CircularProgress } from "@mui/material";
 import type { TicketModel } from "../../../models/ticket";
 import TicketErrorSection from "../components/ticketErrorSection";
@@ -16,60 +13,33 @@ function TicketSelection({
     event,
     quantity,
     selectedTicket,
+    total,
+    isLoading,
+    tickets,
+    error,
+    isFreeEvent,
+    freeTicket,
     increaseQuantity,
     decreaseQuantity,
-    chooseTicket,
-    total,
+    chooseTicket,  
     nextPage,
 }: {
     event: EventModel;
     quantity: number;
     selectedTicket: TicketModel | null;
+    total: number;
+    isLoading: boolean,
+    tickets: TicketModel[],
+    error: string | null,
+    isFreeEvent: boolean,
+    freeTicket: TicketModel | null,
     increaseQuantity: () => void;
     decreaseQuantity: () => void;
-    chooseTicket: (ticket: TicketModel) => void;
-    total: number;
+    chooseTicket: (ticket: TicketModel) => void; 
     nextPage: () => void;
 }) {
-    const {
-        isLoading,
-        tickets,
-        error,
-        getTicketsByEventId,
-    } = useTicketStore(
-        useShallow((state) => ({
-            isLoading: state.isLoading,
-            tickets: state.tickets,
-            error: state.error,
-            getTicketsByEventId: state.getTicketsByEventId,
-        }))
-    );
-
-    const isFreeEvent =
-        tickets.length === 1 && tickets[0].ticketPrice === 0;
-
-    const freeTicket = isFreeEvent ? tickets[0] : null;
-
-    const loadTickets = () => {
-        getTicketsByEventId(event.id);
-    };
-
-    useEffect(() => {
-        loadTickets();
-    }, [getTicketsByEventId]);
-
-    useEffect(() => {
-        if (
-            isFreeEvent &&
-            selectedTicket === null
-        ) {
-            chooseTicket(tickets[0]);
-        }
-    }, [tickets, selectedTicket, chooseTicket]);
-
     return (
         <>
-
             {/* Event Information */}
             <section className="mx-auto w-full max-w-3xl px-4 pt-4 sm:px-6 md:px-8">
 
