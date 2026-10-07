@@ -3,6 +3,8 @@ import useEventsStore from "../../stores/eventsStore";
 import EventCard from "./components/eventCard";
 import { useShallow } from 'zustand/react/shallow';
 import CircularProgress from "@mui/material/CircularProgress";
+import type { PaginationButtonsProps } from "../../components/ui/paginationButtons";
+import PaginationButtons from "../../components/ui/paginationButtons";
 
 
 function EventListing() {
@@ -58,6 +60,14 @@ function EventListing() {
         );
     }
 
+    const paginationButtonsProps: PaginationButtonsProps = {
+        handlePrevious,
+        currentPage: paginatedEvents?.currentPage,
+        previousButtonDisabled: paginatedEvents?.previousPage === null,
+        nextButtonDisabled: paginatedEvents?.nextPage === null,
+        handleNext,
+    };
+
     return (
         <>
             <div className="mx-auto px-4 py-6 md:px-8 lg:px-8 lg:py-12">
@@ -71,61 +81,7 @@ function EventListing() {
                     ))}
                 </div>
                 {/* Pagination */}
-                <div className="mt-12 flex items-center justify-center gap-2">
-
-                    {/* Previous */}
-                    <button
-                        onClick={handlePrevious}
-                        disabled={paginatedEvents?.previousPage === null}
-                        className="
-                            rounded-lg
-                            border border-purple-200
-                            bg-purple-50
-                            px-4 py-2
-                            text-sm font-semibold text-purple-700
-                            transition-colors duration-200
-                            hover:bg-purple-100
-                            hover:text-purple-800
-                            disabled:cursor-not-allowed
-                            disabled:opacity-50
-                        "
-                    >
-                        Previous
-                    </button>
-
-                    {/* Current page */}
-                    <button
-                        className="
-                            rounded-lg
-                            bg-primary
-                            px-4 py-2
-                            text-sm font-semibold text-white
-                        "
-                    >
-                        {paginatedEvents?.currentPage}
-                    </button>
-
-                    {/* Next */}
-                    <button
-                        onClick={handleNext}
-                        disabled={paginatedEvents?.nextPage === null}
-                        className="
-                            rounded-lg
-                            border border-purple-200
-                            bg-purple-50
-                            px-4 py-2
-                            text-sm font-semibold text-purple-700
-                            transition-colors duration-200
-                            hover:bg-purple-100
-                            hover:text-purple-800
-                            disabled:cursor-not-allowed
-                            disabled:opacity-50
-                        "
-                    >
-                        Next
-                    </button>
-
-                </div>
+                <PaginationButtons {...paginationButtonsProps} />
             </div>
         </>
     )
