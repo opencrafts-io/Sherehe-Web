@@ -84,6 +84,9 @@ function EventBookingMobile({
                         phoneNumber={phoneNumber}
                         setPhoneNumber={setPhoneNumber}
                         previousPage={previousPage}
+                        ticketId={selectedTicket?.id}
+                        ticketQuantity={quantity}
+                        isFreeEvent={isFreeEvent}
                     />
                 )}
             </div>

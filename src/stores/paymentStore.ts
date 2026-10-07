@@ -5,6 +5,8 @@ import paymentService from "../services/paymentService";
 
 interface PaymentState {
     isLoading: boolean;
+    isSendingStkPush: boolean;
+    isConfirmingPayment: boolean;
     error: string | null;
     stkSent: boolean;
     transId: string | null;
@@ -19,6 +21,8 @@ interface PaymentState {
 
 const usePaymentStore = create<PaymentState>()((set, get) => ({
     isLoading: false,
+    isSendingStkPush: false,
+    isConfirmingPayment: false,
     error: null,
     stkSent: false,
     transId: null,
@@ -51,7 +55,7 @@ const usePaymentStore = create<PaymentState>()((set, get) => ({
     stkPush: async (ticketId: string, ticketQuantity: number, phoneNumber: string) => {
         try {
             set({
-                isLoading: true,
+                isSendingStkPush: true,
                 error: null,
                 stkSent: false,
                 transId: null,
@@ -60,14 +64,14 @@ const usePaymentStore = create<PaymentState>()((set, get) => ({
             const paymentModel = await paymentService.purchaseTicket(ticketId, ticketQuantity, phoneNumber);
 
             set({
-                isLoading: true,
+                isSendingStkPush: false,
                 error: null,
                 stkSent: true,
                 transId: paymentModel.transId,
             });
         } catch (error) {
             set({
-                isLoading: false,
+                isSendingStkPush: false,
                 error: getErrorMessage(error),
                 stkSent: false,
                 transId: null,
@@ -77,7 +81,7 @@ const usePaymentStore = create<PaymentState>()((set, get) => ({
     confirmPayment: async () => {
         try {
             set({
-                isLoading: true,
+                isConfirmingPayment: true,
                 error: null,
                 confirmedPayment: null,
             });
@@ -91,19 +95,19 @@ const usePaymentStore = create<PaymentState>()((set, get) => ({
             const confirmedPaymentModel = await paymentService.confirmPayment(transId);
 
             set({
-                isLoading: false,
+                isConfirmingPayment: false,
                 error: null,
                 confirmedPayment: confirmedPaymentModel,
             });
 
-            if (confirmedPaymentModel.status === "SUCCESS" && !confirmedPaymentModel.attendee) {
+            if (confirmedPaymentModel.status === "SUCCESS" && confirmedPaymentModel.attendee) {
                 return true;
             } else {
                 return false;
             }
         } catch (error) {
             set({
-                isLoading: false,
+                isConfirmingPayment: false,
                 error: getErrorMessage(error),
                 confirmedPayment: null,
             });
