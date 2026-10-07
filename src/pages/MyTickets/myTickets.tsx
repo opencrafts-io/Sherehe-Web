@@ -4,6 +4,7 @@ import {
     faChevronRight,
     faTicket,
     faUsers,
+    faSearch,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { PaginationButtonsProps } from "../../components/ui/paginationButtons";
@@ -51,6 +52,8 @@ function MyTickets() {
         tickets[0]?.id ?? null
     );
 
+    const [searchQuery, setSearchQuery] = useState("");
+
     //hardcoded for now
     const paginationButtonsProps: PaginationButtonsProps = {
         handlePrevious: () => { },
@@ -86,6 +89,24 @@ function MyTickets() {
                         Your purchased event tickets in one place. Select a
                         ticket to view its details and get ready for the event.
                     </p>
+                </div>
+
+                {/* Search */}
+                <div className="mb-6">
+                    <div className="relative">
+                        <FontAwesomeIcon
+                            icon={faSearch}
+                            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                        />
+
+                        <input
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder="Search your tickets..."
+                            className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/10"
+                        />
+                    </div>
                 </div>
 
                 {/* Tickets */}
