@@ -1,11 +1,11 @@
 import { useShallow } from "zustand/react/shallow";
 import usePaymentStore from "../../../stores/paymentStore";
-import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { CircularProgress } from "@mui/material";
 import ErrorPaymentDialogue from "./errorPaymentDialogue";
+import { useNavigationToEventTickets } from "../utils/navigationHook";
 
-function FreeTicketConfirmationButton({ ticketId, ticketQuantity }: { ticketId?: string, ticketQuantity: number }) {
+function FreeTicketConfirmationButton({ ticketId, ticketQuantity, eventId }: { ticketId?: string, ticketQuantity: number, eventId: string }) {
     const { isLoading, confirmFreeEvent, freeEventBooked, error } = usePaymentStore(
         useShallow(
             (state) => ({
@@ -21,7 +21,7 @@ function FreeTicketConfirmationButton({ ticketId, ticketQuantity }: { ticketId?:
 
     const [errorShown, setErrorShown] = useState<string | null>(null);
 
-    const navigate = useNavigate();
+    const navigationToEventTickets = useNavigationToEventTickets();
 
     const closeDialog = () => {
         setShowError(false);
@@ -39,15 +39,16 @@ function FreeTicketConfirmationButton({ ticketId, ticketQuantity }: { ticketId?:
     // Navigate after successful booking
     useEffect(() => {
         if (freeEventBooked) {
-            navigate("/dashboard");
+            console.log(`Event Id is ${eventId}`);
+            navigationToEventTickets(eventId);
         }
-    }, [freeEventBooked, navigate]);
+    }, [freeEventBooked]);
 
     // Show error dialog when an error occurs
     useEffect(() => {
         if (error) {
             setShowError(true);
-             setErrorShown(error);
+            setErrorShown(error);
         }
     }, [error]);
 

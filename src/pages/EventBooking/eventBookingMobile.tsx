@@ -87,6 +87,7 @@ function EventBookingMobile({
                         ticketId={selectedTicket?.id}
                         ticketQuantity={quantity}
                         isFreeEvent={isFreeEvent}
+                        eventId={event.id}
                     />
                 )}
             </div>

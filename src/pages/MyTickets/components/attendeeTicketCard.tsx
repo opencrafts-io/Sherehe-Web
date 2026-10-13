@@ -4,7 +4,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarDays, faChevronRight, faTicket, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { formatEventDateTime } from "../../../utils/EventsUtils/eventUtils";
 
-function AttendeeTicketCard(attendeeTicket: AttendeeTicket) {
+export type AttendeeTicketType = "specificEvent" | "allEvents";
+
+export interface AttendeeTicketCardProps {
+    attendeeTicket: AttendeeTicket;
+    ticketType: AttendeeTicketType;
+};
+
+function AttendeeTicketCard({
+    attendeeTicket,
+    ticketType,
+}: AttendeeTicketCardProps) {
     const { startDate } = formatEventDateTime(attendeeTicket.event.startDate, attendeeTicket.event.endDate);
 
     return (
@@ -16,26 +26,55 @@ function AttendeeTicketCard(attendeeTicket: AttendeeTicket) {
                 >
                     {/* Ticket top section */}
                     <div className="p-5 sm:p-6">
-                        <div className="flex items-start gap-4">
-                            {/* Ticket icon */}
-                            <div
-                                className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition bg-primary/10 text-primary group-hover:bg-primary/15`}
-                            >
-                                <FontAwesomeIcon
-                                    icon={faTicket}
-                                />
-                            </div>
 
-                            <div className="min-w-0 flex-1 pr-8">
-                                <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-primary">
-                                    {attendeeTicket.ticket.ticketName}
-                                </p>
+                        {ticketType === 'allEvents' && (
+                            <div className="flex items-start gap-4">
+                                {/* Ticket icon */}
+                                <div
+                                    className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition bg-primary/10 text-primary group-hover:bg-primary/15`}
+                                >
+                                    <FontAwesomeIcon
+                                        icon={faTicket}
+                                    />
+                                </div>
+                                <div className="min-w-0 flex-1 pr-8">
+                                    {ticketType === 'allEvents' && (
+                                        <>
+                                            <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-primary">
+                                                {attendeeTicket.ticket.ticketName}
+                                            </p>
 
-                                <h3 className="truncate text-lg font-bold text-gray-900">
-                                    {attendeeTicket.event.eventName}
-                                </h3>
+                                            <h3 className="truncate text-lg font-bold text-gray-900">
+                                                {attendeeTicket.event.eventName}
+                                            </h3>
+                                        </>
+                                    )}
+                                </div>
                             </div>
-                        </div>
+                        )}
+
+                        {ticketType === 'specificEvent' && (
+                            <div className="flex items-center gap-4">
+                                {/* Ticket icon */}
+                                <div
+                                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition bg-primary/10 text-primary group-hover:bg-primary/15`}
+                                >
+                                    <FontAwesomeIcon
+                                        icon={faTicket}
+                                    />
+                                </div>
+                                <div className="min-w-0 flex-1 pr-8">
+                                    {ticketType === 'specificEvent' && (
+                                        <>
+                                            <p className="mb-1 text-small font-semibold uppercase tracking-wider text-primary">
+                                                {attendeeTicket.ticket.ticketName}
+                                            </p>
+
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                        )}
 
                         {/* Divider */}
                         <div className="my-5 border-t border-dashed border-gray-200" />

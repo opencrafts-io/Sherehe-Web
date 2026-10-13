@@ -11,6 +11,7 @@ import Profile from "../pages/Profile/profile";
 import MyTickets from "../pages/MyTickets/myTickets";
 import MyOrganizedEvents from "../pages/MyOrganizedEvents/myOrganizedEvents";
 import TicketPage from "../pages/ticketPage/ticketPage";
+import EventAttendedEvents from "../pages/eventAttendedEvents/eventAttendedEvents";
 
 export const router = createBrowserRouter([
     {
@@ -43,6 +44,10 @@ export const router = createBrowserRouter([
             {
                 path: "my-ticket/:id",
                 element: <TicketPage />,
+            },
+            {
+                path: "my-ticket/event/:id",
+                element: <EventAttendedEvents />,
             },
             {
                 path: "my-organized-events",

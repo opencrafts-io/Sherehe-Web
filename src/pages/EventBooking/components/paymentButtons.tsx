@@ -1,11 +1,11 @@
 import { useShallow } from "zustand/react/shallow";
 import usePaymentStore from "../../../stores/paymentStore";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import ErrorPaymentDialogue from "./errorPaymentDialogue";
 import { CircularProgress } from "@mui/material";
+import { useNavigationToEventTickets } from "../utils/navigationHook";
 
-function PaymentButtons({ phoneNumber, ticketId, ticketQuantity }: { phoneNumber: string, ticketId?: string, ticketQuantity: number }) {
+function PaymentButtons({ phoneNumber, ticketId, ticketQuantity, eventId }: { phoneNumber: string, ticketId?: string, ticketQuantity: number, eventId: string }) {
     const { isSendingStkPush, isConfirmingPayment, stkPush, error, stkSent, confirmPayment } = usePaymentStore(
         useShallow(
             (state) => ({
@@ -23,6 +23,8 @@ function PaymentButtons({ phoneNumber, ticketId, ticketQuantity }: { phoneNumber
     const [showError, setShowError] = useState(false);
 
     const [errorShown, setErrorShown] = useState<string | null>(null);
+
+    const navigationToEventTickets = useNavigationToEventTickets();
 
     const closeDialog = () => {
         setShowError(false);
@@ -66,10 +68,9 @@ function PaymentButtons({ phoneNumber, ticketId, ticketQuantity }: { phoneNumber
             return;
         }
 
-        navigate("/dashboard");
+        navigationToEventTickets(eventId);
     };
 
-    const navigate = useNavigate();
 
     useEffect(() => {
         if (error) {

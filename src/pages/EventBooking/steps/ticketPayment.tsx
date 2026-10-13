@@ -17,14 +17,16 @@ function TicketPayment({
     ticketId,
     ticketQuantity,
     isFreeEvent,
+    eventId,
 }: {
-    total: number;
-    phoneNumber: string;
-    ticketId?: string;
-    ticketQuantity: number;
+    total: number,
+    phoneNumber: string,
+    ticketId?: string,
+    ticketQuantity: number,
     isFreeEvent: boolean,
-    setPhoneNumber: (value: string) => void;
-    previousPage: () => void;
+    setPhoneNumber: (value: string) => void,
+    previousPage: () => void,
+    eventId: string,
 }) {
     return (
         <>
@@ -68,6 +70,7 @@ function TicketPayment({
                     <FreeTicketConfirmationButton
                         ticketId={ticketId}
                         ticketQuantity={ticketQuantity}
+                        eventId={eventId}
                     />
                 </>
             ) : (
@@ -183,6 +186,7 @@ function TicketPayment({
                                     phoneNumber={phoneNumber}
                                     ticketId={ticketId}
                                     ticketQuantity={ticketQuantity}
+                                    eventId={eventId}
                                 />
                             </div>
                         </div>

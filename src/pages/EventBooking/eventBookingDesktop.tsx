@@ -273,6 +273,7 @@ function EventBookingDesktop({
                                         setPhoneNumber={setPhoneNumber}
                                         ticketId={selectedTicket?.id ?? ''}
                                         ticketQuantity={quantity}
+                                        eventId={event.id}
                                     />
                                 </div>
                             </div>

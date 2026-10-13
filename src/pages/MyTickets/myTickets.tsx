@@ -10,7 +10,7 @@ import PaginationButtons from "../../components/ui/paginationButtons";
 import { useShallow } from "zustand/react/shallow";
 import useAttendeeTicketStore from "../../stores/attendeeTicketStore";
 import { CircularProgress } from "@mui/material";
-import AttendeeTicketCard from "./components/attendeeTicketCard";
+import AttendeeTicketCard, { type AttendeeTicketType } from "./components/attendeeTicketCard";
 
 function MyTickets() {
     const { isLoading, error, paginatedAttendeeTickets, searchAttendedEvents, getAllAttendedEvents, searchAttendedEvent } = useAttendeeTicketStore(
@@ -95,6 +95,8 @@ function MyTickets() {
             paginatedAttendeeTickets === null ||
             paginatedAttendeeTickets.data.length === 0
         );
+
+    const ticketType: AttendeeTicketType = "allEvents";
 
     return (
         <>
@@ -185,7 +187,8 @@ function MyTickets() {
                                     return (
                                         <AttendeeTicketCard
                                             key={attendeeTicket.id}
-                                            {...attendeeTicket}
+                                            attendeeTicket={attendeeTicket}
+                                            ticketType={ticketType}
                                         />
                                     );
                                 })}
@@ -200,7 +203,8 @@ function MyTickets() {
                                 return (
                                     <AttendeeTicketCard
                                         key={attendeeTicket.id}
-                                        {...attendeeTicket}
+                                        attendeeTicket={attendeeTicket}
+                                        ticketType={ticketType}
                                     />
                                 );
                             })}

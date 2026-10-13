@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PaymentButtons from "./paymentButtons";
 import FreeTicketConfirmationButton from "./freeTicketConfirmationButton";
 
-function PaymentSectionWeb({ phoneNumber, setPhoneNumber, isFreeEvent, ticketId, ticketQuantity }: { phoneNumber: string, setPhoneNumber: (value: string) => void, isFreeEvent: boolean, ticketId?: string, ticketQuantity: number }) {
+function PaymentSectionWeb({ phoneNumber, setPhoneNumber, isFreeEvent, ticketId, ticketQuantity, eventId }: { phoneNumber: string, setPhoneNumber: (value: string) => void, isFreeEvent: boolean, ticketId?: string, ticketQuantity: number, eventId: string }) {
     return (
         <>
             {isFreeEvent ? (
@@ -49,6 +49,7 @@ function PaymentSectionWeb({ phoneNumber, setPhoneNumber, isFreeEvent, ticketId,
                     <FreeTicketConfirmationButton
                         ticketId={ticketId}
                         ticketQuantity={ticketQuantity}
+                        eventId={eventId}
                     />
                 </div>
             ) : (
@@ -116,6 +117,7 @@ function PaymentSectionWeb({ phoneNumber, setPhoneNumber, isFreeEvent, ticketId,
                             phoneNumber={phoneNumber}
                             ticketId={ticketId}
                             ticketQuantity={ticketQuantity}
+                            eventId={eventId}
                         />
                     </div>
                 </div>
