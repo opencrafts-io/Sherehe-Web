@@ -2,7 +2,6 @@ import {
     faArrowLeft,
     faCalendarDays,
     faClock,
-    faDownload,
     faLocationDot,
     faTicket,
     faUsers,
@@ -12,6 +11,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import useAttendeeTicketStore from "../../stores/attendeeTicketStore";
 import { formatEventDateTime, isEventMultiday } from "../../utils/EventsUtils/eventUtils";
 import { QRCodeSVG } from "qrcode.react";
+import DownloadTicketButton from "./components/downloadTicketButton";
 
 function TicketPage() {
     const { id } = useParams();
@@ -46,11 +46,6 @@ function TicketPage() {
     const isMultidayEvent = isEventMultiday(attendeeTicket.event.startDate, attendeeTicket.event.endDate);
 
     const totalPrice = attendeeTicket.ticket.ticketPrice * attendeeTicket.ticketQuantity;
-
-    const handleDownload = () => {
-        // TODO: Generate/download ticket PDF
-        console.log("Downloading ticket...");
-    };
 
     const qrcodeData = `academia@opencrafts:${attendeeTicket.id}`;
 
@@ -375,17 +370,9 @@ function TicketPage() {
                                 </p>
                             </div>
 
-                            <button
-                                type="button"
-                                onClick={handleDownload}
-                                className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-primary/30 sm:w-auto"
-                            >
-                                <FontAwesomeIcon
-                                    icon={faDownload}
-                                    className="text-xs"
-                                />
-                                Download Ticket
-                            </button>
+                            <DownloadTicketButton
+                                attendeeTicket={attendeeTicket}
+                            />
                         </div>
                     </div>
                 </div>
