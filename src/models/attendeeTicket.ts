@@ -5,7 +5,7 @@ export interface AttendeeTicket {
     userId: string;
     eventId: string;
     ticketId: string;
-    ticketQuantity: string;
+    ticketQuantity: number;
     event: EventModel;
     ticket: ShereheTicket;
 }
@@ -15,7 +15,7 @@ export interface AttendeeTicketDto {
     user_id: string;
     event_id: string;
     ticket_id: string;
-    ticket_quantity: string;
+    ticket_quantity: number;
     event: EventDto;
     ticket: ShereheTicketDto;
 }
