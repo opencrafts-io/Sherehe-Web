@@ -2,12 +2,14 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import { router } from "./routes/appRouter";
-import { RouterProvider } from 'react-router-dom'
+import { RouterProvider } from 'react-router-dom';
+import { Buffer } from "buffer";
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
+globalThis.Buffer = Buffer;
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

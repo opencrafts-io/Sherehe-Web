@@ -218,6 +218,7 @@ const styles = StyleSheet.create({
     poweredByLabel: {
         color: MUTED,
         fontSize: 8,
+        fontWeight: "bold",
     },
 
     companyLogo: {

@@ -1,9 +1,5 @@
 import { useState } from "react";
-
-import {
-    PDFDownloadLink,
-} from "@react-pdf/renderer";
-
+import { pdf } from "@react-pdf/renderer";
 import QRCode from "qrcode";
 import TicketPdfDocument from "./ticketPdf";
 import type { AttendeeTicket } from "../../../models/attendeeTicket";
@@ -15,20 +11,15 @@ interface DownloadTicketButtonProps {
 function DownloadTicketButton({
     attendeeTicket,
 }: DownloadTicketButtonProps) {
-    const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string | null>(
-        null
-    );
-
     const [generating, setGenerating] = useState(false);
 
     const handlePrepareDownload = async () => {
+        if (generating) return;
+
         try {
-            console.log("Preparing ticket PDF...");
             setGenerating(true);
-            console.log(`Generating QR code for ticket ID: ${attendeeTicket.id}`);
 
-
-            const dataUrl = await QRCode.toDataURL(
+            const qrCodeDataUrl = await QRCode.toDataURL(
                 `academia@opencrafts:${attendeeTicket.id}`,
                 {
                     errorCorrectionLevel: "H",
@@ -37,32 +28,36 @@ function DownloadTicketButton({
                 }
             );
 
-            setQrCodeDataUrl(dataUrl);
+            // Generate the PDF document and convert it to a Blob.
+            const pdfBlob = await pdf(
+                <TicketPdfDocument
+                    attendeeTicket={attendeeTicket}
+                    qrCodeDataUrl={qrCodeDataUrl}
+                />
+            ).toBlob();
+
+            // Create a temporary URL for the generated PDF.
+            const pdfUrl = URL.createObjectURL(pdfBlob);
+
+            // Create a temporary anchor to trigger the download.
+            const link = document.createElement("a");
+
+            link.href = pdfUrl;
+            link.download = `${attendeeTicket.ticket.ticketName}-${attendeeTicket.id}.pdf`;
+
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            // Release the temporary URL after the download starts.
+            setTimeout(() => URL.revokeObjectURL(pdfUrl), 1000);
+
         } catch (error) {
-            console.error("Failed to prepare ticket PDF:", error);
+            console.error("Failed to generate or download ticket PDF:", error);
         } finally {
             setGenerating(false);
         }
     };
-
-    if (qrCodeDataUrl) {
-        return (
-            <PDFDownloadLink
-                document={
-                    <TicketPdfDocument
-                        attendeeTicket={attendeeTicket}
-                        qrCodeDataUrl={qrCodeDataUrl}
-                    />
-                }
-                fileName={`${attendeeTicket.ticket.ticketName}-${attendeeTicket.id}.pdf`}
-                className="flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white"
-            >
-                {({ loading }) =>
-                    loading ? "Generating PDF..." : "Download Ticket"
-                }
-            </PDFDownloadLink>
-        );
-    }
 
     return (
         <button
@@ -71,7 +66,7 @@ function DownloadTicketButton({
             disabled={generating}
             className="flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white disabled:opacity-50"
         >
-            {generating ? "Preparing ticket..." : "Download Ticket"}
+            {generating ? "Generating PDF..." : "Download Ticket"}
         </button>
     );
 }
