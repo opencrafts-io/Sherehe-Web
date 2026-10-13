@@ -8,24 +8,43 @@ import {
     faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import useAttendeeTicketStore from "../../stores/attendeeTicketStore";
+import { formatEventDateTime, isEventMultiday } from "../../utils/EventsUtils/eventUtils";
 
 function TicketPage() {
+    const { id } = useParams();
     const navigate = useNavigate();
 
-    // Hardcoded for now
-    const ticket = {
-        eventName: "Daystar Homecoming",
-        ticketName: "VIP Ticket",
-        date: "Saturday, 18 October 2026",
-        time: "4:00 PM - 11:00 PM",
-        location: "Daystar University, Athi River",
-        quantity: 2,
-        ticketPrice: 1500,
-        qrValue: "SHEREHE-TICKET-001",
-    };
+    const paginatedAttendeeTickets = useAttendeeTicketStore(
+        (state) => state.paginatedAttendeeTickets
+    );
 
-    const totalPrice = ticket.ticketPrice * ticket.quantity;
+    const searchAttendeeTicket = useAttendeeTicketStore(
+        (state) => state.searchAttendedEvents
+    );
+
+    const attendeeTicket = paginatedAttendeeTickets?.data.find(
+        (attendeeTicket) => attendeeTicket.id === id
+    ) ??
+        searchAttendeeTicket.find((attendeeTicket) => attendeeTicket.id === id);
+
+
+    if (!attendeeTicket) {
+        return (
+            <div className="flex min-h-screen items-center justify-center px-4">
+                <p className="text-gray-600">
+                    Ticket not found
+                </p>
+            </div>
+        );
+    }
+
+    const { startDate, startTime, endDate, endTime } = formatEventDateTime(attendeeTicket.event.startDate, attendeeTicket.event.endDate);
+
+    const isMultidayEvent = isEventMultiday(attendeeTicket.event.startDate, attendeeTicket.event.endDate);
+
+    const totalPrice = attendeeTicket.ticket.ticketPrice * attendeeTicket.ticketQuantity;
 
     const handleDownload = () => {
         // TODO: Generate/download ticket PDF
@@ -56,7 +75,7 @@ function TicketPage() {
                     </p>
 
                     <h1 className="mt-1 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-                        {ticket.eventName}
+                        {attendeeTicket.event.eventName}
                     </h1>
 
                     <p className="mt-2 text-sm text-gray-500">
@@ -81,7 +100,7 @@ function TicketPage() {
                                     </p>
 
                                     <h2 className="mt-2 text-2xl font-bold sm:text-3xl">
-                                        {ticket.eventName}
+                                        {attendeeTicket.event.eventName}
                                     </h2>
                                 </div>
 
@@ -95,7 +114,7 @@ function TicketPage() {
 
                             <div className="mt-5 inline-flex rounded-full bg-white/10 px-3 py-1.5">
                                 <span className="text-xs font-semibold">
-                                    {ticket.ticketName}
+                                    {attendeeTicket.ticket.ticketName}
                                 </span>
                             </div>
                         </div>
@@ -113,48 +132,89 @@ function TicketPage() {
                                 </p>
 
                                 <h3 className="mt-1 text-lg font-bold text-gray-900">
-                                    {ticket.eventName}
+                                    {attendeeTicket.event.eventName}
                                 </h3>
                             </div>
 
                             {/* Details grid */}
                             <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2">
+                                {isMultidayEvent && (
+                                    <>
+                                        <div className="flex gap-3">
+                                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                                                <FontAwesomeIcon
+                                                    icon={faCalendarDays}
+                                                />
+                                            </div>
 
-                                {/* Date */}
-                                <div className="flex gap-3">
-                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                                        <FontAwesomeIcon
-                                            icon={faCalendarDays}
-                                        />
-                                    </div>
+                                            <div>
+                                                <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
+                                                    Start Date & Time
+                                                </p>
 
-                                    <div>
-                                        <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
-                                            Date
-                                        </p>
+                                                <p className="mt-1 text-sm font-semibold text-gray-800">
+                                                    {startDate} - {startTime}
+                                                </p>
+                                            </div>
+                                        </div>
 
-                                        <p className="mt-1 text-sm font-semibold text-gray-800">
-                                            {ticket.date}
-                                        </p>
-                                    </div>
-                                </div>
+                                        <div className="flex gap-3">
+                                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                                                <FontAwesomeIcon icon={faClock} />
+                                            </div>
 
-                                {/* Time */}
-                                <div className="flex gap-3">
-                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                                        <FontAwesomeIcon icon={faClock} />
-                                    </div>
+                                            <div>
+                                                <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
+                                                    End Date & Time
+                                                </p>
 
-                                    <div>
-                                        <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
-                                            Time
-                                        </p>
+                                                <p className="mt-1 text-sm font-semibold text-gray-800">
+                                                    {endDate} - {endTime}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
 
-                                        <p className="mt-1 text-sm font-semibold text-gray-800">
-                                            {ticket.time}
-                                        </p>
-                                    </div>
-                                </div>
+                                {!isMultidayEvent && (
+                                    <>
+                                        {/* Date */}
+                                        <div className="flex gap-3">
+                                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                                                <FontAwesomeIcon
+                                                    icon={faCalendarDays}
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
+                                                    Date
+                                                </p>
+
+                                                <p className="mt-1 text-sm font-semibold text-gray-800">
+                                                    {startDate}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {/* Time */}
+                                        <div className="flex gap-3">
+                                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                                                <FontAwesomeIcon icon={faClock} />
+                                            </div>
+
+                                            <div>
+                                                <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
+                                                    Time
+                                                </p>
+
+                                                <p className="mt-1 text-sm font-semibold text-gray-800">
+                                                    {startTime} - {endTime}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
 
                                 {/* Location */}
                                 <div className="flex gap-3 sm:col-span-2">
@@ -170,7 +230,7 @@ function TicketPage() {
                                         </p>
 
                                         <p className="mt-1 text-sm font-semibold text-gray-800">
-                                            {ticket.location}
+                                            {attendeeTicket.event.eventLocation}
                                         </p>
                                     </div>
                                 </div>
@@ -187,8 +247,8 @@ function TicketPage() {
                                         </p>
 
                                         <p className="mt-1 text-sm font-semibold text-gray-800">
-                                            {ticket.quantity}{" "}
-                                            {ticket.quantity === 1
+                                            {attendeeTicket.ticketQuantity}{" "}
+                                            {attendeeTicket.ticketQuantity === 1
                                                 ? "ticket"
                                                 : "tickets"}
                                         </p>
@@ -207,7 +267,7 @@ function TicketPage() {
                                         </p>
 
                                         <p className="mt-1 text-sm font-semibold text-gray-800">
-                                            {ticket.ticketName}
+                                            {attendeeTicket.ticket.ticketName}
                                         </p>
                                     </div>
                                 </div>
@@ -226,11 +286,11 @@ function TicketPage() {
 
                                     <div className="flex items-center justify-between text-sm">
                                         <span className="text-gray-500">
-                                            {ticket.ticketName}
+                                            {attendeeTicket.ticket.ticketName}
                                         </span>
 
                                         <span className="font-medium text-gray-800">
-                                            Ksh {ticket.ticketPrice.toLocaleString()}
+                                            Ksh {attendeeTicket.ticket.ticketPrice.toLocaleString()}
                                         </span>
                                     </div>
 
@@ -240,7 +300,7 @@ function TicketPage() {
                                         </span>
 
                                         <span className="font-medium text-gray-800">
-                                            × {ticket.quantity}
+                                            × {attendeeTicket.ticketQuantity}
                                         </span>
                                     </div>
 
@@ -291,14 +351,14 @@ function TicketPage() {
                                             </p>
 
                                             <p className="mt-1 px-4 text-[10px] text-gray-400">
-                                                {ticket.qrValue}
+                                                1234
                                             </p>
                                         </div>
                                     </div>
                                 </div>
 
-                                <p className="mt-4 text-[11px] text-gray-400">
-                                    Ticket ID: {ticket.qrValue}
+                                <p className="mt-4 text-xs text-gray-400">
+                                    Ticket ID: {attendeeTicket.id}
                                 </p>
                             </div>
                         </div>
