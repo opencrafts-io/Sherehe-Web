@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate, useParams } from "react-router-dom";
 import useAttendeeTicketStore from "../../stores/attendeeTicketStore";
 import { formatEventDateTime, isEventMultiday } from "../../utils/EventsUtils/eventUtils";
+import { QRCodeSVG } from "qrcode.react";
 
 function TicketPage() {
     const { id } = useParams();
@@ -50,6 +51,8 @@ function TicketPage() {
         // TODO: Generate/download ticket PDF
         console.log("Downloading ticket...");
     };
+
+    const qrcodeData = `academia@opencrafts:${attendeeTicket.id}`;
 
     return (
         <div className="min-h-dvh bg-gray-50">
@@ -337,24 +340,18 @@ function TicketPage() {
                                     for verification.
                                 </p>
 
-                                {/* QR placeholder */}
+                                {/* QR Code */}
                                 <div className="mx-auto mt-6 flex aspect-square w-full max-w-57.5 items-center justify-center rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
-                                    <div className="flex h-full w-full items-center justify-center rounded-lg border-2 border-dashed border-primary/20 bg-primary/5">
-                                        <div className="text-center">
-                                            <FontAwesomeIcon
-                                                icon={faTicket}
-                                                className="text-4xl text-primary/30"
-                                            />
-
-                                            <p className="mt-3 text-xs font-semibold text-primary">
-                                                QR CODE
-                                            </p>
-
-                                            <p className="mt-1 px-4 text-[10px] text-gray-400">
-                                                1234
-                                            </p>
-                                        </div>
-                                    </div>
+                                    <QRCodeSVG
+                                        value={qrcodeData}
+                                        size={200}
+                                        level="H"
+                                        marginSize={2}
+                                        bgColor="#FFFFFF"
+                                        fgColor="#000000"
+                                        title="Attendee Ticket QR Code"
+                                        className="h-full w-full"
+                                    />
                                 </div>
 
                                 <p className="mt-4 text-xs text-gray-400">
