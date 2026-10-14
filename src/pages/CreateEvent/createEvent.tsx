@@ -1,16 +1,19 @@
 import { useState } from "react";
 import BookingStepper, { type Steps } from "../../components/ui/bookingStepper";
 import { type SxProps, type Theme } from "@mui/material";
-import AboutEvent from "./steps/aboutEvent";
+import AboutEvent, { type AboutEventProps } from "./steps/aboutEvent";
 import EventDescription from "./steps/eventDescription";
 import ImageUpload from "./steps/imageUpload";
+import type { Institution } from "../../models/institution";
+import dayjs from "dayjs";
 
-//will replace with a union
 export interface EventVisibility {
     id: string;
-    value: string;
+    value: EventVisibilityType;
     label: string;
 }
+
+export type EventVisibilityType = 'public' | 'institution' | 'private';
 
 export type EventTicketType = 'free' | 'paid';
 
@@ -47,11 +50,21 @@ function CreateEvent() {
             title: 'Payment',
         },
     ];
-
+    const [hasAttemptedToContinue, setHasAttemptedToContinue] = useState(false);
     const nextPage = () => {
-        if (currentPage < steps.length) {
-            setCurrentPage(currentPage + 1);
+        if (currentPage > steps.length) return;
+
+        console.log(`Current Page is ${currentPage}`);
+
+        if (currentPage === 1) {
+            const isValid = validateAboutEvent();
+            console.log(`is valid: ${isValid}`);
+
+            if (!isValid) return;
         }
+
+        setCurrentPage(currentPage + 1);
+
     };
     const previousPage = () => {
         if (currentPage >= 1) {
@@ -72,7 +85,7 @@ function CreateEvent() {
         },
 
     };
-    //Event Details Stepper
+    //About Event Details Stepper
     const eventVisibilityOptions: EventVisibility[] = [
         {
             id: "1",
@@ -90,6 +103,63 @@ function CreateEvent() {
             label: "Private - Exclusive"
         },
     ];
+    const [eventName, setEventName] = useState("");
+    const [eventStartDateTime, setEventStartDateTime] = useState("");
+    const [eventEndDateTime, setEventEndDateTime] = useState("");
+    const [eventLocation, setEventLocation] = useState("");
+    const [eventVisibility, setEventVisibility] = useState<EventVisibilityType>("public");
+    const [selectedInstitutions, setSelectedInstitutions] = useState<Institution[]>([]);
+
+    const aboutEventProps: AboutEventProps = {
+        sxVariable,
+        eventVisibilityOptions,
+        eventName,
+        eventStartDateTime,
+        eventEndDateTime,
+        eventLocation,
+        eventVisibility,
+        selectedInstitutions,
+        hasAttemptedToContinue,
+        setEventName,
+        setEventStartDateTime,
+        setEventEndDateTime,
+        setEventLocation,
+        setEventVisibility,
+        setSelectedInstitutions,
+    };
+
+    const validateAboutEvent = () => {
+        setHasAttemptedToContinue(true);
+
+        const isEventNameValid = eventName.trim().length > 0;
+        const isLocationValid = eventLocation.trim().length > 0;
+
+        const startDate = dayjs(eventStartDateTime);
+        const endDate = dayjs(eventEndDateTime);
+
+        const isStartDateValid =
+            eventStartDateTime !== "" && startDate.isValid();
+
+        const isEndDateValid =
+            eventEndDateTime !== "" && endDate.isValid();
+
+        const isDateRangeValid =
+            isStartDateValid &&
+            isEndDateValid &&
+            endDate.isAfter(startDate);
+
+        const areInstitutionsValid =
+            eventVisibility !== "institution" ||
+            selectedInstitutions.length > 0;
+
+        return (
+            isEventNameValid &&
+            isLocationValid &&
+            isDateRangeValid &&
+            areInstitutionsValid
+        );
+    };
+
     //Event Genre Stepper
     const eventGenres: string[] = [
         'Meetup',
@@ -166,15 +236,12 @@ function CreateEvent() {
         <>
             <div className="flex flex-col my-6 mx-10 gap-3 border border-gray-200 rounded-lg">
                 <div className="flex flex-col p-6 gap-3 border border-gray-200 bg-gray-100 ">
-                    <h1 className="font-bold text-3xl">Create Event</h1>
+                    <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">Create Event</h1>
                     <BookingStepper currentStep={currentPage} steps={steps} />
                 </div>
                 <div className="flex flex-col p-6">
                     {currentPage === 1 && (
-                        <AboutEvent
-                            sxVariable={sxVariable}
-                            eventVisibilityOptions={eventVisibilityOptions}
-                        />
+                        <AboutEvent {...aboutEventProps} />
                     )}
                     {currentPage === 2 && (
                         <EventDescription
