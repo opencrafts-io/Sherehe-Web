@@ -54,11 +54,8 @@ function CreateEvent() {
     const nextPage = () => {
         if (currentPage > steps.length) return;
 
-        console.log(`Current Page is ${currentPage}`);
-
         if (currentPage === 1) {
             const isValid = validateAboutEvent();
-            console.log(`is valid: ${isValid}`);
 
             if (!isValid) return;
         }
