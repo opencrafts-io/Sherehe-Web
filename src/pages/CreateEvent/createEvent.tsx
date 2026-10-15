@@ -6,6 +6,8 @@ import EventDescription, { type EventDescriptionProps } from "./steps/eventDescr
 import ImageUpload, { type ImageUploadProps } from "./steps/imageUpload";
 import type { Institution } from "../../models/institution";
 import dayjs from "dayjs";
+import type { TicketTypesProps } from "./steps/ticketTypes";
+import TicketTypes from "./steps/ticketTypes";
 
 export interface EventVisibility {
     id: string;
@@ -60,6 +62,10 @@ function CreateEvent() {
 
         if (currentPage === 2) {
             if (!validateEventDescription()) return;
+        }
+
+        if (currentPage === 4) {
+            if (eventTicketType === "free" && !validateFreeTicket()) return;
         }
 
         setHasAttemptedToContinue(false);
@@ -258,19 +264,30 @@ function CreateEvent() {
         setPosterImage,
     };
 
-    //Ticket Types Stepper
-    //Will Continue
+    //Ticket Types Section
+    const [eventTicketType, setEventTicketType] = useState<EventTicketType | null>(null);
+    const [ticketQuantity, setTicketQuantity] = useState<string>("");
 
-    // const [eventTicketType, setEventTicketType] = useState<EventTicketType | null>(null);
-    // const [ticketAdded, setTicketAdded] = useState<TicketInfo[]>([]);
+    const ticketTypesProps: TicketTypesProps = {
+        eventTicketType,
+        setEventTicketType,
+        ticketQuantity,
+        setTicketQuantity,
+        hasAttemptedToContinue,
+    };
 
-    // const chooseEventTicketType = () => {
-    //     setEventTicketType(eventTicketType);
-    // };
+    const validateFreeTicket = () => {
+        setHasAttemptedToContinue(true);
 
-    // const AddTicket = (ticket: TicketInfo) => {
-    //     setTicketAdded(ticketAdded);
-    // };
+        const isQuantityValid =
+            /^\d+$/.test(ticketQuantity) &&
+            Number(ticketQuantity) > 0 &&
+            Number.isSafeInteger(Number(ticketQuantity));
+
+        const eventTypeValid = eventTicketType !== null;
+
+        return isQuantityValid && eventTypeValid;
+    };
 
 
     return (
@@ -290,9 +307,9 @@ function CreateEvent() {
                     {currentPage === 3 && (
                         <ImageUpload {...imageUploadProps} />
                     )}
-                    {/* {currentPage === 4 && (
-                        <TicketTypes />
-                    )} */}
+                    {currentPage === 4 && (
+                        <TicketTypes {...ticketTypesProps} />
+                    )}
                 </div>
                 <div className="flex justify-between p-6 border border-gray-200 bg-gray-100">
                     <button
@@ -307,7 +324,7 @@ function CreateEvent() {
                         onClick={nextPage}
                         className="ml-auto rounded-md bg-primary px-4 py-3 font-medium text-white transition hover:bg-purple-700"
                     >
-                        Continue
+                        {currentPage === 4 && eventTicketType === "free" ? "Create Event" : "Continue"}
                     </button>
                 </div>
 

@@ -12,17 +12,19 @@ import useAttendeeTicketStore from "../../stores/attendeeTicketStore";
 import { formatEventDateTime, isEventMultiday } from "../../utils/EventsUtils/eventUtils";
 import { QRCodeSVG } from "qrcode.react";
 import DownloadTicketButton from "./components/downloadTicketButton";
+import { useShallow } from "zustand/react/shallow";
 
 function TicketPage() {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const paginatedAttendeeTickets = useAttendeeTicketStore(
-        (state) => state.paginatedAttendeeTickets
-    );
-
-    const searchAttendeeTicket = useAttendeeTicketStore(
-        (state) => state.searchAttendedEvents
+    const { paginatedAttendeeTickets, searchAttendeeTicket } = useAttendeeTicketStore(
+        useShallow(
+            (state) => ({
+                paginatedAttendeeTickets: state.paginatedAttendeeTickets,
+                searchAttendeeTicket: state.searchAttendedEvents,
+            })
+        )
     );
 
     const attendeeTicket = paginatedAttendeeTickets?.data.find(
