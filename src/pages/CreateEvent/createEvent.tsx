@@ -3,7 +3,7 @@ import BookingStepper, { type Steps } from "../../components/ui/bookingStepper";
 import { type SxProps, type Theme } from "@mui/material";
 import AboutEvent, { type AboutEventProps } from "./steps/aboutEvent";
 import EventDescription, { type EventDescriptionProps } from "./steps/eventDescription";
-import ImageUpload from "./steps/imageUpload";
+import ImageUpload, { type ImageUploadProps } from "./steps/imageUpload";
 import type { Institution } from "../../models/institution";
 import dayjs from "dayjs";
 
@@ -244,6 +244,20 @@ function CreateEvent() {
         setEventDescription,
     };
 
+    // Image Upload Section
+    const [cardImage, setCardImage] = useState<File | null>(null);
+    const [bannerImage, setBannerImage] = useState<File | null>(null);
+    const [posterImage, setPosterImage] = useState<File | null>(null);
+
+    const imageUploadProps: ImageUploadProps = {
+        cardImage,
+        bannerImage,
+        posterImage,
+        setCardImage,
+        setBannerImage,
+        setPosterImage,
+    };
+
     //Ticket Types Stepper
     //Will Continue
 
@@ -274,7 +288,7 @@ function CreateEvent() {
                         <EventDescription {...eventDescriptionProps} />
                     )}
                     {currentPage === 3 && (
-                        <ImageUpload />
+                        <ImageUpload {...imageUploadProps} />
                     )}
                     {/* {currentPage === 4 && (
                         <TicketTypes />
