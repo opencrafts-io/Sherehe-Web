@@ -2,7 +2,7 @@ import { useState } from "react";
 import BookingStepper, { type Steps } from "../../components/ui/bookingStepper";
 import { type SxProps, type Theme } from "@mui/material";
 import AboutEvent, { type AboutEventProps } from "./steps/aboutEvent";
-import EventDescription from "./steps/eventDescription";
+import EventDescription, { type EventDescriptionProps } from "./steps/eventDescription";
 import ImageUpload from "./steps/imageUpload";
 import type { Institution } from "../../models/institution";
 import dayjs from "dayjs";
@@ -55,11 +55,14 @@ function CreateEvent() {
         if (currentPage > steps.length) return;
 
         if (currentPage === 1) {
-            const isValid = validateAboutEvent();
-
-            if (!isValid) return;
+            if (!validateAboutEvent()) return;
         }
 
+        if (currentPage === 2) {
+            if (!validateEventDescription()) return;
+        }
+
+        setHasAttemptedToContinue(false);
         setCurrentPage(currentPage + 1);
 
     };
@@ -157,7 +160,8 @@ function CreateEvent() {
         );
     };
 
-    //Event Genre Stepper
+    //Event Genre and description Stepper
+    const [eventDescription, setEventDescription] = useState("");
     const eventGenres: string[] = [
         'Meetup',
         'Party',
@@ -214,6 +218,32 @@ function CreateEvent() {
         setDialogOpen(false);
     };
 
+    const validateEventDescription = () => {
+        setHasAttemptedToContinue(true);
+
+        const isEventDescriptionValid = eventDescription.trim().length > 0;
+        const areGenresValid = selectedGenres.length > 0;
+
+        return isEventDescriptionValid && areGenresValid;
+    };
+
+    const eventDescriptionProps: EventDescriptionProps = {
+        chooseGenres,
+        selectedGenres,
+        eventGenres,
+        removeGenre,
+        dialogOpen,
+        closeDialogue,
+        clearGenres,
+        applyGenres,
+        openDialogue,
+        tempGenres,
+        sxVariable,
+        hasAttemptedToContinue,
+        eventDescription,
+        setEventDescription,
+    };
+
     //Ticket Types Stepper
     //Will Continue
 
@@ -241,19 +271,7 @@ function CreateEvent() {
                         <AboutEvent {...aboutEventProps} />
                     )}
                     {currentPage === 2 && (
-                        <EventDescription
-                            selectedGenre={selectedGenres}
-                            chooseGenres={chooseGenres}
-                            eventGenres={eventGenres}
-                            removeGenre={removeGenre}
-                            dialogOpen={dialogOpen}
-                            closeDialogue={closeDialogue}
-                            clearGenres={clearGenres}
-                            applyGenres={applyGenres}
-                            openDialogue={openDialogue}
-                            tempGenres={tempGenres}
-                            sxVariable={sxVariable}
-                        />
+                        <EventDescription {...eventDescriptionProps} />
                     )}
                     {currentPage === 3 && (
                         <ImageUpload />
