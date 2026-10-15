@@ -50,6 +50,7 @@ function ImageUpload({
                             onImageChange={setCardImage}
                             inputId="cardImage"
                             aspectRatio="aspect-square"
+                            expectedRatio={1}
                             label="Card"
                         />
                     </div>
@@ -75,6 +76,7 @@ function ImageUpload({
                             onImageChange={setBannerImage}
                             inputId="bannerImage"
                             aspectRatio="aspect-video"
+                            expectedRatio={16 / 9}
                             label="Banner"
                         />
                     </div>
@@ -101,6 +103,7 @@ function ImageUpload({
                             onImageChange={setPosterImage}
                             inputId="posterImage"
                             aspectRatio="aspect-[2/3]"
+                            expectedRatio={2 / 3}
                             label="Poster"
                         />
                     </div>
