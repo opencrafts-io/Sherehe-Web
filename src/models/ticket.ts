@@ -32,3 +32,12 @@ export function mapEventsDtoToTickets(dto: TicketDto): TicketModel {
         endDate: dto.end_date,
     };
 }
+
+export interface TicketCreationModel {
+    ticketName: string;
+    ticketPrice: number;
+    ticketFor: number;
+    ticketQuantity: number;
+    startDate: string;
+    endDate: string;
+}

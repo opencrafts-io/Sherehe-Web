@@ -3,6 +3,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { EventTicketType } from "../createEvent";
 import type { FreeTicketCreationProps } from "../components/freeTicketCreation";
 import FreeTicketCreation from "../components/freeTicketCreation";
+import PaidTicketCreation from "../components/paidTicketCreation";
+import type { TicketCreationModel } from "../../../models/ticket";
 
 export interface TicketTypesProps {
     eventTicketType: EventTicketType | null;
@@ -10,6 +12,9 @@ export interface TicketTypesProps {
     ticketQuantity: string;
     setTicketQuantity: (quantity: string) => void;
     hasAttemptedToContinue: boolean;
+    paidTicketsAdded: TicketCreationModel[];
+    setPaidTicketsAdded: (tickets: TicketCreationModel[]) => void;
+    handleTicketAdded: (ticket: TicketCreationModel) => void;
 }
 
 function TicketTypes({
@@ -113,13 +118,7 @@ function TicketTypes({
 
                 {/* Placeholder */}
                 {eventTicketType === "paid" && (
-                    <div className="mt-8 rounded-lg border border-purple-200 bg-purple-50 p-4">
-                        <p className="text-sm text-gray-700">
-                            Paid ticket configuration will be available here.
-                            You'll be able to define ticket names, prices,
-                            quantities, and other details.
-                        </p>
-                    </div>
+                    <PaidTicketCreation />
                 )}
 
             </div>

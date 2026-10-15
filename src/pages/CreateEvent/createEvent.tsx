@@ -8,6 +8,7 @@ import type { Institution } from "../../models/institution";
 import dayjs from "dayjs";
 import type { TicketTypesProps } from "./steps/ticketTypes";
 import TicketTypes from "./steps/ticketTypes";
+import type { TicketCreationModel } from "../../models/ticket";
 
 export interface EventVisibility {
     id: string;
@@ -267,6 +268,10 @@ function CreateEvent() {
     //Ticket Types Section
     const [eventTicketType, setEventTicketType] = useState<EventTicketType | null>(null);
     const [ticketQuantity, setTicketQuantity] = useState<string>("");
+    const [paidTicketsAdded, setPaidTicketsAdded] = useState<TicketCreationModel[]>([]);
+    const handleTicketAdded = (ticket: TicketCreationModel) => {
+        setPaidTicketsAdded((prevTickets) => [...prevTickets, ticket]);
+    };
 
     const ticketTypesProps: TicketTypesProps = {
         eventTicketType,
@@ -274,6 +279,9 @@ function CreateEvent() {
         ticketQuantity,
         setTicketQuantity,
         hasAttemptedToContinue,
+        paidTicketsAdded,
+        setPaidTicketsAdded,
+        handleTicketAdded,
     };
 
     const validateFreeTicket = () => {
@@ -288,6 +296,7 @@ function CreateEvent() {
 
         return isQuantityValid && eventTypeValid;
     };
+
 
 
     return (
