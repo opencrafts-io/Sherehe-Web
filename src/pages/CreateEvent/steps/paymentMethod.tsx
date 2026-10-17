@@ -4,8 +4,8 @@ import {
     type SxProps,
     type Theme,
 } from "@mui/material";
-import type { PaymentType } from "../createEvent";
 import CreateEventAs from "../components/createEventAs";
+import type { PaymentType } from "../../../models/event";
 
 export interface PaymentMethodProps {
     sxVariable: SxProps<Theme>;
@@ -17,7 +17,7 @@ export interface PaymentMethodProps {
     paybillNumber: string;
     accountReference: string;
     tillNumber: string;
-    phoneNumber: string;
+    sendMoneyNumber: string;
     pochiNumber: string;
     hasAttemptedToContinue: boolean;
 
@@ -25,7 +25,7 @@ export interface PaymentMethodProps {
     setPaybillNumber: (value: string) => void;
     setAccountReference: (value: string) => void;
     setTillNumber: (value: string) => void;
-    setPhoneNumber: (value: string) => void;
+    setSendMoneyNumber: (value: string) => void;
     setPochiNumber: (value: string) => void;
 }
 
@@ -35,7 +35,7 @@ function PaymentMethod({
     paybillNumber,
     accountReference,
     tillNumber,
-    phoneNumber,
+    sendMoneyNumber,
     pochiNumber,
     hasAttemptedToContinue,
     paymentOptions,
@@ -43,7 +43,7 @@ function PaymentMethod({
     setPaybillNumber,
     setAccountReference,
     setTillNumber,
-    setPhoneNumber,
+    setSendMoneyNumber,
     setPochiNumber,
 }: PaymentMethodProps) {
     const isPaybillInvalid =
@@ -64,7 +64,7 @@ function PaymentMethod({
     const isPhoneNumberInvalid =
         hasAttemptedToContinue &&
         paymentType === "sendMoney" &&
-        !phoneNumber.trim();
+        !sendMoneyNumber.trim();
 
     const isPochiNumberInvalid =
         hasAttemptedToContinue &&
@@ -243,9 +243,9 @@ function PaymentMethod({
                         fullWidth
                         required
                         sx={sxVariable}
-                        value={phoneNumber}
+                        value={sendMoneyNumber}
                         onChange={(event) =>
-                            setPhoneNumber(event.target.value)
+                            setSendMoneyNumber(event.target.value)
                         }
                         placeholder="e.g. 0712345678"
                         error={isPhoneNumberInvalid}

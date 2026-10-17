@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { EventModel } from "../models/event";
+import type { CreateEventPayload, EventModel, PaymentType } from "../models/event";
 import type { PaginatedResponseModel } from "../models/paginatedResponseModel";
 import eventService from "../services/eventService";
 import { getErrorMessage } from "../utils/getErrorMessage";
@@ -10,6 +10,7 @@ interface EventState {
     paginatedEvents: PaginatedResponseModel<EventModel> | null;
 
     getEvents: (page: number, limit?: number) => void;
+    createEvent: (payload: CreateEventPayload, selectedPaymentType: PaymentType | null) => Promise<boolean>;
 }
 
 const useEventsStore = create<EventState>()((set) => ({
@@ -40,7 +41,61 @@ const useEventsStore = create<EventState>()((set) => ({
             });
         }
     },
+    createEvent: async (payload: CreateEventPayload, selectedPaymentType: PaymentType | null) => {
+        try {
+            set({
+                isLoading: true,
+                error: null,
+            });
 
+            const createEventPayload: CreateEventPayload = {
+                ...payload,
+                paybillNumber: undefined,
+                accountReference: undefined,
+                tillNumber: undefined,
+                sendMoneyPhoneNumber: undefined,
+                pochiNumber: undefined,
+            };
+
+            switch (selectedPaymentType) {
+                case "paybill":
+                    createEventPayload.paybillNumber = payload.paybillNumber;
+                    createEventPayload.accountReference = payload.accountReference;
+                    break;
+
+                case "till":
+                    createEventPayload.tillNumber = payload.tillNumber;
+                    break;
+
+                case "sendMoney":
+                    createEventPayload.sendMoneyPhoneNumber = payload.sendMoneyPhoneNumber;
+                    break;
+
+                case "pochi":
+                    createEventPayload.pochiNumber = payload.pochiNumber;
+                    break;
+                default:
+                    break;
+            }
+
+            await eventService.createEvent(createEventPayload);
+
+            set({
+                isLoading: false,
+                error: null,
+            });
+
+            return true;
+
+        } catch (error) {
+            set({
+                isLoading: false,
+                error: getErrorMessage(error),
+            });
+
+            return false;
+        }
+    }
 }));
 
 export default useEventsStore;

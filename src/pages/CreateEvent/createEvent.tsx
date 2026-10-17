@@ -8,9 +8,15 @@ import type { Institution } from "../../models/institution";
 import dayjs from "dayjs";
 import type { TicketTypesProps } from "./steps/ticketTypes";
 import TicketTypes from "./steps/ticketTypes";
-import type { TicketCreationModel } from "../../models/ticket";
+import type { TicketCreationModel, TicketSubmissionModel } from "../../models/ticket";
 import { validateTicket } from "../../utils/EventsUtils/CreateEventPageValidations";
 import PaymentMethod, { type PaymentMethodProps } from "./steps/paymentMethod";
+import type { CreateEventPayload, PaymentType } from "../../models/event";
+import useUserStore from "../../stores/userStore";
+import useEventsStore from "../../stores/eventsStore";
+import { useShallow } from "zustand/react/shallow";
+import { useNavigate } from "react-router-dom";
+import AppSnackbar from "../../components/ui/appSnackbar";
 
 export interface EventVisibility {
     id: string;
@@ -21,8 +27,6 @@ export interface EventVisibility {
 export type EventVisibilityType = 'public' | 'institution' | 'private';
 
 export type EventTicketType = 'free' | 'paid';
-
-export type PaymentType = 'sendMoney' | 'paybill' | 'pochi' | 'till';
 
 export interface TicketInfo {
     ticketName: string;
@@ -39,8 +43,9 @@ export type TicketType = 'individual' | 'group2' | 'group3' | 'group4' | 'group5
 function CreateEvent() {
     const [currentPage, setCurrentPage] = useState(1);
     const [hasAttemptedToContinue, setHasAttemptedToContinue] = useState(false);
-    const nextPage = () => {
-        if (currentPage > steps.length) return;
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const nextPage = async () => {
+        if (currentPage > steps.length || isLoading) return;
 
         setHasAttemptedToContinue(true);
 
@@ -54,18 +59,26 @@ function CreateEvent() {
 
         if (currentPage === 4) {
             if (!eventTicketType) return;
-            if (eventTicketType === "free" && !validateFreeTicket()) return;
-            if (eventTicketType === "paid" && !validatePaidTickets()) return;
+
+            if (eventTicketType === "free") {
+                if (!validateFreeTicket()) return;
+
+                await submitEvent();
+                return;
+            }
+
+            if (!validatePaidTickets()) return;
         }
 
         if (currentPage === 5) {
             if (!validatePaymentDetails()) return;
+
+            await submitEvent();
+            return;
         }
 
         setHasAttemptedToContinue(false);
-
-        setCurrentPage(currentPage + 1);
-
+        setCurrentPage((page) => page + 1);
     };
     const previousPage = () => {
         if (currentPage >= 1) {
@@ -334,7 +347,7 @@ function CreateEvent() {
     const [paybillNumber, setPaybillNumber] = useState<string>("");
     const [accountReference, setAccountReference] = useState<string>("");
     const [tillNumber, setTillNumber] = useState<string>("");
-    const [phoneNumber, setPhoneNumber] = useState<string>("");
+    const [sendMoneyNumber, setSendMoneyNumber] = useState<string>("");
     const [pochiNumber, setPochiNumber] = useState<string>("");
     const paymentOptions: { value: PaymentType; label: string }[] = [
         { value: 'paybill', label: 'Paybill' },
@@ -347,14 +360,14 @@ function CreateEvent() {
         paybillNumber,
         accountReference,
         tillNumber,
-        phoneNumber,
+        sendMoneyNumber,
         pochiNumber,
         hasAttemptedToContinue,
         setPaymentType,
         setPaybillNumber,
         setAccountReference,
         setTillNumber,
-        setPhoneNumber,
+        setSendMoneyNumber,
         setPochiNumber,
         sxVariable,
         paymentOptions
@@ -374,7 +387,7 @@ function CreateEvent() {
                 return Boolean(tillNumber.trim());
 
             case "sendMoney":
-                return Boolean(phoneNumber.trim());
+                return Boolean(sendMoneyNumber.trim());
 
             case "pochi":
                 return Boolean(pochiNumber.trim());
@@ -410,6 +423,88 @@ function CreateEvent() {
             ]
             : []),
     ];
+
+    const userId = useUserStore((state) => state.user?.id);
+    const { isLoading, error, createEvent } = useEventsStore(
+        useShallow((state) => ({
+            isLoading: state.isLoading,
+            error: state.error,
+            createEvent: state.createEvent,
+        }))
+    );
+    const navigate = useNavigate();
+
+    const submitEvent = async () => {
+        if (!userId || !eventTicketType || isLoading) return;
+
+        const tickets: TicketSubmissionModel[] =
+            eventTicketType === "free"
+                ? [
+                    {
+                        ticketName: "Free Ticket",
+                        ticketPrice: 0,
+                        ticketQuantity: Number(ticketQuantity),
+                        ticketFor: 1,
+                        scope: "public",
+                        institutions: [],
+                        startDate: eventStartDateTime,
+                        endDate: eventEndDateTime,
+                    },
+                ]
+                : paidTicketsAdded.map((ticket) => ({
+                    ticketName: ticket.ticketName,
+                    ticketPrice: ticket.ticketPrice,
+                    ticketQuantity: ticket.ticketQuantity,
+                    ticketFor: ticket.ticketFor!,
+                    scope: ticket.scope,
+                    institutions:
+                        ticket.scope === "institution"
+                            ? ticket.institutions?.map(
+                                (institution) => institution.institutionId
+                            ) ?? []
+                            : [],
+                    startDate: ticket.startDate,
+                    endDate: ticket.endDate,
+                }));
+
+        const eventData: CreateEventPayload = {
+            eventName,
+            eventDescription,
+            eventLocation,
+            eventStartDate: eventStartDateTime,
+            eventEndDate: eventEndDateTime,
+            organizerId: userId,
+            eventGenre: selectedGenres,
+            eventCardImage: cardImage,
+            eventPosterImage: posterImage,
+            eventBannerImage: bannerImage,
+            tickets,
+            institutions:
+                eventVisibility === "institution"
+                    ? selectedInstitutions.map(
+                        (institution) => institution.institutionId
+                    )
+                    : [],
+            scope: eventVisibility,
+            paybillNumber,
+            accountReference,
+            tillNumber,
+            sendMoneyPhoneNumber: sendMoneyNumber,
+            pochiNumber,
+        };
+
+        const success = await createEvent(
+            eventData,
+            paymentType
+        );
+
+        if (success) {
+            navigate("/dashboard");
+        } else {
+            setSnackbarOpen(true);
+        }
+
+    };
 
     return (
         <>
@@ -447,12 +542,23 @@ function CreateEvent() {
                         <button
                             type="button"
                             onClick={nextPage}
-                            className="ml-auto rounded-md bg-primary px-4 py-3 font-medium text-white transition hover:bg-purple-700"
+                            disabled={isLoading}
+                            className="ml-auto rounded-md bg-primary px-4 py-3 font-medium text-white transition hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-60"
                         >
-                            {currentPage === 4 && eventTicketType === "free"
-                                ? "Create Event"
-                                : "Continue"}
+                            {isLoading
+                                ? "Creating Event..."
+                                : currentPage === 4 && eventTicketType === "free"
+                                    ? "Create Event"
+                                    : currentPage === 5
+                                        ? "Create Event"
+                                        : "Continue"}
                         </button>
+
+                        <AppSnackbar
+                            open={snackbarOpen && Boolean(error)}
+                            message={error ?? ""}
+                            onClose={() => setSnackbarOpen(false)}
+                        />
                     </div>
                 </div>
             </div>

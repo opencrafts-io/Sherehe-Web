@@ -44,3 +44,14 @@ export interface TicketCreationModel {
     startDate: string;
     endDate: string;
 }
+
+export interface TicketSubmissionModel {
+    ticketName: string;
+    ticketPrice: number;
+    ticketFor: number;
+    ticketQuantity: number;
+    scope: string;
+    institutions: number[] | null;
+    startDate: string;
+    endDate: string;
+}
