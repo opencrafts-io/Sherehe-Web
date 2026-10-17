@@ -295,10 +295,20 @@ function CreateEvent() {
         { value: 'private', label: 'Private - Exclusive' },
     ];
 
+    const handleEventTypeChange = (type: EventTicketType) => {
+        setEventTicketType(type);
+        if (type === "free") {
+            setPaidTicketsAdded([]);
+        }
+        if (type === "paid") {
+            setTicketQuantity("");
+        }
+    };
+
 
     const ticketTypesProps: TicketTypesProps = {
         eventTicketType,
-        setEventTicketType,
+        handleEventTypeChange,
         ticketQuantity,
         setTicketQuantity,
         hasAttemptedToContinue,

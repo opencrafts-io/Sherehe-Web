@@ -9,7 +9,7 @@ import { Alert, type SxProps, type Theme } from "@mui/material";
 
 export interface TicketTypesProps {
     eventTicketType: EventTicketType | null;
-    setEventTicketType: (type: EventTicketType) => void;
+    handleEventTypeChange: (type: EventTicketType) => void;
     ticketQuantity: string;
     setTicketQuantity: (quantity: string) => void;
     hasAttemptedToContinue: boolean;
@@ -32,7 +32,7 @@ export interface TicketTypesProps {
 
 function TicketTypes({
     eventTicketType,
-    setEventTicketType,
+    handleEventTypeChange,
     ticketQuantity,
     setTicketQuantity,
     hasAttemptedToContinue,
@@ -100,7 +100,7 @@ function TicketTypes({
                 <div className="mt-4 grid gap-4 sm:grid-cols-2">
                     <button
                         type="button"
-                        onClick={() => setEventTicketType("free")}
+                        onClick={() => handleEventTypeChange("free")}
                         aria-pressed={eventTicketType === "free"}
                         className={`rounded-lg border p-5 text-left transition ${eventTicketType === "free"
                             ? "border-primary bg-purple-50 ring-1 ring-primary"
@@ -123,7 +123,7 @@ function TicketTypes({
 
                     <button
                         type="button"
-                        onClick={() => setEventTicketType("paid")}
+                        onClick={() => handleEventTypeChange("paid")}
                         aria-pressed={eventTicketType === "paid"}
                         className={`rounded-lg border p-5 text-left transition ${eventTicketType === "paid"
                             ? "border-primary bg-purple-50 ring-1 ring-primary"
