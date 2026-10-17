@@ -10,6 +10,7 @@ import type { TicketTypesProps } from "./steps/ticketTypes";
 import TicketTypes from "./steps/ticketTypes";
 import type { TicketCreationModel } from "../../models/ticket";
 import { validateTicket } from "../../utils/EventsUtils/paidTicketValidation";
+import PaymentMethod, { type PaymentMethodProps } from "./steps/paymentMethod";
 
 export interface EventVisibility {
     id: string;
@@ -20,6 +21,8 @@ export interface EventVisibility {
 export type EventVisibilityType = 'public' | 'institution' | 'private';
 
 export type EventTicketType = 'free' | 'paid';
+
+export type PaymentType = 'sendMoney' | 'paybill' | 'pochi' | 'till';
 
 export interface TicketInfo {
     ticketName: string;
@@ -75,6 +78,10 @@ function CreateEvent() {
             if (!eventTicketType) return;
             if (eventTicketType === "free" && !validateFreeTicket()) return;
             if (eventTicketType === "paid" && !validatePaidTickets()) return;
+        }
+
+        if (currentPage === 5) {
+            if (!validatePaymentDetails()) return;
         }
 
         setHasAttemptedToContinue(false);
@@ -343,7 +350,60 @@ function CreateEvent() {
         });
     };
 
+    // Payment Section
+    const [paymentType, setPaymentType] = useState<PaymentType | null>(null);
+    const [paybillNumber, setPaybillNumber] = useState<string>("");
+    const [accountReference, setAccountReference] = useState<string>("");
+    const [tillNumber, setTillNumber] = useState<string>("");
+    const [phoneNumber, setPhoneNumber] = useState<string>("");
+    const [pochiNumber, setPochiNumber] = useState<string>("");
+    const paymentOptions: { value: PaymentType; label: string }[] = [
+        { value: 'paybill', label: 'Paybill' },
+        { value: 'till', label: 'Till Number' },
+        { value: 'sendMoney', label: 'Send Money' },
+        { value: 'pochi', label: 'Pochi La Biashara' },
+    ];
+    const paymentMethodProps: PaymentMethodProps = {
+        paymentType,
+        paybillNumber,
+        accountReference,
+        tillNumber,
+        phoneNumber,
+        pochiNumber,
+        hasAttemptedToContinue,
+        setPaymentType,
+        setPaybillNumber,
+        setAccountReference,
+        setTillNumber,
+        setPhoneNumber,
+        setPochiNumber,
+        sxVariable,
+        paymentOptions
+    };
 
+    const validatePaymentDetails = () => {
+        if (!paymentType) return false;
+
+        switch (paymentType) {
+            case "paybill":
+                return Boolean(
+                    paybillNumber.trim() &&
+                    accountReference.trim(),
+                );
+
+            case "till":
+                return Boolean(tillNumber.trim());
+
+            case "sendMoney":
+                return Boolean(phoneNumber.trim());
+
+            case "pochi":
+                return Boolean(pochiNumber.trim());
+
+            default:
+                return false;
+        }
+    };
 
     return (
         <>
@@ -364,6 +424,9 @@ function CreateEvent() {
                     )}
                     {currentPage === 4 && (
                         <TicketTypes {...ticketTypesProps} />
+                    )}
+                    {currentPage == 5 && (
+                        <PaymentMethod {...paymentMethodProps} />
                     )}
                 </div>
                 <div className="flex justify-between p-6 border border-gray-200 bg-gray-100">
