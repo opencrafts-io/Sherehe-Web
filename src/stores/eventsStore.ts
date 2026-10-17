@@ -8,15 +8,18 @@ interface EventState {
     isLoading: boolean;
     error: string | null;
     paginatedEvents: PaginatedResponseModel<EventModel> | null;
+    organizedEvents: EventModel[] | null;
 
     getEvents: (page: number, limit?: number) => void;
     createEvent: (payload: CreateEventPayload, selectedPaymentType: PaymentType | null) => Promise<boolean>;
+    getEventByOrganizerId(organizerId: string): Promise<void>;
 }
 
 const useEventsStore = create<EventState>()((set) => ({
     isLoading: false,
     error: null,
     paginatedEvents: null,
+    organizedEvents: null,
     getEvents: async (page, limit = 8) => {
         try {
             set({
@@ -99,6 +102,29 @@ const useEventsStore = create<EventState>()((set) => ({
             });
 
             return false;
+        }
+    },
+    getEventByOrganizerId: async (organizerId: string) => {
+        try {
+            set({
+                isLoading: true,
+                error: null,
+                organizedEvents: null,
+            });
+
+            const organizedEvents = await eventService.getEventByOrganizerId(organizerId);
+
+            set({
+                isLoading: false,
+                error: null,
+                organizedEvents,
+            })
+        } catch (error) {
+            set({
+                isLoading: false,
+                error: getErrorMessage(error),
+                organizedEvents: null,
+            })
         }
     }
 }));

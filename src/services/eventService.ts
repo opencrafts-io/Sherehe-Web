@@ -136,6 +136,19 @@ class EventService {
 
         return mapEventsDtoToEvents(response.data.data.event);
     }
+
+    async getEventByOrganizerId(
+        organizerId: string
+    ): Promise<EventModel[]> {
+        const response = await shereheApis.get<{
+            count: number;
+            data: EventDto[];
+        }>(`/event/organizer/${organizerId}`);
+
+        return response.data.data.map((eventDto) =>
+            mapEventsDtoToEvents(eventDto)
+        );
+    }
 }
 
 export default new EventService();
