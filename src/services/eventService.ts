@@ -97,6 +97,10 @@ class EventService {
             );
         }
 
+        if (payload.paymentType) {
+            formData.append("payment_type", payload.paymentType);
+        }
+
         if (payload.paybillNumber?.trim()) {
             formData.append(
                 "paybill_number",

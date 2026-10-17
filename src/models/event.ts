@@ -96,6 +96,7 @@ export interface CreateEventPayload {
     tickets: TicketSubmissionModel[];
     institutions?: number[];
     scope: string;
+    paymentType?: string;
     paybillNumber?: string;
     accountReference?: string;
     tillNumber?: string;

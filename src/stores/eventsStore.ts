@@ -50,6 +50,7 @@ const useEventsStore = create<EventState>()((set) => ({
 
             const createEventPayload: CreateEventPayload = {
                 ...payload,
+                paymentType: undefined,
                 paybillNumber: undefined,
                 accountReference: undefined,
                 tillNumber: undefined,
@@ -59,19 +60,23 @@ const useEventsStore = create<EventState>()((set) => ({
 
             switch (selectedPaymentType) {
                 case "paybill":
+                    createEventPayload.paymentType = 'MPESA_PAYBILL';
                     createEventPayload.paybillNumber = payload.paybillNumber;
                     createEventPayload.accountReference = payload.accountReference;
                     break;
 
                 case "till":
+                    createEventPayload.paymentType = 'MPESA_TILL';
                     createEventPayload.tillNumber = payload.tillNumber;
                     break;
 
                 case "sendMoney":
+                    createEventPayload.paymentType = 'MPESA_SEND_MONEY';
                     createEventPayload.sendMoneyPhoneNumber = payload.sendMoneyPhoneNumber;
                     break;
 
                 case "pochi":
+                    createEventPayload.paymentType = 'POSHI_LA_BIASHARA';
                     createEventPayload.pochiNumber = payload.pochiNumber;
                     break;
                 default:
