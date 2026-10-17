@@ -5,6 +5,7 @@ import {
     type Theme,
 } from "@mui/material";
 import type { PaymentType } from "../createEvent";
+import CreateEventAs from "../components/createEventAs";
 
 export interface PaymentMethodProps {
     sxVariable: SxProps<Theme>;
@@ -287,6 +288,8 @@ function PaymentMethod({
                     />
                 </div>
             )}
+
+            <CreateEventAs />
         </div>
     );
 }

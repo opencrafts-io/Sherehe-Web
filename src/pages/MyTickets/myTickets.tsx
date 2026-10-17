@@ -55,7 +55,6 @@ function MyTickets() {
         const query = searchQuery.trim();
 
         if (!query) {
-            setCurrentPage(1);
             return;
         }
 

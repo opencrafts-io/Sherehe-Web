@@ -28,7 +28,7 @@ import type { Institution } from "../../../models/institution";
 import type { InstitutionDialogProps } from "./institutionDialog";
 import InstitutionDialog from "./institutionDialog";
 import { isEventMultiday } from "../../../utils/EventsUtils/eventUtils";
-import { validateTicket } from "../../../utils/EventsUtils/paidTicketValidation";
+import { validateTicket } from "../../../utils/EventsUtils/CreateEventPageValidations";
 
 export interface PaidTicketCreationProps {
     sxVariable: SxProps<Theme>;

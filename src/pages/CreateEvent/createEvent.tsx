@@ -9,7 +9,7 @@ import dayjs from "dayjs";
 import type { TicketTypesProps } from "./steps/ticketTypes";
 import TicketTypes from "./steps/ticketTypes";
 import type { TicketCreationModel } from "../../models/ticket";
-import { validateTicket } from "../../utils/EventsUtils/paidTicketValidation";
+import { validateTicket } from "../../utils/EventsUtils/CreateEventPageValidations";
 import PaymentMethod, { type PaymentMethodProps } from "./steps/paymentMethod";
 
 export interface EventVisibility {
@@ -38,28 +38,6 @@ export type TicketType = 'individual' | 'group2' | 'group3' | 'group4' | 'group5
 
 function CreateEvent() {
     const [currentPage, setCurrentPage] = useState(1);
-    const steps: Steps[] = [
-        {
-            id: 1,
-            title: 'About Event',
-        },
-        {
-            id: 2,
-            title: 'Description',
-        },
-        {
-            id: 3,
-            title: 'Media',
-        },
-        {
-            id: 4,
-            title: 'Tickets',
-        },
-        {
-            id: 5,
-            title: 'Payment',
-        },
-    ];
     const [hasAttemptedToContinue, setHasAttemptedToContinue] = useState(false);
     const nextPage = () => {
         if (currentPage > steps.length) return;
@@ -85,6 +63,7 @@ function CreateEvent() {
         }
 
         setHasAttemptedToContinue(false);
+
         setCurrentPage(currentPage + 1);
 
     };
@@ -405,49 +384,78 @@ function CreateEvent() {
         }
     };
 
+    const steps: Steps[] = [
+        {
+            id: 1,
+            title: 'About Event',
+        },
+        {
+            id: 2,
+            title: 'Description',
+        },
+        {
+            id: 3,
+            title: 'Media',
+        },
+        {
+            id: 4,
+            title: 'Tickets',
+        },
+        ...(eventTicketType === "paid"
+            ? [
+                {
+                    id: 5,
+                    title: 'Payment',
+                },
+            ]
+            : []),
+    ];
+
     return (
         <>
-            <div className="flex flex-col my-6 mx-10 gap-3 border border-gray-200 rounded-lg">
-                <div className="flex flex-col p-6 gap-3 border border-gray-200 bg-gray-100 ">
-                    <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">Create Event</h1>
-                    <BookingStepper currentStep={currentPage} steps={steps} />
-                </div>
-                <div className="flex flex-col p-6">
-                    {currentPage === 1 && (
-                        <AboutEvent {...aboutEventProps} />
-                    )}
-                    {currentPage === 2 && (
-                        <EventDescription {...eventDescriptionProps} />
-                    )}
-                    {currentPage === 3 && (
-                        <ImageUpload {...imageUploadProps} />
-                    )}
-                    {currentPage === 4 && (
-                        <TicketTypes {...ticketTypesProps} />
-                    )}
-                    {currentPage == 5 && (
-                        <PaymentMethod {...paymentMethodProps} />
-                    )}
-                </div>
-                <div className="flex justify-between p-6 border border-gray-200 bg-gray-100">
-                    <button
-                        type="button"
-                        onClick={previousPage}
-                        className={currentPage === 1 ? "hidden" : "rounded-md border border-primary px-4 py-3 font-medium text-primary transition hover:bg-primary-95"}
-                    >
-                        Previous
-                    </button>
-                    <button
-                        type="button"
-                        onClick={nextPage}
-                        className="ml-auto rounded-md bg-primary px-4 py-3 font-medium text-white transition hover:bg-purple-700"
-                    >
-                        {currentPage === 4 && eventTicketType === "free" ? "Create Event" : "Continue"}
-                    </button>
-                </div>
+            <div className="mx-auto my-4 w-full max-w-7xl px-3 sm:my-6 sm:px-6 lg:px-8 lg:py-6">
+                <div className="flex flex-col gap-3 overflow-hidden rounded-lg border border-gray-200 bg-white">
+                    <div className="flex flex-col gap-3 border-b border-gray-200 bg-gray-100 p-4 sm:p-6">
+                        <h1 className="text-xl font-bold tracking-tight text-gray-900 sm:text-2xl lg:text-3xl">
+                            Create Event
+                        </h1>
 
+                        <BookingStepper currentStep={currentPage} steps={steps} />
+                    </div>
+
+                    <div className="flex flex-col p-4 sm:p-6 lg:p-8">
+                        {currentPage === 1 && <AboutEvent {...aboutEventProps} />}
+                        {currentPage === 2 && <EventDescription {...eventDescriptionProps} />}
+                        {currentPage === 3 && <ImageUpload {...imageUploadProps} />}
+                        {currentPage === 4 && <TicketTypes {...ticketTypesProps} />}
+                        {currentPage === 5 && <PaymentMethod {...paymentMethodProps} />}
+                    </div>
+
+                    <div className="flex justify-between gap-3 border-t border-gray-200 bg-gray-100 p-4 sm:p-6">
+                        <button
+                            type="button"
+                            onClick={previousPage}
+                            className={
+                                currentPage === 1
+                                    ? "invisible"
+                                    : "rounded-md border border-primary px-4 py-3 font-medium text-primary transition hover:bg-primary-95"
+                            }
+                        >
+                            Previous
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={nextPage}
+                            className="ml-auto rounded-md bg-primary px-4 py-3 font-medium text-white transition hover:bg-purple-700"
+                        >
+                            {currentPage === 4 && eventTicketType === "free"
+                                ? "Create Event"
+                                : "Continue"}
+                        </button>
+                    </div>
+                </div>
             </div>
-
         </>
     );
 }
