@@ -28,6 +28,7 @@ import type { Institution } from "../../../models/institution";
 import type { InstitutionDialogProps } from "./institutionDialog";
 import InstitutionDialog from "./institutionDialog";
 import { isEventMultiday } from "../../../utils/EventsUtils/eventUtils";
+import { validateTicket } from "../../../utils/EventsUtils/paidTicketValidation";
 
 export interface PaidTicketCreationProps {
     sxVariable: SxProps<Theme>;
@@ -44,6 +45,7 @@ export interface PaidTicketCreationProps {
     }[];
     eventStartDateTime: string;
     eventEndDateTime: string;
+    hasAttemptedToContinue: boolean;
 }
 
 function createEmptyTicket(isMultiDayEvent: boolean, eventStartDateTime: string, eventEndDateTime: string): TicketCreationModel {
@@ -70,6 +72,7 @@ function PaidTicketCreation({
     ticketVisibilityOptions,
     eventStartDateTime,
     eventEndDateTime,
+    hasAttemptedToContinue,
 }: PaidTicketCreationProps) {
     const isMultiDayEvent = isEventMultiday(eventStartDateTime, eventEndDateTime);
     const tickets =
@@ -157,6 +160,9 @@ function PaidTicketCreation({
         handleInstitutionToggle,
     };
 
+    const getTicketErrors = (ticket: TicketCreationModel) =>
+        validateTicket(ticket);
+
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
             <div className="mt-8 border-t border-gray-200 pt-6">
@@ -179,317 +185,308 @@ function PaidTicketCreation({
                 </div>
 
                 <div className="mt-6 space-y-5">
-                    {tickets.map((ticket, index) => (
-                        <Paper
-                            key={index}
-                            variant="outlined"
-                            sx={{
-                                p: { xs: 2, sm: 3 },
-                                borderRadius: 3,
-                                borderColor: "grey.300",
-                                boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
-                            }}
-                        >
-                            <div className="flex items-center justify-between gap-3">
-                                <div className="flex items-center gap-3">
-                                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-purple-100">
-                                        <FontAwesomeIcon
-                                            icon={faTicket}
-                                            className="text-primary"
+                    {tickets.map((ticket, index) => {
+                        const errors = getTicketErrors(ticket);
+
+                        return (
+                            <Paper
+                                key={index}
+                                variant="outlined"
+                                sx={{
+                                    p: { xs: 2, sm: 3 },
+                                    borderRadius: 3,
+                                    borderColor: "grey.300",
+                                    boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+                                }}
+                            >
+                                <div className="flex items-center justify-between gap-3">
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-purple-100">
+                                            <FontAwesomeIcon
+                                                icon={faTicket}
+                                                className="text-primary" />
+                                        </div>
+
+                                        <div>
+                                            <h5 className="font-semibold text-gray-900">
+                                                Ticket {index + 1}
+                                            </h5>
+
+                                            <p className="text-sm text-gray-500">
+                                                Ticket details and pricing
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {tickets.length > 1 && (
+                                        <IconButton
+                                            aria-label={`Remove ticket ${index + 1}`}
+                                            onClick={() => handleRemoveTicket(index)}
+                                            color="error"
+                                            size="small"
+                                        >
+                                            <FontAwesomeIcon icon={faTrash} />
+                                        </IconButton>
+                                    )}
+                                </div>
+
+                                <Divider sx={{ my: 3 }} />
+
+                                <div className="grid grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2">
+                                    <div className="sm:col-span-2">
+                                        <label
+                                            htmlFor={`ticket-name-${index}`}
+                                            className="mb-2 block text-sm font-bold text-gray-900"
+                                        >
+                                            Ticket Name
+                                        </label>
+
+                                        <TextField
+                                            id={`ticket-name-${index}`}
+                                            fullWidth
+                                            sx={sxVariable}
+                                            value={ticket.ticketName}
+                                            onChange={(event) => updateTicket(
+                                                index,
+                                                "ticketName",
+                                                event.target.value
+                                            )}
+                                            placeholder="e.g. Early Bird, General Admission"
+                                            error={hasAttemptedToContinue && Boolean(errors.ticketName)}
+                                            helperText={hasAttemptedToContinue && errors.ticketName ? errors.ticketName : " "}
                                         />
+
                                     </div>
 
                                     <div>
-                                        <h5 className="font-semibold text-gray-900">
-                                            Ticket {index + 1}
-                                        </h5>
+                                        <label
+                                            htmlFor={`ticket-price-${index}`}
+                                            className="mb-2 block text-sm font-bold text-gray-900"
+                                        >
+                                            Ticket Price (KES)
+                                        </label>
 
-                                        <p className="text-sm text-gray-500">
-                                            Ticket details and pricing
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {tickets.length > 1 && (
-                                    <IconButton
-                                        aria-label={`Remove ticket ${index + 1}`}
-                                        onClick={() =>
-                                            handleRemoveTicket(index)
-                                        }
-                                        color="error"
-                                        size="small"
-                                    >
-                                        <FontAwesomeIcon icon={faTrash} />
-                                    </IconButton>
-                                )}
-                            </div>
-
-                            <Divider sx={{ my: 3 }} />
-
-                            <div className="grid grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2">
-                                <div className="sm:col-span-2">
-                                    <label
-                                        htmlFor={`ticket-name-${index}`}
-                                        className="mb-2 block text-sm font-bold text-gray-900"
-                                    >
-                                        Ticket Name
-                                    </label>
-
-                                    <TextField
-                                        id={`ticket-name-${index}`}
-                                        fullWidth
-                                        sx={sxVariable}
-                                        value={ticket.ticketName}
-                                        onChange={(event) =>
-                                            updateTicket(
-                                                index,
-                                                "ticketName",
-                                                event.target.value,
-                                            )
-                                        }
-                                        placeholder="e.g. Early Bird, General Admission"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label
-                                        htmlFor={`ticket-price-${index}`}
-                                        className="mb-2 block text-sm font-bold text-gray-900"
-                                    >
-                                        Ticket Price (KES)
-                                    </label>
-
-                                    <TextField
-                                        id={`ticket-price-${index}`}
-                                        fullWidth
-                                        type="number"
-                                        sx={sxVariable}
-                                        value={
-                                            ticket.ticketPrice === 0
+                                        <TextField
+                                            id={`ticket-price-${index}`}
+                                            fullWidth
+                                            type="number"
+                                            sx={sxVariable}
+                                            value={ticket.ticketPrice === 0
                                                 ? ""
-                                                : ticket.ticketPrice
-                                        }
-                                        onChange={(event) =>
-                                            updateTicket(
+                                                : ticket.ticketPrice}
+                                            onChange={(event) => updateTicket(
                                                 index,
                                                 "ticketPrice",
                                                 event.target.value === ""
                                                     ? 0
-                                                    : Number(event.target.value),
-                                            )
-                                        }
-                                        slotProps={{
-                                            htmlInput: {
-                                                min: 1,
-                                                step: 1,
-                                            },
-                                        }}
-                                        placeholder="e.g. 500"
-                                    />
-                                </div>
+                                                    : Number(event.target.value)
+                                            )}
+                                            slotProps={{
+                                                htmlInput: {
+                                                    min: 1,
+                                                    step: 1,
+                                                },
+                                            }}
+                                            placeholder="e.g. 500"
+                                            error={hasAttemptedToContinue && Boolean(errors.ticketPrice)}
+                                            helperText={hasAttemptedToContinue && errors.ticketPrice ? errors.ticketPrice : " "}
+                                        />
+                                    </div>
 
-                                <div>
-                                    <label
-                                        htmlFor={`ticket-quantity-${index}`}
-                                        className="mb-2 block text-sm font-bold text-gray-900"
-                                    >
-                                        Ticket Quantity
-                                    </label>
+                                    <div>
+                                        <label
+                                            htmlFor={`ticket-quantity-${index}`}
+                                            className="mb-2 block text-sm font-bold text-gray-900"
+                                        >
+                                            Ticket Quantity
+                                        </label>
 
-                                    <TextField
-                                        id={`ticket-quantity-${index}`}
-                                        fullWidth
-                                        type="number"
-                                        sx={sxVariable}
-                                        value={
-                                            ticket.ticketQuantity === 0
+                                        <TextField
+                                            id={`ticket-quantity-${index}`}
+                                            fullWidth
+                                            type="number"
+                                            sx={sxVariable}
+                                            value={ticket.ticketQuantity === 0
                                                 ? ""
-                                                : ticket.ticketQuantity
-                                        }
-                                        onChange={(event) =>
-                                            updateTicket(
+                                                : ticket.ticketQuantity}
+                                            onChange={(event) => updateTicket(
                                                 index,
                                                 "ticketQuantity",
                                                 event.target.value === ""
                                                     ? 0
-                                                    : Number(event.target.value),
-                                            )
-                                        }
-                                        slotProps={{
-                                            htmlInput: {
-                                                min: 1,
-                                                step: 1,
-                                            },
-                                        }}
-                                        placeholder="e.g. 100"
-                                    />
-                                </div>
+                                                    : Number(event.target.value)
+                                            )}
+                                            slotProps={{
+                                                htmlInput: {
+                                                    min: 1,
+                                                    step: 1,
+                                                },
+                                            }}
+                                            placeholder="e.g. 100"
+                                            error={hasAttemptedToContinue && Boolean(errors.ticketQuantity)}
+                                            helperText={hasAttemptedToContinue && errors.ticketQuantity ? errors.ticketQuantity : " "}
+                                        />
+                                    </div>
 
-                                <div>
-                                    <label
-                                        htmlFor={`ticket-type-${index}`}
-                                        className="mb-2 block text-sm font-bold text-gray-900"
-                                    >
-                                        Ticket Type
-                                    </label>
+                                    <div>
+                                        <label
+                                            htmlFor={`ticket-type-${index}`}
+                                            className="mb-2 block text-sm font-bold text-gray-900"
+                                        >
+                                            Ticket Type
+                                        </label>
 
-                                    <TextField
-                                        id={`ticket-type-${index}`}
-                                        select
-                                        fullWidth
-                                        sx={sxVariable}
-                                        value={ticket.ticketFor}
-                                        onChange={(event) =>
-                                            updateTicket(
+                                        <TextField
+                                            id={`ticket-type-${index}`}
+                                            select
+                                            fullWidth
+                                            sx={sxVariable}
+                                            value={ticket.ticketFor}
+                                            onChange={(event) => updateTicket(
                                                 index,
                                                 "ticketFor",
                                                 event.target.value === ""
                                                     ? null
-                                                    : Number(event.target.value),
-                                            )
-                                        }
-                                    >
-                                        {ticketTypeOptions.map((option) => (
-                                            <MenuItem key={option.value} value={option.ticketFor}>
-                                                {option.label}
-                                            </MenuItem>
-                                        ))}
-                                    </TextField>
-                                </div>
+                                                    : Number(event.target.value)
+                                            )}
+                                            error={hasAttemptedToContinue && Boolean(errors.ticketFor)}
+                                            helperText={hasAttemptedToContinue && errors.ticketFor ? errors.ticketFor : " "}
+                                        >
+                                            {ticketTypeOptions.map((option) => (
+                                                <MenuItem key={option.value} value={option.ticketFor}>
+                                                    {option.label}
+                                                </MenuItem>
+                                            ))}
+                                        </TextField>
+                                    </div>
 
-                                <div>
-                                    <label
-                                        htmlFor={`ticket-scope-${index}`}
-                                        className="mb-2 block text-sm font-bold text-gray-900"
-                                    >
-                                        Ticket Scope
-                                    </label>
-
-                                    <TextField
-                                        id={`ticket-scope-${index}`}
-                                        select
-                                        fullWidth
-                                        required
-                                        sx={sxVariable}
-                                        value={ticket.scope}
-                                        onChange={(event) => {
-                                            updateTicket(
-                                                index,
-                                                "scope",
-                                                event.target.value as EventVisibilityType,
-                                            );
-                                        }}
-                                    >
-                                        {ticketVisibilityOptions.map((option) => (
-                                            <MenuItem key={option.value} value={option.value}>
-                                                {option.label}
-                                            </MenuItem>
-                                        ))}
-                                    </TextField>
-                                </div>
-
-                                {ticket.scope === "institution" && (
-                                    <div className="sm:col-span-2">
+                                    <div>
                                         <label
-                                            htmlFor={`ticket-institutions-${index}`}
+                                            htmlFor={`ticket-scope-${index}`}
                                             className="mb-2 block text-sm font-bold text-gray-900"
                                         >
-                                            Ticket Institutions
+                                            Ticket Scope
                                         </label>
 
                                         <TextField
-                                            id={`ticket-institutions-${index}`}
+                                            id={`ticket-scope-${index}`}
+                                            select
                                             fullWidth
+                                            required
                                             sx={sxVariable}
-                                            value={
-                                                ticket.institutions
-                                                    ?.map((institution) => institution.name)
-                                                    .join(", ") ?? ""
-                                            }
-                                            placeholder="Choose institutions"
-                                            slotProps={{
-                                                input: {
-                                                    readOnly: true,
-                                                },
+                                            value={ticket.scope}
+                                            onChange={(event) => {
+                                                updateTicket(
+                                                    index,
+                                                    "scope",
+                                                    event.target.value as EventVisibilityType
+                                                );
                                             }}
-                                            onClick={() => handleOpenInstitutionDialog(index)}
-                                            helperText="Click to select the institutions eligible for this ticket."
-                                        />
+                                            error={hasAttemptedToContinue && Boolean(errors.ticketFor)}
+                                            helperText={hasAttemptedToContinue && errors.ticketFor ? errors.ticketFor : " "}
+                                        >
+                                            {ticketVisibilityOptions.map((option) => (
+                                                <MenuItem key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </MenuItem>
+                                            ))}
+                                        </TextField>
                                     </div>
-                                )}
 
-                                {isMultiDayEvent && (
-                                    <>
-                                        <div>
+                                    {ticket.scope === "institution" && (
+                                        <div className="sm:col-span-2">
                                             <label
-                                                htmlFor={`ticket-start-${index}`}
+                                                htmlFor={`ticket-institutions-${index}`}
                                                 className="mb-2 block text-sm font-bold text-gray-900"
                                             >
-                                                Ticket Validity Start
+                                                Ticket Institutions
                                             </label>
 
-                                            <DateTimePicker
-                                                value={
-                                                    ticket.startDate
+                                            <TextField
+                                                id={`ticket-institutions-${index}`}
+                                                fullWidth
+                                                sx={sxVariable}
+                                                value={ticket.institutions
+                                                    ?.map((institution) => institution.name)
+                                                    .join(", ") ?? ""}
+                                                placeholder="Choose institutions"
+                                                slotProps={{
+                                                    input: {
+                                                        readOnly: true,
+                                                    },
+                                                }}
+                                                onClick={() => handleOpenInstitutionDialog(index)}
+                                                helperText="Click to select the institutions eligible for this ticket." />
+                                        </div>
+                                    )}
+
+                                    {isMultiDayEvent && (
+                                        <>
+                                            <div>
+                                                <label
+                                                    htmlFor={`ticket-start-${index}`}
+                                                    className="mb-2 block text-sm font-bold text-gray-900"
+                                                >
+                                                    Ticket Validity Start
+                                                </label>
+
+                                                <DateTimePicker
+                                                    value={ticket.startDate
                                                         ? dayjs(ticket.startDate)
-                                                        : null
-                                                }
-                                                onChange={(value: Dayjs | null) =>
-                                                    updateTicket(
+                                                        : null}
+                                                    onChange={(value: Dayjs | null) => updateTicket(
                                                         index,
                                                         "startDate",
                                                         value && value.isValid()
                                                             ? value.toISOString()
-                                                            : "",
-                                                    )
-                                                }
-                                                slotProps={{
-                                                    textField: {
-                                                        id: `ticket-start-${index}`,
-                                                        fullWidth: true,
-                                                        sx: sxVariable,
-                                                    },
-                                                }}
-                                            />
-                                        </div>
+                                                            : ""
+                                                    )}
+                                                    slotProps={{
+                                                        textField: {
+                                                            id: `ticket-start-${index}`,
+                                                            fullWidth: true,
+                                                            sx: sxVariable,
+                                                            error: hasAttemptedToContinue && Boolean(errors.startDate),
+                                                            helperText: (hasAttemptedToContinue && errors.startDate) ?? ""
+                                                        },
+                                                    }} />
+                                            </div>
 
-                                        <div>
-                                            <label
-                                                htmlFor={`ticket-end-${index}`}
-                                                className="mb-2 block text-sm font-bold text-gray-900"
-                                            >
-                                                Ticket Validity End
-                                            </label>
+                                            <div>
+                                                <label
+                                                    htmlFor={`ticket-end-${index}`}
+                                                    className="mb-2 block text-sm font-bold text-gray-900"
+                                                >
+                                                    Ticket Validity End
+                                                </label>
 
-                                            <DateTimePicker
-                                                value={
-                                                    ticket.endDate
+                                                <DateTimePicker
+                                                    value={ticket.endDate
                                                         ? dayjs(ticket.endDate)
-                                                        : null
-                                                }
-                                                onChange={(value: Dayjs | null) =>
-                                                    updateTicket(
+                                                        : null}
+                                                    onChange={(value: Dayjs | null) => updateTicket(
                                                         index,
                                                         "endDate",
                                                         value && value.isValid()
                                                             ? value.toISOString()
-                                                            : "",
-                                                    )
-                                                }
-                                                slotProps={{
-                                                    textField: {
-                                                        id: `ticket-end-${index}`,
-                                                        fullWidth: true,
-                                                        sx: sxVariable,
-                                                    },
-                                                }}
-                                            />
-                                        </div>
-                                    </>
-                                )}
-                            </div>
-                        </Paper>
-                    ))}
+                                                            : ""
+                                                    )}
+                                                    slotProps={{
+                                                        textField: {
+                                                            id: `ticket-end-${index}`,
+                                                            fullWidth: true,
+                                                            sx: sxVariable,
+                                                            error: hasAttemptedToContinue && Boolean(errors.endDate),
+                                                            helperText: (hasAttemptedToContinue && errors.endDate) ?? ""
+                                                        },
+                                                    }} />
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            </Paper>
+                        );
+                    })}
                 </div>
 
                 <div className="mt-5">

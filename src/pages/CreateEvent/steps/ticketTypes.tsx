@@ -5,7 +5,7 @@ import type { FreeTicketCreationProps } from "../components/freeTicketCreation";
 import FreeTicketCreation from "../components/freeTicketCreation";
 import PaidTicketCreation, { type PaidTicketCreationProps } from "../components/paidTicketCreation";
 import type { TicketCreationModel } from "../../../models/ticket";
-import type { SxProps, Theme } from "@mui/material";
+import { Alert, type SxProps, type Theme } from "@mui/material";
 
 export interface TicketTypesProps {
     eventTicketType: EventTicketType | null;
@@ -61,6 +61,7 @@ function TicketTypes({
     };
 
     const paidTicketCreationProps: PaidTicketCreationProps = {
+        hasAttemptedToContinue,
         paidTicketsAdded,
         setPaidTicketsAdded,
         sxVariable,
@@ -69,6 +70,8 @@ function TicketTypes({
         eventStartDateTime,
         eventEndDateTime,
     };
+
+    const isEventTypeInvalid = hasAttemptedToContinue && !eventTicketType;
 
     return (
         <>
@@ -141,6 +144,12 @@ function TicketTypes({
                         </p>
                     </button>
                 </div>
+
+                {isEventTypeInvalid && (
+                    <Alert severity="error" className="mt-3">
+                        Please select if event is free or paid.
+                    </Alert>
+                )}
 
                 {eventTicketType === "free" && (
                     <FreeTicketCreation {...freeTicketCreationProps} />

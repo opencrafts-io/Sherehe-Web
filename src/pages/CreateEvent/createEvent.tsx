@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import type { TicketTypesProps } from "./steps/ticketTypes";
 import TicketTypes from "./steps/ticketTypes";
 import type { TicketCreationModel } from "../../models/ticket";
+import { validateTicket } from "../../utils/EventsUtils/paidTicketValidation";
 
 export interface EventVisibility {
     id: string;
@@ -60,6 +61,8 @@ function CreateEvent() {
     const nextPage = () => {
         if (currentPage > steps.length) return;
 
+        setHasAttemptedToContinue(true);
+
         if (currentPage === 1) {
             if (!validateAboutEvent()) return;
         }
@@ -69,7 +72,9 @@ function CreateEvent() {
         }
 
         if (currentPage === 4) {
+            if (!eventTicketType) return;
             if (eventTicketType === "free" && !validateFreeTicket()) return;
+            if (eventTicketType === "paid" && !validatePaidTickets()) return;
         }
 
         setHasAttemptedToContinue(false);
@@ -139,8 +144,6 @@ function CreateEvent() {
     };
 
     const validateAboutEvent = () => {
-        setHasAttemptedToContinue(true);
-
         const isEventNameValid = eventName.trim().length > 0;
         const isLocationValid = eventLocation.trim().length > 0;
 
@@ -229,8 +232,6 @@ function CreateEvent() {
     };
 
     const validateEventDescription = () => {
-        setHasAttemptedToContinue(true);
-
         const isEventDescriptionValid = eventDescription.trim().length > 0;
         const areGenresValid = selectedGenres.length > 0;
 
@@ -312,8 +313,6 @@ function CreateEvent() {
     };
 
     const validateFreeTicket = () => {
-        setHasAttemptedToContinue(true);
-
         const isQuantityValid =
             /^\d+$/.test(ticketQuantity) &&
             Number(ticketQuantity) > 0 &&
@@ -322,6 +321,16 @@ function CreateEvent() {
         const eventTypeValid = eventTicketType !== null;
 
         return isQuantityValid && eventTypeValid;
+    };
+
+    const validatePaidTickets = () => {
+        if (paidTicketsAdded.length === 0) return false;
+
+        return paidTicketsAdded.every((ticket) => {
+            const errors = validateTicket(ticket);
+
+            return Object.keys(errors).length === 0;
+        });
     };
 
 
