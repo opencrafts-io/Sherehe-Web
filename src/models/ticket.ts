@@ -1,3 +1,5 @@
+import type { Institution } from "./institution";
+
 export interface TicketModel {
     id: string;
     eventId: string;
@@ -32,12 +34,13 @@ export function mapEventsDtoToTickets(dto: TicketDto): TicketModel {
         endDate: dto.end_date,
     };
 }
-
 export interface TicketCreationModel {
     ticketName: string;
     ticketPrice: number;
-    ticketFor: number;
+    ticketFor: number | null;
     ticketQuantity: number;
+    scope: string;
+    institutions: Institution[] | null;
     startDate: string;
     endDate: string;
 }

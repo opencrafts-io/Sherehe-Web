@@ -29,6 +29,9 @@ export interface TicketInfo {
     ticketValidity: number;
 }
 
+export type TicketType = 'individual' | 'group2' | 'group3' | 'group4' | 'group5' | 'group6' | 'group7' | 'group8' | 'group9' | 'group10';
+
+
 function CreateEvent() {
     const [currentPage, setCurrentPage] = useState(1);
     const steps: Steps[] = [
@@ -272,6 +275,25 @@ function CreateEvent() {
     const handleTicketAdded = (ticket: TicketCreationModel) => {
         setPaidTicketsAdded((prevTickets) => [...prevTickets, ticket]);
     };
+    const ticketTypeOptions: { value: TicketType; label: string; ticketFor: number }[] = [
+        { value: 'individual', label: 'Individual', ticketFor: 1 },
+        { value: 'group2', label: 'Group of 2', ticketFor: 2 },
+        { value: 'group3', label: 'Group of 3', ticketFor: 3 },
+        { value: 'group4', label: 'Group of 4', ticketFor: 4 },
+        { value: 'group5', label: 'Group of 5', ticketFor: 5 },
+        { value: 'group6', label: 'Group of 6', ticketFor: 6 },
+        { value: 'group7', label: 'Group of 7', ticketFor: 7 },
+        { value: 'group8', label: 'Group of 8', ticketFor: 8 },
+        { value: 'group9', label: 'Group of 9', ticketFor: 9 },
+        { value: 'group10', label: 'Group of 10', ticketFor: 10 },
+    ];
+
+    const ticketVisibilityOptions: { value: EventVisibilityType; label: string }[] = [
+        { value: 'public', label: 'Public - Anyone Can View' },
+        { value: 'institution', label: 'Institution - Specific Instituitions' },
+        { value: 'private', label: 'Private - Exclusive' },
+    ];
+
 
     const ticketTypesProps: TicketTypesProps = {
         eventTicketType,
@@ -282,6 +304,11 @@ function CreateEvent() {
         paidTicketsAdded,
         setPaidTicketsAdded,
         handleTicketAdded,
+        sxVariable,
+        ticketTypeOptions,
+        ticketVisibilityOptions,
+        eventStartDateTime,
+        eventEndDateTime,
     };
 
     const validateFreeTicket = () => {

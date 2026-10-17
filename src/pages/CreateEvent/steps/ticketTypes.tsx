@@ -1,10 +1,11 @@
 import { faTicket, faCreditCard } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import type { EventTicketType } from "../createEvent";
+import type { EventTicketType, EventVisibilityType, TicketType } from "../createEvent";
 import type { FreeTicketCreationProps } from "../components/freeTicketCreation";
 import FreeTicketCreation from "../components/freeTicketCreation";
-import PaidTicketCreation from "../components/paidTicketCreation";
+import PaidTicketCreation, { type PaidTicketCreationProps } from "../components/paidTicketCreation";
 import type { TicketCreationModel } from "../../../models/ticket";
+import type { SxProps, Theme } from "@mui/material";
 
 export interface TicketTypesProps {
     eventTicketType: EventTicketType | null;
@@ -15,6 +16,18 @@ export interface TicketTypesProps {
     paidTicketsAdded: TicketCreationModel[];
     setPaidTicketsAdded: (tickets: TicketCreationModel[]) => void;
     handleTicketAdded: (ticket: TicketCreationModel) => void;
+    sxVariable: SxProps<Theme>;
+    ticketTypeOptions: {
+        value: TicketType;
+        label: string;
+        ticketFor: number;
+    }[];
+    ticketVisibilityOptions: {
+        value: EventVisibilityType;
+        label: string;
+    }[];
+    eventStartDateTime: string;
+    eventEndDateTime: string;
 }
 
 function TicketTypes({
@@ -23,6 +36,13 @@ function TicketTypes({
     ticketQuantity,
     setTicketQuantity,
     hasAttemptedToContinue,
+    paidTicketsAdded,
+    setPaidTicketsAdded,
+    sxVariable,
+    ticketTypeOptions,
+    ticketVisibilityOptions,
+    eventStartDateTime,
+    eventEndDateTime,
 }: TicketTypesProps) {
     const isQuantityValid =
         /^\d+$/.test(ticketQuantity) &&
@@ -38,6 +58,16 @@ function TicketTypes({
         ticketQuantity,
         setTicketQuantity,
         showQuantityError,
+    };
+
+    const paidTicketCreationProps: PaidTicketCreationProps = {
+        paidTicketsAdded,
+        setPaidTicketsAdded,
+        sxVariable,
+        ticketTypeOptions,
+        ticketVisibilityOptions,
+        eventStartDateTime,
+        eventEndDateTime,
     };
 
     return (
@@ -118,7 +148,7 @@ function TicketTypes({
 
                 {/* Placeholder */}
                 {eventTicketType === "paid" && (
-                    <PaidTicketCreation />
+                    <PaidTicketCreation {...paidTicketCreationProps} />
                 )}
 
             </div>
