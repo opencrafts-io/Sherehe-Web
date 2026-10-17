@@ -1,6 +1,6 @@
 import { useState } from "react";
 import BookingStepper, { type Steps } from "../../components/ui/bookingStepper";
-import { type SxProps, type Theme } from "@mui/material";
+import { type AlertColor, type SxProps, type Theme } from "@mui/material";
 import AboutEvent, { type AboutEventProps } from "./steps/aboutEvent";
 import EventDescription, { type EventDescriptionProps } from "./steps/eventDescription";
 import ImageUpload, { type ImageUploadProps } from "./steps/imageUpload";
@@ -44,6 +44,9 @@ function CreateEvent() {
     const [currentPage, setCurrentPage] = useState(1);
     const [hasAttemptedToContinue, setHasAttemptedToContinue] = useState(false);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+    const [snackbarSeverity, setSnackbarSeverity] =
+        useState<AlertColor>("error");
     const nextPage = async () => {
         if (currentPage > steps.length || isLoading) return;
 
@@ -499,8 +502,17 @@ function CreateEvent() {
         );
 
         if (success) {
-            navigate("/dashboard");
+            setSnackbarMessage("Event created successfully!");
+            setSnackbarSeverity("success");
+            setSnackbarOpen(true);
+
+            // Navigate after showing the notification
+            setTimeout(() => {
+                navigate("/dashboard");
+            }, 1500);
         } else {
+            setSnackbarMessage(error ?? "Failed to create event. Please try again.");
+            setSnackbarSeverity("error");
             setSnackbarOpen(true);
         }
 
@@ -555,8 +567,9 @@ function CreateEvent() {
                         </button>
 
                         <AppSnackbar
-                            open={snackbarOpen && Boolean(error)}
-                            message={error ?? ""}
+                            open={snackbarOpen}
+                            message={snackbarMessage}
+                            severity={snackbarSeverity}
                             onClose={() => setSnackbarOpen(false)}
                         />
                     </div>

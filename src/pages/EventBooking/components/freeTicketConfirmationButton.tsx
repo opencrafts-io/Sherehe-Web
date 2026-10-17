@@ -1,9 +1,10 @@
 import { useShallow } from "zustand/react/shallow";
 import usePaymentStore from "../../../stores/paymentStore";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CircularProgress } from "@mui/material";
 import ErrorPaymentDialogue from "./errorPaymentDialogue";
 import { useNavigationToEventTickets } from "../utils/navigationHook";
+import AppSnackbar from "../../../components/ui/appSnackbar";
 
 function FreeTicketConfirmationButton({ ticketId, ticketQuantity, eventId }: { ticketId?: string, ticketQuantity: number, eventId: string }) {
     const { isLoading, confirmFreeEvent, freeEventBooked, error } = usePaymentStore(
@@ -21,37 +22,31 @@ function FreeTicketConfirmationButton({ ticketId, ticketQuantity, eventId }: { t
 
     const [errorShown, setErrorShown] = useState<string | null>(null);
 
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+
     const navigationToEventTickets = useNavigationToEventTickets();
 
     const closeDialog = () => {
         setShowError(false);
     };
 
-    const handleBookTicket = () => {
+    const handleBookTicket = async () => {
         if (!ticketId) {
             setShowError(true);
             setErrorShown("An error occurred");
         }
 
-        confirmFreeEvent(ticketId!, ticketQuantity);
-    };
-
-    // Navigate after successful booking
-    useEffect(() => {
+        await confirmFreeEvent(ticketId!, ticketQuantity);
         if (freeEventBooked) {
-            console.log(`Event Id is ${eventId}`);
-            navigationToEventTickets(eventId);
-        }
-    }, [freeEventBooked]);
-
-    // Show error dialog when an error occurs
-    useEffect(() => {
-        if (error) {
+            setSnackbarOpen(true);
+            setTimeout(() => {
+                navigationToEventTickets(eventId);
+            }, 1500);
+        } else {
             setShowError(true);
-            setErrorShown(error);
+            setErrorShown(error ?? "An error occurred");
         }
-    }, [error]);
-
+    };
 
     return (
         <>
@@ -74,6 +69,13 @@ function FreeTicketConfirmationButton({ ticketId, ticketQuantity, eventId }: { t
                         "Book Ticket"
                     )}
                 </button>
+
+                <AppSnackbar
+                    open={snackbarOpen}
+                    message="Ticket Booked Successfully"
+                    severity='success'
+                    onClose={() => setSnackbarOpen(false)}
+                />
 
                 {/* Error Dialog */}
                 <ErrorPaymentDialogue
