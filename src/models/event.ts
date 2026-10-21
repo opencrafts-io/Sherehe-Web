@@ -1,3 +1,5 @@
+import type { TicketSubmissionModel } from "./ticket";
+
 export interface EventModel {
     id: string;
     eventName: string;
@@ -75,4 +77,29 @@ export function mapEventsDtoToEvents(dto: EventDto): EventModel {
         scope: dto.scope,
         institutions: dto.institutions,
     };
+}
+
+export type PaymentType = 'sendMoney' | 'paybill' | 'pochi' | 'till';
+
+export interface CreateEventPayload {
+    eventName: string;
+    eventDescription: string;
+    eventUrl?: string;
+    eventLocation: string;
+    eventStartDate: string;
+    eventEndDate: string;
+    organizerId: string;
+    eventGenre: string[];
+    eventCardImage?: File | null;
+    eventPosterImage?: File | null;
+    eventBannerImage?: File | null;
+    tickets: TicketSubmissionModel[];
+    institutions?: number[];
+    scope: string;
+    paymentType?: string;
+    paybillNumber?: string;
+    accountReference?: string;
+    tillNumber?: string;
+    sendMoneyPhoneNumber?: string;
+    pochiNumber?: string;
 }

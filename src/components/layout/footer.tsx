@@ -7,22 +7,22 @@ function Footer() {
         {
             name: "Instagram",
             icon: faInstagram,
-            url: "https://instagram.com/",
+            url: "https://www.instagram.com/opencrafts.io?vrfl=YXhvZ3JpMGozNmsy",
         },
         {
             name: "TikTok",
             icon: faTiktok,
-            url: "https://tiktok.com/",
+            url: "https://www.tiktok.com/@opencrafts?_r=1&_t=ZS-9AZspdNMxEN",
         },
         {
             name: "LinkedIn",
             icon: faLinkedin,
-            url: "https://linkedin.com/",
+            url: "https://www.linkedin.com/in/opencrafts-io-a10339368?utm_source=share_via&utm_content=profile&utm_medium=member_android",
         },
         {
             name: "GitHub",
             icon: faGithub,
-            url: "https://github.com/",
+            url: "https://github.com/opencrafts-io",
         },
     ];
 

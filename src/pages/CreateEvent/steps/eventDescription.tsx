@@ -1,11 +1,37 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faShapes, faPenToSquare, faXmark, faPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+    faShapes,
+    faPenToSquare,
+    faXmark,
+    faPlus,
+} from "@fortawesome/free-solid-svg-icons";
 import GenreDialog from "../components/genreDialog";
-import { TextField, type SxProps, type Theme } from "@mui/material";
+import {
+    Alert,
+    TextField,
+    type SxProps,
+    type Theme,
+} from "@mui/material";
 
+export interface EventDescriptionProps {
+    selectedGenres: string[];
+    chooseGenres: (genre: string) => void;
+    eventGenres: string[];
+    removeGenre: (genre: string) => void;
+    dialogOpen: boolean;
+    closeDialogue: () => void;
+    clearGenres: () => void;
+    applyGenres: () => void;
+    openDialogue: () => void;
+    tempGenres: string[];
+    sxVariable: SxProps<Theme>;
+    hasAttemptedToContinue: boolean;
+    eventDescription: string;
+    setEventDescription: (eventDescription: string) => void;
+}
 
 function EventDescription({
-    selectedGenre,
+    selectedGenres,
     chooseGenres,
     eventGenres,
     removeGenre,
@@ -16,109 +42,157 @@ function EventDescription({
     openDialogue,
     tempGenres,
     sxVariable,
-}:
-    {
-        selectedGenre: string[],
-        chooseGenres: (genre: string) => void,
-        eventGenres: string[],
-        removeGenre: (genre: string) => void,
-        dialogOpen: boolean,
-        closeDialogue: () => void,
-        clearGenres: () => void,
-        applyGenres: () => void,
-        openDialogue: () => void,
-        tempGenres: string[],
-        sxVariable: SxProps<Theme>
-    }) {
+    hasAttemptedToContinue,
+    eventDescription,
+    setEventDescription,
+}: EventDescriptionProps) {
+    const isEventDescriptionInvalid =
+        hasAttemptedToContinue && !eventDescription.trim();
+
+    const areGenresInvalid =
+        hasAttemptedToContinue && selectedGenres.length === 0;
+
     return (
-        <>
-            <div className="flex flex-col gap-2">
-                <h2 className='text-4xl my-2 font-bold'>Event Description & Genres</h2>
-                <div className="flex flex-col border border-gray-200 rounded-lg p-4">
-                    <div className="flex justify-between">
-                        <div className="flex flex-col gap-3">
-                            <div className="flex gap-4 items-center">
-                                <FontAwesomeIcon icon={faShapes} className="text-primary" />
-                                <h3 className="text-lg font-bold">Event Genres</h3>
-                                <div className="flex flex-col border border-gray-200 rounded-full  bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-700">
-                                    {selectedGenre.length} Selected
-                                </div>
-                            </div>
-                            <p className="text-base text-gray-600">Select genres that best represent your event</p>
-                        </div>
-                        <button
-                            type="button"
-                            onClick={openDialogue}
-                            disabled={selectedGenre.length === 0}
-                            className="flex h-full items-center gap-1 border rounded-lg p-2 border-gray-800  bg-purple-100 text-purple-700 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50">
-                            <FontAwesomeIcon icon={faPenToSquare} />
-                            <p>Edit Selection {selectedGenre.length}/{eventGenres.length}</p>
-                        </button>
-                    </div>
-                    <div className="mt-4 flex flex-wrap items-center gap-2">
-                        {selectedGenre.map((genre) => (
-                            <div
-                                key={genre}
-                                className="flex items-center gap-2 rounded-full border border-gray-200 bg-purple-100 px-3 py-2 text-xs font-semibold text-purple-700"
-                            >
-                                <p>{genre}</p>
-
-                                <FontAwesomeIcon
-                                    icon={faXmark}
-                                    className="cursor-pointer"
-                                    onClick={() => removeGenre(genre)}
-                                />
-                            </div>
-                        ))}
-
-                        <button
-                            type="button"
-                            onClick={openDialogue}
-                            disabled={selectedGenre.length >= eventGenres.length}
-                            className="flex items-center gap-2 rounded-full border border-dashed border-gray-400 bg-gray-100 px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                            <FontAwesomeIcon icon={faPlus} />
-
-                            {selectedGenre.length > 0
-                                ? "Add More Genres"
-                                : "Add Genre"}
-                        </button>
-                    </div>
-                </div>
-                <div className="mt-6">
-                    <label
-                        htmlFor="eventDescription"
-                        className="my-2 block font-bold"
-                    >
-                        Event Description
-                    </label>
-
-                    <TextField
-                        id="eventDescription"
-                        name="eventDescription"
-                        fullWidth
-                        multiline
-                        rows={6}
-                        placeholder="Tell attendees about your event..."
-                        sx={sxVariable}
-                    />
-                </div>
-
-                {dialogOpen === true && (
-                    <GenreDialog
-                        dialogOpen={dialogOpen}
-                        closeDialogue={closeDialogue}
-                        eventGenres={eventGenres}
-                        chooseGenres={chooseGenres}
-                        clearGenres={clearGenres}
-                        applyGenres={applyGenres}
-                        tempGenres={tempGenres}
-                    />
-                )}
-
+        <div className="flex w-full min-w-0 flex-col gap-5 sm:gap-6">
+            <div>
+                <h2 className="text-xl font-bold tracking-tight text-gray-900 sm:text-2xl lg:text-3xl">
+                    Event Description &amp; Genres
+                </h2>
+                <p className="mt-2 text-sm text-gray-600 sm:text-base">
+                    Describe your event and choose the genres that best
+                    represent it.
+                </p>
             </div>
 
-        </>
+            {/* Event Genres */}
+            <section className="flex min-w-0 flex-col gap-4 rounded-lg border border-gray-200 p-3 sm:p-5 lg:p-6">
+                <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex min-w-0 flex-col gap-2">
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                            <FontAwesomeIcon
+                                icon={faShapes}
+                                className="text-primary"
+                            />
+
+                            <h3 className="text-base font-bold sm:text-lg">
+                                Event Genres
+                            </h3>
+
+                            <span className="rounded-full border border-purple-200 bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-700">
+                                {selectedGenres.length} Selected
+                            </span>
+                        </div>
+
+                        <p className="text-sm leading-relaxed text-gray-600 sm:text-base">
+                            Select genres that best represent your event.
+                        </p>
+                    </div>
+
+                    <button
+                        type="button"
+                        onClick={openDialogue}
+                        disabled={selectedGenres.length === 0}
+                        className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-lg border border-gray-300 bg-purple-100 px-3 py-2.5 text-sm font-medium text-purple-700 transition hover:bg-purple-200 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                    >
+                        <FontAwesomeIcon icon={faPenToSquare} />
+                        <span>
+                            Edit Selection ({selectedGenres.length}/
+                            {eventGenres.length})
+                        </span>
+                    </button>
+                </div>
+
+                {/* Selected genre chips */}
+                <div className="flex min-w-0 flex-wrap items-center gap-2 border-t border-gray-100 pt-4">
+                    {selectedGenres.map((genre) => (
+                        <div
+                            key={genre}
+                            className="inline-flex max-w-full items-center gap-2 rounded-full border border-purple-200 bg-purple-100 py-2 pl-3 pr-2 text-xs font-semibold text-purple-700 sm:text-sm"
+                        >
+                            <span className="break-words">{genre}</span>
+
+                            <button
+                                type="button"
+                                onClick={() => removeGenre(genre)}
+                                aria-label={`Remove ${genre}`}
+                                className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full transition hover:bg-purple-200"
+                            >
+                                <FontAwesomeIcon icon={faXmark} />
+                            </button>
+                        </div>
+                    ))}
+
+                    <button
+                        type="button"
+                        onClick={openDialogue}
+                        disabled={selectedGenres.length >= eventGenres.length}
+                        className="inline-flex max-w-full items-center justify-center gap-2 rounded-full border border-dashed border-gray-400 bg-gray-50 px-3 py-2 text-xs font-medium text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4 sm:text-sm"
+                    >
+                        <FontAwesomeIcon icon={faPlus} />
+
+                        <span>
+                            {selectedGenres.length > 0
+                                ? "Add More Genres"
+                                : "Add Genre"}
+                        </span>
+                    </button>
+                </div>
+
+                {areGenresInvalid && (
+                    <Alert severity="error">
+                        Please select at least one genre before continuing.
+                    </Alert>
+                )}
+            </section>
+
+            {/* Event Description */}
+            <section className="flex min-w-0 flex-col gap-2">
+                <label
+                    htmlFor="eventDescription"
+                    className="font-bold text-gray-900 sm:text-base"
+                >
+                    Event Description
+                    <span className="ml-1 text-red-600">*</span>
+                </label>
+
+                <p className="text-sm text-gray-600">
+                    Tell attendees what to expect, what makes the event
+                    special, and any important details they should know.
+                </p>
+
+                <TextField
+                    id="eventDescription"
+                    name="eventDescription"
+                    required
+                    fullWidth
+                    multiline
+                    minRows={5}
+                    maxRows={12}
+                    placeholder="Tell attendees about your event..."
+                    sx={sxVariable}
+                    value={eventDescription}
+                    onChange={(e) => setEventDescription(e.target.value)}
+                    error={isEventDescriptionInvalid}
+                    helperText={
+                        isEventDescriptionInvalid
+                            ? "Event description is required."
+                            : "Include useful details to help attendees decide whether to attend."
+                    }
+                />
+            </section>
+
+            {dialogOpen && (
+                <GenreDialog
+                    dialogOpen={dialogOpen}
+                    closeDialogue={closeDialogue}
+                    eventGenres={eventGenres}
+                    chooseGenres={chooseGenres}
+                    clearGenres={clearGenres}
+                    applyGenres={applyGenres}
+                    tempGenres={tempGenres}
+                />
+            )}
+        </div>
     );
 }
 

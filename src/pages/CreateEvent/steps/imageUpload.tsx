@@ -1,11 +1,30 @@
-import { faCloudArrowUp, faImage } from "@fortawesome/free-solid-svg-icons";
+import { faImage } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ImagePreview from "../components/imagePreview";
 
-function ImageUpload() {
+export interface ImageUploadProps {
+    cardImage: File | null;
+    setCardImage: (file: File | null) => void;
+
+    bannerImage: File | null;
+    setBannerImage: (file: File | null) => void;
+
+    posterImage: File | null;
+    setPosterImage: (file: File | null) => void;
+}
+
+function ImageUpload({
+    cardImage,
+    setCardImage,
+    bannerImage,
+    setBannerImage,
+    posterImage,
+    setPosterImage,
+}: ImageUploadProps) {
     return (
         <>
             <div>
-                <h2 className='text-4xl my-2 font-bold'>Event Images</h2>
+                <h2 className='text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl'>Event Images</h2>
                 <h3>Upload images to make your event more engaging. Each image is used in different parts of the app.</h3>
             </div>
             <div className="my-4 rounded-lg border border-gray-200 p-6">
@@ -26,30 +45,14 @@ function ImageUpload() {
                             </p>
                         </div>
 
-                        <label
-                            htmlFor="cardImage"
-                            className="flex aspect-square cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 transition hover:border-primary hover:bg-purple-50"
-                        >
-                            <FontAwesomeIcon
-                                icon={faCloudArrowUp}
-                                className="mb-3 text-2xl text-gray-500"
-                            />
-
-                            <span className="text-sm font-medium text-gray-600">
-                                Click to upload
-                            </span>
-
-                            <span className="mt-1 text-xs text-gray-400">
-                                1:1 image
-                            </span>
-
-                            <input
-                                id="cardImage"
-                                type="file"
-                                accept="image/*"
-                                className="hidden"
-                            />
-                        </label>
+                        <ImagePreview
+                            image={cardImage}
+                            onImageChange={setCardImage}
+                            inputId="cardImage"
+                            aspectRatio="aspect-square"
+                            expectedRatio={1}
+                            label="Card"
+                        />
                     </div>
 
                     <div>
@@ -68,30 +71,14 @@ function ImageUpload() {
                             </p>
                         </div>
 
-                        <label
-                            htmlFor="bannerImage"
-                            className="flex aspect-video cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 transition hover:border-primary hover:bg-purple-50"
-                        >
-                            <FontAwesomeIcon
-                                icon={faCloudArrowUp}
-                                className="mb-3 text-2xl text-gray-500"
-                            />
-
-                            <span className="text-sm font-medium text-gray-600">
-                                Click to upload
-                            </span>
-
-                            <span className="mt-1 text-xs text-gray-400">
-                                16:9 image
-                            </span>
-
-                            <input
-                                id="bannerImage"
-                                type="file"
-                                accept="image/*"
-                                className="hidden"
-                            />
-                        </label>
+                        <ImagePreview
+                            image={bannerImage}
+                            onImageChange={setBannerImage}
+                            inputId="bannerImage"
+                            aspectRatio="aspect-video"
+                            expectedRatio={16 / 9}
+                            label="Banner"
+                        />
                     </div>
 
                     <div>
@@ -111,30 +98,14 @@ function ImageUpload() {
                             </p>
                         </div>
 
-                        <label
-                            htmlFor="posterImage"
-                            className="flex aspect-2/3 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 transition hover:border-primary hover:bg-purple-50"
-                        >
-                            <FontAwesomeIcon
-                                icon={faCloudArrowUp}
-                                className="mb-3 text-2xl text-gray-500"
-                            />
-
-                            <span className="text-sm font-medium text-gray-600">
-                                Click to upload
-                            </span>
-
-                            <span className="mt-1 text-xs text-gray-400">
-                                2:3 image
-                            </span>
-
-                            <input
-                                id="posterImage"
-                                type="file"
-                                accept="image/*"
-                                className="hidden"
-                            />
-                        </label>
+                        <ImagePreview
+                            image={posterImage}
+                            onImageChange={setPosterImage}
+                            inputId="posterImage"
+                            aspectRatio="aspect-[2/3]"
+                            expectedRatio={2 / 3}
+                            label="Poster"
+                        />
                     </div>
 
                 </div>

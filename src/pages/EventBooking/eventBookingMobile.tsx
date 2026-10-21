@@ -12,6 +12,11 @@ function EventBookingMobile({
     selectedTicket,
     total,
     phoneNumber,
+    isLoading,
+    tickets,
+    error,
+    isFreeEvent,
+    freeTicket,
     setPhoneNumber,
     increaseQuantity,
     decreaseQuantity,
@@ -44,7 +49,7 @@ function EventBookingMobile({
     };
     return (
         <>
-            <div className="p-4 my-2 gap-4">
+            <div className="p-4 flex flex-col my-2 gap-8 min-h-screen bg-gray-50 mb-24">
                 <BookingStepper currentStep={currentPage} steps={steps} />
 
                 {currentPage === 1 && (
@@ -52,15 +57,21 @@ function EventBookingMobile({
                         event={event}
                         selectedTicket={selectedTicket}
                         quantity={quantity}
+                        total={total}
+                        isLoading={isLoading}
+                        tickets={tickets}
+                        error={error}
+                        isFreeEvent={isFreeEvent}
+                        freeTicket={freeTicket}
                         chooseTicket={chooseTicket}
                         increaseQuantity={increaseQuantity}
                         decreaseQuantity={decreaseQuantity}
                         nextPage={nextPage}
-                        total={total}
                     />
                 )}
                 {currentPage === 2 && (
-                    <OrderSummary selectedTicket={selectedTicket}
+                    <OrderSummary
+                        selectedTicket={selectedTicket}
                         nextPage={nextPage}
                         previousPage={previousPage}
                         quantity={quantity}
@@ -73,6 +84,10 @@ function EventBookingMobile({
                         phoneNumber={phoneNumber}
                         setPhoneNumber={setPhoneNumber}
                         previousPage={previousPage}
+                        ticketId={selectedTicket?.id}
+                        ticketQuantity={quantity}
+                        isFreeEvent={isFreeEvent}
+                        eventId={event.id}
                     />
                 )}
             </div>
