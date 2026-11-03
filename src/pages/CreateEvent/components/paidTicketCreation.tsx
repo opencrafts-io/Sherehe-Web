@@ -8,19 +8,15 @@ import {
     type SxProps,
     type Theme,
 } from "@mui/material";
-
 import {
     faTicket,
     faPlus,
     faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { type Dayjs } from "dayjs";
-
 import type { TicketCreationModel } from "../../../models/ticket";
 import type { EventVisibilityType, TicketType } from "../createEvent";
 import { useState } from "react";
@@ -29,6 +25,7 @@ import type { InstitutionDialogProps } from "./institutionDialog";
 import InstitutionDialog from "./institutionDialog";
 import { isEventMultiday } from "../../../utils/EventsUtils/eventUtils";
 import { validateTicket } from "../../../utils/EventsUtils/CreateEventPageValidations";
+import DateTimePickerComponent from "./dateTimePickerComponent";
 
 export interface PaidTicketCreationProps {
     sxVariable: SxProps<Theme>;
@@ -430,26 +427,22 @@ function PaidTicketCreation({
                                                     Ticket Validity Start
                                                 </label>
 
-                                                <DateTimePicker
+                                                <DateTimePickerComponent
+                                                    textFieldId={`ticket-start-${index}`}
+                                                    textFieldName={`ticket-start-${index}`}
+                                                    error={hasAttemptedToContinue && Boolean(errors.startDate)}
+                                                    helperText={hasAttemptedToContinue ? errors.startDate ?? "" : ""}
                                                     value={ticket.startDate
                                                         ? dayjs(ticket.startDate)
                                                         : null}
-                                                    onChange={(value: Dayjs | null) => updateTicket(
+                                                    onValueChange={(value: Dayjs | null) => updateTicket(
                                                         index,
                                                         "startDate",
                                                         value && value.isValid()
                                                             ? value.toISOString()
                                                             : ""
                                                     )}
-                                                    slotProps={{
-                                                        textField: {
-                                                            id: `ticket-start-${index}`,
-                                                            fullWidth: true,
-                                                            sx: sxVariable,
-                                                            error: hasAttemptedToContinue && Boolean(errors.startDate),
-                                                            helperText: (hasAttemptedToContinue && errors.startDate) ?? ""
-                                                        },
-                                                    }} />
+                                                />
                                             </div>
 
                                             <div>
@@ -460,26 +453,22 @@ function PaidTicketCreation({
                                                     Ticket Validity End
                                                 </label>
 
-                                                <DateTimePicker
+                                                <DateTimePickerComponent
+                                                    textFieldId={`ticket-end-${index}`}
+                                                    textFieldName={`ticket-end-${index}`}
+                                                    error={hasAttemptedToContinue && Boolean(errors.endDate)}
+                                                    helperText={hasAttemptedToContinue ? errors.endDate ?? "" : ""}
                                                     value={ticket.endDate
                                                         ? dayjs(ticket.endDate)
                                                         : null}
-                                                    onChange={(value: Dayjs | null) => updateTicket(
+                                                    onValueChange={(value: Dayjs | null) => updateTicket(
                                                         index,
                                                         "endDate",
                                                         value && value.isValid()
                                                             ? value.toISOString()
                                                             : ""
                                                     )}
-                                                    slotProps={{
-                                                        textField: {
-                                                            id: `ticket-end-${index}`,
-                                                            fullWidth: true,
-                                                            sx: sxVariable,
-                                                            error: hasAttemptedToContinue && Boolean(errors.endDate),
-                                                            helperText: (hasAttemptedToContinue && errors.endDate) ?? ""
-                                                        },
-                                                    }} />
+                                                />
                                             </div>
                                         </>
                                     )}
