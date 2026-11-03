@@ -61,6 +61,17 @@ function GenreDialog({
                                 <Checkbox
                                     checked={tempGenres.includes(genre)}
                                     onChange={() => chooseGenres(genre)}
+                                    sx={{
+                                        color: "var(--color-primary-70)",
+
+                                        "&.Mui-checked": {
+                                            color: "var(--color-primary)",
+                                        },
+
+                                        "&:hover": {
+                                            backgroundColor: "var(--color-primary-95)",
+                                        },
+                                    }}
                                 />
 
                                 <span className="text-sm">

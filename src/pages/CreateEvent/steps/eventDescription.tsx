@@ -109,7 +109,7 @@ function EventDescription({
                             key={genre}
                             className="inline-flex max-w-full items-center gap-2 rounded-full border border-purple-200 bg-purple-100 py-2 pl-3 pr-2 text-xs font-semibold text-purple-700 sm:text-sm"
                         >
-                            <span className="break-words">{genre}</span>
+                            <span className="wrap-break-word">{genre}</span>
 
                             <button
                                 type="button"
@@ -126,11 +126,11 @@ function EventDescription({
                         type="button"
                         onClick={openDialogue}
                         disabled={selectedGenres.length >= eventGenres.length}
-                        className="inline-flex max-w-full items-center justify-center gap-2 rounded-full border border-dashed border-gray-400 bg-gray-50 px-3 py-2 text-xs font-medium text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4 sm:text-sm"
+                        className="cursor-pointer inline-flex max-w-full items-center justify-center gap-2 rounded-full border border-dashed border-primary bg-gray-50 px-3 py-2 text-xs font-medium text-gray-700 transition hover:bg-primary-95 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4 sm:text-sm"
                     >
-                        <FontAwesomeIcon icon={faPlus} />
+                        <FontAwesomeIcon icon={faPlus} className="text-primary" />
 
-                        <span>
+                        <span className="text-primary">
                             {selectedGenres.length > 0
                                 ? "Add More Genres"
                                 : "Add Genre"}
