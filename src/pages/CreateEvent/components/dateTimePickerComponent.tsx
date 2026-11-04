@@ -1,7 +1,7 @@
-import type { SxProps, Theme } from "@mui/material";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import type { PickerValue } from "@mui/x-date-pickers/internals";
 import type { DateTimeValidationError, PickerChangeHandlerContext } from "@mui/x-date-pickers/models";
+import type { Dayjs } from "dayjs";
 
 export interface DateTimePickerComponentProps {
     textFieldId: string;
@@ -9,25 +9,12 @@ export interface DateTimePickerComponentProps {
     error: any;
     helperText: string;
     value?: PickerValue | undefined;
-    onValueChange?: ((value: PickerValue, context: PickerChangeHandlerContext<DateTimeValidationError>) => void) | undefined
+    onValueChange?: ((value: PickerValue, context: PickerChangeHandlerContext<DateTimeValidationError>) => void) | undefined;
+    minDateTime?: Dayjs | undefined;
+    maxDateTime?: Dayjs | undefined;
 }
 
-function DateTimePickerComponent({ textFieldId, textFieldName, error, helperText, value, onValueChange }: DateTimePickerComponentProps) {
-    const selectedDayStyles = {
-        "&.Mui-selected": {
-            backgroundColor: "var(--color-primary)",
-            color: "#FFFFFF",
-
-            "&:hover, &:focus": {
-                backgroundColor: "var(--color-primary-60)",
-            },
-        },
-
-        "&.MuiPickersDay-today:not(.Mui-selected)": {
-            borderColor: "var(--color-primary)",
-        },
-    };
-
+function DateTimePickerComponent({ textFieldId, textFieldName, error, helperText, value, onValueChange, minDateTime, maxDateTime }: DateTimePickerComponentProps) {
     const clockStyles = {
         "& .MuiClock-pin, & .MuiClockPointer-root": {
             backgroundColor: "var(--color-primary)",
@@ -64,85 +51,78 @@ function DateTimePickerComponent({ textFieldId, textFieldName, error, helperText
         },
     };
 
-    const calendarHeader = {
-        "& .MuiPickersCalendarHeader-label": {
-            color: "var(--color-primary)",
-            fontWeight: 700,
-        },
-
-        "& .MuiPickersArrowSwitcher-button": {
-            color: "var(--color-primary)",
-        },
-    };
-
-    const monthButton = {
-        "&.Mui-selected": {
-            backgroundColor: "var(--color-primary)",
-            color: "#FFFFFF",
-        },
-
-    };
-
-    const yearButton = {
-        "&.Mui-selected": {
-            backgroundColor: "var(--color-primary)",
-            color: "#FFFFFF",
-
-            "&:hover, &:focus": {
-                backgroundColor: "var(--color-primary)",
-            },
-        },
-    };
-
-    const actionBar = {
-        "& .MuiButton-root": {
-            color: "var(--color-primary)",
-        },
-    };
-
-    const sxDateTextField: SxProps<Theme> = {
-        '& .MuiPickersOutlinedInput-root': {
-            '&:hover .MuiPickersOutlinedInput-notchedOutline': {
-                borderColor: 'var(--color-primary-70)',
-            },
-            '&.Mui-focused .MuiPickersOutlinedInput-notchedOutline': {
-                borderColor: 'var(--color-primary)',
-            },
-        },
-
-        '& .MuiInputLabel-root.Mui-focused': {
-            color: 'var(--color-primary)',
-        },
-    };
-
-    const openPickerButton = {
-        color: 'var(--color-primary)',
-        '&:hover': {
-            backgroundColor: 'var(--color-primary-95)',
-        },
-    };
-
     return (
         <>
             <DateTimePicker
+                minDateTime={minDateTime}
+                maxDateTime={maxDateTime}
                 slotProps={{
                     textField: {
                         id: textFieldId,
                         name: textFieldName,
                         fullWidth: true,
-                        sx: sxDateTextField,
+                        sx: {
+                            '& .MuiPickersOutlinedInput-root': {
+                                '&:hover .MuiPickersOutlinedInput-notchedOutline': {
+                                    borderColor: 'var(--color-primary-70)',
+                                },
+                                '&.Mui-focused .MuiPickersOutlinedInput-notchedOutline': {
+                                    borderColor: 'var(--color-primary)',
+                                },
+                            },
+
+                            '& .MuiInputLabel-root.Mui-focused': {
+                                color: 'var(--color-primary)',
+                            },
+                        },
                         error: error,
                         helperText: helperText,
                     },
                     openPickerButton: {
-                        sx: openPickerButton,
+                        sx: {
+                            color: 'var(--color-primary)',
+                            '&:hover': {
+                                backgroundColor: 'var(--color-primary-95)',
+                            },
+                        },
                     },
                     day: {
-                        sx: selectedDayStyles,
+                        sx: {
+                            "&.Mui-selected": {
+                                backgroundColor: "var(--color-primary)",
+                                color: "#FFFFFF",
+
+                                "&:hover, &:focus": {
+                                    backgroundColor: "var(--color-primary-60)",
+                                },
+                            },
+
+                            "&.MuiPickersDay-today:not(.Mui-selected)": {
+                                borderColor: "var(--color-primary)",
+                            },
+                        },
                     },
                     // Desktop picker container
                     desktopPaper: {
-                        sx: pickerContainerStyles,
+                        sx: {
+                            // Clock selection
+                            ...clockStyles,
+
+                            "& .MuiMultiSectionDigitalClockSection-item.Mui-selected": {
+                                backgroundColor: "var(--color-primary)",
+                                color: "#FFFFFF",
+                            },
+
+                            // Cancel and OK buttons
+                            "& .MuiDialogActions-root .MuiButton-root": {
+                                color: "var(--color-primary)",
+                                fontWeight: 600,
+
+                                "&:hover": {
+                                    backgroundColor: "var(--color-primary-95)",
+                                },
+                            },
+                        },
                     },
 
                     // Mobile picker container
@@ -150,16 +130,44 @@ function DateTimePickerComponent({ textFieldId, textFieldName, error, helperText
                         sx: pickerContainerStyles,
                     },
                     calendarHeader: {
-                        sx: calendarHeader,
+                        sx: {
+                            "& .MuiPickersCalendarHeader-label": {
+                                color: "var(--color-primary)",
+                                fontWeight: 700,
+                            },
+
+                            "& .MuiPickersArrowSwitcher-button": {
+                                color: "var(--color-primary)",
+                            },
+                        },
                     },
                     monthButton: {
-                        sx: monthButton,
+                        sx: {
+                            "&.Mui-selected": {
+                                backgroundColor: "var(--color-primary)",
+                                color: "#FFFFFF",
+                            },
+
+                        },
                     },
                     yearButton: {
-                        sx: yearButton,
+                        sx: {
+                            "&.Mui-selected": {
+                                backgroundColor: "var(--color-primary)",
+                                color: "#FFFFFF",
+
+                                "&:hover, &:focus": {
+                                    backgroundColor: "var(--color-primary)",
+                                },
+                            },
+                        },
                     },
                     actionBar: {
-                        sx: actionBar,
+                        sx: {
+                            "& .MuiButton-root": {
+                                color: "var(--color-primary)",
+                            },
+                        },
                     },
                 }}
                 value={value}

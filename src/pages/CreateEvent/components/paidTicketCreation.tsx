@@ -432,16 +432,37 @@ function PaidTicketCreation({
                                                     textFieldName={`ticket-start-${index}`}
                                                     error={hasAttemptedToContinue && Boolean(errors.startDate)}
                                                     helperText={hasAttemptedToContinue ? errors.startDate ?? "" : ""}
+                                                    minDateTime={dayjs(eventStartDateTime)}
+                                                    maxDateTime={dayjs(eventEndDateTime)}
                                                     value={ticket.startDate
                                                         ? dayjs(ticket.startDate)
                                                         : null}
-                                                    onValueChange={(value: Dayjs | null) => updateTicket(
-                                                        index,
-                                                        "startDate",
-                                                        value && value.isValid()
-                                                            ? value.toISOString()
-                                                            : ""
-                                                    )}
+                                                    onValueChange={(value: Dayjs | null) => {
+                                                        const ticketEndDate = ticket.endDate
+                                                            ? dayjs(ticket.endDate)
+                                                            : null;
+
+                                                        updateTicket(
+                                                            index,
+                                                            "startDate",
+                                                            value && value.isValid()
+                                                                ? value.toISOString()
+                                                                : ""
+                                                        );
+
+                                                        //reset ticket endate if invalid
+                                                        if (
+                                                            value &&
+                                                            ticketEndDate &&
+                                                            !ticketEndDate.isAfter(value)
+                                                        ) {
+                                                            updateTicket(
+                                                                index,
+                                                                "endDate",
+                                                                "",
+                                                            )
+                                                        }
+                                                    }}
                                                 />
                                             </div>
 
@@ -458,16 +479,21 @@ function PaidTicketCreation({
                                                     textFieldName={`ticket-end-${index}`}
                                                     error={hasAttemptedToContinue && Boolean(errors.endDate)}
                                                     helperText={hasAttemptedToContinue ? errors.endDate ?? "" : ""}
+                                                    minDateTime={dayjs(dayjs(ticket.startDate).add(1, "minute"))}
+                                                    maxDateTime={dayjs(eventEndDateTime)}
                                                     value={ticket.endDate
                                                         ? dayjs(ticket.endDate)
                                                         : null}
-                                                    onValueChange={(value: Dayjs | null) => updateTicket(
-                                                        index,
-                                                        "endDate",
-                                                        value && value.isValid()
-                                                            ? value.toISOString()
-                                                            : ""
-                                                    )}
+                                                    onValueChange={(value: Dayjs | null) => {
+                                                        updateTicket(
+                                                            index,
+                                                            "endDate",
+                                                            value && value.isValid()
+                                                                ? value.toISOString()
+                                                                : ""
+                                                        );
+
+                                                    }}
                                                 />
                                             </div>
                                         </>

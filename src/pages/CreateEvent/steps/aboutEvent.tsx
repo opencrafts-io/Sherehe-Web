@@ -175,11 +175,21 @@ function AboutEvent({
                     helperText={isStartDateInvalid
                         ? "A valid start date is required."
                         : ""}
-                    value={eventStartDateTime ? dayjs(eventStartDateTime) : null}
+                    minDateTime={dayjs()}
+                    value={startDate}
                     onValueChange={(value: Dayjs | null) => {
                         setEventStartDateTime(
                             value && value.isValid() ? value.toISOString() : ""
                         );
+
+                        // Reset end date if it is no longer valid.
+                        if (
+                            value &&
+                            endDate &&
+                            !endDate.isAfter(value)
+                        ) {
+                            setEventEndDateTime("");
+                        }
                     }}
                 />
 
@@ -198,7 +208,11 @@ function AboutEvent({
                     helperText={isEndDateInvalid
                         ? "Select an end date and time after the start date."
                         : ""}
-                    value={eventEndDateTime ? dayjs(eventEndDateTime) : null}
+                    value={endDate}
+                    minDateTime={startDate
+                        ? startDate.add(1, "minute")
+                        : dayjs()
+                    }
                     onValueChange={(value: Dayjs | null) => {
                         setEventEndDateTime(
                             value && value.isValid() ? value.toISOString() : ""
