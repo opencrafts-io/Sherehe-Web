@@ -8,12 +8,11 @@ import {
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { type Dayjs } from "dayjs";
-
-import type { EventVisibility, EventVisibilityType } from "../createEvent";
 import type { InstitutionDialogProps } from "../components/institutionDialog";
 import type { Institution } from "../../../models/institution";
 import InstitutionDialog from "../components/institutionDialog";
 import DateTimePickerComponent from "../components/dateTimePickerComponent";
+import type { EventVisibility, EventVisibilityType } from "../components/data";
 
 export interface AboutEventProps {
     sxVariable: SxProps<Theme>;

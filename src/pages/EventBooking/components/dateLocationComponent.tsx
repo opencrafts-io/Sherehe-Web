@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { EventModel } from "../../../models/event";
-import { formatEventDateTime, isEventMultiday } from "../../../utils/EventsUtils/eventUtils";
+import { formatEventDateTime, isEventMultiday } from "../../CreateEvent/utils/eventUtils";
 import { faCalendarDays, faLocationDot } from "@fortawesome/free-solid-svg-icons";
 
 function DateLocationComponent({ event }: { event: EventModel }) {

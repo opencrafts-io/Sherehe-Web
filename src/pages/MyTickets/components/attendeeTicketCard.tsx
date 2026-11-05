@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import type { AttendeeTicket } from "../../../models/attendeeTicket";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarDays, faChevronRight, faTicket, faUsers } from "@fortawesome/free-solid-svg-icons";
-import { formatEventDateTime } from "../../../utils/EventsUtils/eventUtils";
+import { formatEventDateTime } from "../../CreateEvent/utils/eventUtils";
 
 export type AttendeeTicketType = "specificEvent" | "allEvents";
 

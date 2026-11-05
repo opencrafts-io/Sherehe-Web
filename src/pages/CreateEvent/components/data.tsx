@@ -1,5 +1,27 @@
+import type { SxProps, Theme } from "@mui/material";
 import type { PaymentType } from "../../../models/event";
-import type { EventVisibility, EventVisibilityType, TicketType } from "../createEvent";
+import type { Steps } from "../../../components/ui/bookingStepper";
+
+export type EventVisibilityType = 'public' | 'institution' | 'private';
+
+export type EventTicketType = 'free' | 'paid';
+
+export interface TicketInfo {
+    ticketName: string;
+    ticketPrice: number;
+    ticketQuantity: number;
+    ticketType: string;
+    ticketScope: string;
+    ticketValidity: number;
+}
+
+export type TicketType = 'individual' | 'group2' | 'group3' | 'group4' | 'group5' | 'group6' | 'group7' | 'group8' | 'group9' | 'group10';
+
+export interface EventVisibility {
+    id: string;
+    value: EventVisibilityType;
+    label: string;
+}
 
 export const eventGenres: string[] = [
     'Meetup',
@@ -69,3 +91,49 @@ export const ticketVisibilityOptions: { value: EventVisibilityType; label: strin
     { value: 'institution', label: 'Institution - Specific Instituitions' },
     { value: 'private', label: 'Private - Exclusive' },
 ];
+
+export const sxVariable: SxProps<Theme> = {
+    '& .MuiOutlinedInput-root': {
+        '&:hover fieldset': {
+            borderColor: 'var(--color-primary-70)',
+        },
+        '&.Mui-focused fieldset': {
+            borderColor: 'var(--color-primary)',
+        },
+    },
+    '& .MuiInputLabel-root.Mui-focused': {
+        color: 'var(--color-primary)',
+    },
+
+};
+
+export function getEventSteps(eventTicketType: EventTicketType | null): Steps[] {
+    return [
+
+        {
+            id: 1,
+            title: 'About Event',
+        },
+        {
+            id: 2,
+            title: 'Description',
+        },
+        {
+            id: 3,
+            title: 'Media',
+        },
+        {
+            id: 4,
+            title: 'Tickets',
+        },
+        ...(eventTicketType === "paid"
+            ? [
+                {
+                    id: 5,
+                    title: 'Payment',
+                },
+            ]
+            : []),
+
+    ];
+}

@@ -99,19 +99,13 @@ function PaymentMethod({
             </div>
 
             <div>
-                <label
-                    htmlFor="paymentType"
-                    className="my-2 block text-base font-bold text-gray-900"
-                >
-                    Payment Method
-                </label>
-
                 <TextField
                     id="paymentType"
                     name="paymentType"
                     select
                     fullWidth
                     required
+                    label="Please select a Payment Method"
                     sx={sxVariable}
                     value={paymentType ?? ""}
                     onChange={(event) =>
@@ -125,6 +119,7 @@ function PaymentMethod({
                             ? "Please select a payment method."
                             : "Choose the method where your earnings should be sent."
                     }
+
                 >
                     {paymentOptions.map((option) => (
                         <MenuItem
@@ -140,13 +135,6 @@ function PaymentMethod({
             {paymentType === "paybill" && (
                 <>
                     <div>
-                        <label
-                            htmlFor="paybillNumber"
-                            className="my-2 block text-base font-bold text-gray-900"
-                        >
-                            Paybill Number
-                        </label>
-
                         <TextField
                             id="paybillNumber"
                             name="paybillNumber"
@@ -157,7 +145,7 @@ function PaymentMethod({
                             onChange={(event) =>
                                 setPaybillNumber(event.target.value)
                             }
-                            placeholder="Enter your paybill number"
+                            label="Enter your paybill number"
                             error={isPaybillInvalid}
                             helperText={
                                 isPaybillInvalid
@@ -168,13 +156,6 @@ function PaymentMethod({
                     </div>
 
                     <div>
-                        <label
-                            htmlFor="accountReference"
-                            className="my-2 block text-base font-bold text-gray-900"
-                        >
-                            Account Reference
-                        </label>
-
                         <TextField
                             id="accountReference"
                             name="accountReference"
@@ -185,7 +166,7 @@ function PaymentMethod({
                             onChange={(event) =>
                                 setAccountReference(event.target.value)
                             }
-                            placeholder="Enter your account reference"
+                            label="Enter your account reference"
                             error={isAccountReferenceInvalid}
                             helperText={
                                 isAccountReferenceInvalid
@@ -199,13 +180,6 @@ function PaymentMethod({
 
             {paymentType === "till" && (
                 <div>
-                    <label
-                        htmlFor="tillNumber"
-                        className="my-2 block text-base font-bold text-gray-900"
-                    >
-                        Till Number
-                    </label>
-
                     <TextField
                         id="tillNumber"
                         name="tillNumber"
@@ -216,7 +190,7 @@ function PaymentMethod({
                         onChange={(event) =>
                             setTillNumber(event.target.value)
                         }
-                        placeholder="Enter your till number"
+                        label="Enter your till number"
                         error={isTillNumberInvalid}
                         helperText={
                             isTillNumberInvalid
@@ -229,13 +203,6 @@ function PaymentMethod({
 
             {paymentType === "sendMoney" && (
                 <div>
-                    <label
-                        htmlFor="phoneNumber"
-                        className="my-2 block text-base font-bold text-gray-900"
-                    >
-                        M-Pesa Phone Number
-                    </label>
-
                     <TextField
                         id="phoneNumber"
                         name="phoneNumber"
@@ -247,7 +214,8 @@ function PaymentMethod({
                         onChange={(event) =>
                             setSendMoneyNumber(event.target.value)
                         }
-                        placeholder="e.g. 0712345678"
+                        label="Send Money Number"
+                        placeholder="eg 0712345678"
                         error={isPhoneNumberInvalid}
                         helperText={
                             isPhoneNumberInvalid
@@ -260,13 +228,6 @@ function PaymentMethod({
 
             {paymentType === "pochi" && (
                 <div>
-                    <label
-                        htmlFor="pochiNumber"
-                        className="my-2 block text-base font-bold text-gray-900"
-                    >
-                        Pochi La Biashara Number
-                    </label>
-
                     <TextField
                         id="pochiNumber"
                         name="pochiNumber"
@@ -278,7 +239,8 @@ function PaymentMethod({
                         onChange={(event) =>
                             setPochiNumber(event.target.value)
                         }
-                        placeholder="Enter your Pochi registered number"
+                        label="Pochi La Biashara Number"
+                        placeholder="eg 0712345678"
                         error={isPochiNumberInvalid}
                         helperText={
                             isPochiNumberInvalid

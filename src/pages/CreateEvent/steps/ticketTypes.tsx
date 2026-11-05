@@ -1,11 +1,11 @@
 import { faTicket, faCreditCard } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import type { EventTicketType, EventVisibilityType, TicketType } from "../createEvent";
 import type { FreeTicketCreationProps } from "../components/freeTicketCreation";
 import FreeTicketCreation from "../components/freeTicketCreation";
 import PaidTicketCreation, { type PaidTicketCreationProps } from "../components/paidTicketCreation";
 import type { TicketCreationModel } from "../../../models/ticket";
 import { Alert, type SxProps, type Theme } from "@mui/material";
+import type { EventTicketType, EventVisibilityType, TicketType } from "../components/data";
 
 export interface TicketTypesProps {
     eventTicketType: EventTicketType | null;

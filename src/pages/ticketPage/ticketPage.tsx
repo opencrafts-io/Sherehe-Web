@@ -9,7 +9,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate, useParams } from "react-router-dom";
 import useAttendeeTicketStore from "../../stores/attendeeTicketStore";
-import { formatEventDateTime, isEventMultiday } from "../../utils/EventsUtils/eventUtils";
+import { formatEventDateTime, isEventMultiday } from "../CreateEvent/utils/eventUtils";
 import { QRCodeSVG } from "qrcode.react";
 import DownloadTicketButton from "./components/downloadTicketButton";
 import { useShallow } from "zustand/react/shallow";

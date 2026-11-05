@@ -10,7 +10,7 @@ import {
 import {
     formatEventDateTime,
     isEventMultiday,
-} from "../../../utils/EventsUtils/eventUtils";
+} from "../../CreateEvent/utils/eventUtils";
 
 import type { AttendeeTicket } from "../../../models/attendeeTicket";
 

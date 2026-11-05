@@ -1,15 +1,13 @@
 import { useState } from "react";
-import BookingStepper, { type Steps } from "../../components/ui/bookingStepper";
-import { type AlertColor, type SxProps, type Theme } from "@mui/material";
+import BookingStepper from "../../components/ui/bookingStepper";
+import { type AlertColor } from "@mui/material";
 import AboutEvent, { type AboutEventProps } from "./steps/aboutEvent";
 import EventDescription, { type EventDescriptionProps } from "./steps/eventDescription";
 import ImageUpload, { type ImageUploadProps } from "./steps/imageUpload";
 import type { Institution } from "../../models/institution";
-import dayjs from "dayjs";
 import type { TicketTypesProps } from "./steps/ticketTypes";
 import TicketTypes from "./steps/ticketTypes";
 import type { TicketCreationModel, TicketSubmissionModel } from "../../models/ticket";
-import { validateTicket } from "../../utils/EventsUtils/CreateEventPageValidations";
 import PaymentMethod, { type PaymentMethodProps } from "./steps/paymentMethod";
 import type { CreateEventPayload, PaymentType } from "../../models/event";
 import useUserStore from "../../stores/userStore";
@@ -17,29 +15,8 @@ import useEventsStore from "../../stores/eventsStore";
 import { useShallow } from "zustand/react/shallow";
 import { useNavigate } from "react-router-dom";
 import AppSnackbar from "../../components/ui/appSnackbar";
-import { eventGenres, eventVisibilityOptions, paymentOptions, ticketTypeOptions, ticketVisibilityOptions } from "./components/data";
-
-export interface EventVisibility {
-    id: string;
-    value: EventVisibilityType;
-    label: string;
-}
-
-export type EventVisibilityType = 'public' | 'institution' | 'private';
-
-export type EventTicketType = 'free' | 'paid';
-
-export interface TicketInfo {
-    ticketName: string;
-    ticketPrice: number;
-    ticketQuantity: number;
-    ticketType: string;
-    ticketScope: string;
-    ticketValidity: number;
-}
-
-export type TicketType = 'individual' | 'group2' | 'group3' | 'group4' | 'group5' | 'group6' | 'group7' | 'group8' | 'group9' | 'group10';
-
+import { eventGenres, eventVisibilityOptions, getEventSteps, paymentOptions, sxVariable, ticketTypeOptions, ticketVisibilityOptions, type EventTicketType, type EventVisibilityType } from "./components/data";
+import { validateAboutEvent, validateEventDescription, validateFreeTicket, validatePaidTickets, validatePaymentDetails } from "./utils/eventValidation";
 
 function CreateEvent() {
     const [currentPage, setCurrentPage] = useState(1);
@@ -54,28 +31,28 @@ function CreateEvent() {
         setHasAttemptedToContinue(true);
 
         if (currentPage === 1) {
-            if (!validateAboutEvent()) return;
+            if (!validateAboutEvent(eventName, eventLocation, eventStartDateTime, eventEndDateTime, eventVisibility, selectedInstitutions)) return;
         }
 
         if (currentPage === 2) {
-            if (!validateEventDescription()) return;
+            if (!validateEventDescription(eventDescription, selectedGenres)) return;
         }
 
         if (currentPage === 4) {
             if (!eventTicketType) return;
 
             if (eventTicketType === "free") {
-                if (!validateFreeTicket()) return;
+                if (!validateFreeTicket(ticketQuantity, eventTicketType)) return;
 
                 await submitEvent();
                 return;
             }
 
-            if (!validatePaidTickets()) return;
+            if (!validatePaidTickets(paidTicketsAdded, eventStartDateTime, eventEndDateTime)) return;
         }
 
         if (currentPage === 5) {
-            if (!validatePaymentDetails()) return;
+            if (!validatePaymentDetails(paymentType, paybillNumber, accountReference, tillNumber, sendMoneyNumber, pochiNumber)) return;
 
             await submitEvent();
             return;
@@ -89,20 +66,7 @@ function CreateEvent() {
             setCurrentPage(currentPage - 1);
         }
     };
-    const sxVariable: SxProps<Theme> = {
-        '& .MuiOutlinedInput-root': {
-            '&:hover fieldset': {
-                borderColor: 'var(--color-primary-70)',
-            },
-            '&.Mui-focused fieldset': {
-                borderColor: 'var(--color-primary)',
-            },
-        },
-        '& .MuiInputLabel-root.Mui-focused': {
-            color: 'var(--color-primary)',
-        },
 
-    };
     //About Event Details Stepper   
     const [eventName, setEventName] = useState("");
     const [eventStartDateTime, setEventStartDateTime] = useState("");
@@ -127,36 +91,6 @@ function CreateEvent() {
         setEventLocation,
         setEventVisibility,
         setSelectedInstitutions,
-    };
-
-    const validateAboutEvent = () => {
-        const isEventNameValid = eventName.trim().length > 0;
-        const isLocationValid = eventLocation.trim().length > 0;
-
-        const startDate = dayjs(eventStartDateTime);
-        const endDate = dayjs(eventEndDateTime);
-
-        const isStartDateValid =
-            eventStartDateTime !== "" && startDate.isValid() && startDate.isAfter(dayjs());
-
-        const isEndDateValid =
-            eventEndDateTime !== "" && endDate.isValid();
-
-        const isDateRangeValid =
-            isStartDateValid &&
-            isEndDateValid &&
-            endDate.isAfter(startDate);
-
-        const areInstitutionsValid =
-            eventVisibility !== "institution" ||
-            selectedInstitutions.length > 0;
-
-        return (
-            isEventNameValid &&
-            isLocationValid &&
-            isDateRangeValid &&
-            areInstitutionsValid
-        );
     };
 
     //Event Genre and description Stepper
@@ -192,13 +126,6 @@ function CreateEvent() {
     };
     const closeDialogue = () => {
         setDialogOpen(false);
-    };
-
-    const validateEventDescription = () => {
-        const isEventDescriptionValid = eventDescription.trim().length > 0;
-        const areGenresValid = selectedGenres.length > 0;
-
-        return isEventDescriptionValid && areGenresValid;
     };
 
     const eventDescriptionProps: EventDescriptionProps = {
@@ -239,18 +166,17 @@ function CreateEvent() {
     const handleTicketAdded = (ticket: TicketCreationModel) => {
         setPaidTicketsAdded((prevTickets) => [...prevTickets, ticket]);
     };
-
     const handleEventTypeChange = (type: EventTicketType) => {
         setEventTicketType(type);
-        if (type === "free") {
-            setPaidTicketsAdded([]);
-        }
-        if (type === "paid") {
-            setTicketQuantity("");
-        }
+        setPaidTicketsAdded([]);
+        setTicketQuantity("");
+        setPaymentType(null);
+        setPaybillNumber("");
+        setAccountReference("");
+        setTillNumber("");
+        setPochiNumber("");
+        setSendMoneyNumber("");
     };
-
-
     const ticketTypesProps: TicketTypesProps = {
         eventTicketType,
         handleEventTypeChange,
@@ -266,28 +192,6 @@ function CreateEvent() {
         eventStartDateTime,
         eventEndDateTime,
     };
-
-    const validateFreeTicket = () => {
-        const isQuantityValid =
-            /^\d+$/.test(ticketQuantity) &&
-            Number(ticketQuantity) > 0 &&
-            Number.isSafeInteger(Number(ticketQuantity));
-
-        const eventTypeValid = eventTicketType !== null;
-
-        return isQuantityValid && eventTypeValid;
-    };
-
-    const validatePaidTickets = () => {
-        if (paidTicketsAdded.length === 0) return false;
-
-        return paidTicketsAdded.every((ticket) => {
-            const errors = validateTicket(ticket, eventStartDateTime, eventEndDateTime);
-
-            return Object.keys(errors).length === 0;
-        });
-    };
-
     // Payment Section
     const [paymentType, setPaymentType] = useState<PaymentType | null>(null);
     const [paybillNumber, setPaybillNumber] = useState<string>("");
@@ -313,58 +217,7 @@ function CreateEvent() {
         sxVariable,
         paymentOptions,
     };
-
-    const validatePaymentDetails = () => {
-        if (!paymentType) return false;
-
-        switch (paymentType) {
-            case "paybill":
-                return Boolean(
-                    paybillNumber.trim() &&
-                    accountReference.trim(),
-                );
-
-            case "till":
-                return Boolean(tillNumber.trim());
-
-            case "sendMoney":
-                return Boolean(sendMoneyNumber.trim());
-
-            case "pochi":
-                return Boolean(pochiNumber.trim());
-
-            default:
-                return false;
-        }
-    };
-
-    const steps: Steps[] = [
-        {
-            id: 1,
-            title: 'About Event',
-        },
-        {
-            id: 2,
-            title: 'Description',
-        },
-        {
-            id: 3,
-            title: 'Media',
-        },
-        {
-            id: 4,
-            title: 'Tickets',
-        },
-        ...(eventTicketType === "paid"
-            ? [
-                {
-                    id: 5,
-                    title: 'Payment',
-                },
-            ]
-            : []),
-    ];
-
+    const steps = getEventSteps(eventTicketType);
     const userId = useUserStore((state) => state.user?.id);
     const { isLoading, error, createEvent } = useEventsStore(
         useShallow((state) => ({
@@ -407,7 +260,6 @@ function CreateEvent() {
                     startDate: ticket.startDate,
                     endDate: ticket.endDate,
                 }));
-
         const eventData: CreateEventPayload = {
             eventName,
             eventDescription,
@@ -433,12 +285,10 @@ function CreateEvent() {
             sendMoneyPhoneNumber: sendMoneyNumber,
             pochiNumber,
         };
-
         const success = await createEvent(
             eventData,
             paymentType
         );
-
         if (success) {
             setSnackbarMessage("Event created successfully!");
             setSnackbarSeverity("success");

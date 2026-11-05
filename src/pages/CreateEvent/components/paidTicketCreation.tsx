@@ -18,14 +18,14 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { type Dayjs } from "dayjs";
 import type { TicketCreationModel } from "../../../models/ticket";
-import type { EventVisibilityType, TicketType } from "../createEvent";
 import { useState } from "react";
 import type { Institution } from "../../../models/institution";
 import type { InstitutionDialogProps } from "./institutionDialog";
 import InstitutionDialog from "./institutionDialog";
-import { isEventMultiday } from "../../../utils/EventsUtils/eventUtils";
-import { validateTicket } from "../../../utils/EventsUtils/CreateEventPageValidations";
+import { isEventMultiday } from "../utils/eventUtils";
+import { validateTicket } from "../utils/ticketsValidation";
 import DateTimePickerComponent from "./dateTimePickerComponent";
+import type { EventVisibilityType, TicketType } from "./data";
 
 export interface PaidTicketCreationProps {
     sxVariable: SxProps<Theme>;

@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import type { TicketCreationModel } from "../../models/ticket";
+import type { TicketCreationModel } from "../../../models/ticket";
 
 export type TicketFieldErrors = {
     ticketName?: string;
@@ -10,10 +10,14 @@ export type TicketFieldErrors = {
     institutions?: string;
     startDate?: string;
     endDate?: string;
+    eventStartDateError?: string,
+    eventEndDateError?: string,
 };
 
 export function validateTicket(
     ticket: TicketCreationModel,
+    eventStartDate?: string,
+    eventEndDate?: string,
 ): TicketFieldErrors {
     const errors: TicketFieldErrors = {};
 
@@ -65,6 +69,15 @@ export function validateTicket(
         ? dayjs(ticket.endDate)
         : null;
 
+
+    const eventStart = eventStartDate
+        ? dayjs(eventStartDate)
+        : null;
+
+    const eventEnd = eventEndDate
+        ? dayjs(eventEndDate)
+        : null;
+
     if (!start || !start.isValid()) {
         errors.startDate =
             "Validity start date is required.";
@@ -81,12 +94,21 @@ export function validateTicket(
     ) {
         if (start.isAfter(end)) {
             errors.startDate =
-                "Start date must be before or equal to the end date.";
+                "Start date must be before to the end date.";
+        }
+
+        if (eventStart != null && (start.isAfter(eventEnd) || start.isBefore(eventStart))) {
+            errors.eventStartDateError = "Start date must be within the event dates";
         }
 
         if (end.isBefore(start)) {
             errors.endDate =
                 "End date must be after or equal to the start date.";
+        }
+
+        if (eventEnd != null && (end.isAfter(eventEnd) || end.isBefore(eventStart))) {
+            errors.eventEndDateError =
+                "End date must be within the event dates";
         }
     }
 

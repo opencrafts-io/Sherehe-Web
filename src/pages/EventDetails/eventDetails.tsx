@@ -9,7 +9,7 @@ import EventGenre from "../../components/ui/eventGenre";
 import {
     formatEventDateTime,
     isEventMultiday,
-} from "../../utils/EventsUtils/eventUtils";
+} from "../CreateEvent/utils/eventUtils";
 import useAttendeesStore from "../../stores/attendeeStore";
 import AttendeesListing from "./components/attendeesListing";
 import DateLocationComponent from "../EventBooking/components/dateLocationComponent";
