@@ -17,6 +17,7 @@ import useEventsStore from "../../stores/eventsStore";
 import { useShallow } from "zustand/react/shallow";
 import { useNavigate } from "react-router-dom";
 import AppSnackbar from "../../components/ui/appSnackbar";
+import { eventGenres, eventVisibilityOptions, paymentOptions, ticketTypeOptions, ticketVisibilityOptions } from "./components/data";
 
 export interface EventVisibility {
     id: string;
@@ -102,24 +103,7 @@ function CreateEvent() {
         },
 
     };
-    //About Event Details Stepper
-    const eventVisibilityOptions: EventVisibility[] = [
-        {
-            id: "1",
-            value: "public",
-            label: "Public - Anyone Can View"
-        },
-        {
-            id: "2",
-            value: "institution",
-            label: "Institution - Specific Instituitions"
-        },
-        {
-            id: "3",
-            value: "private",
-            label: "Private - Exclusive"
-        },
-    ];
+    //About Event Details Stepper   
     const [eventName, setEventName] = useState("");
     const [eventStartDateTime, setEventStartDateTime] = useState("");
     const [eventEndDateTime, setEventEndDateTime] = useState("");
@@ -153,7 +137,7 @@ function CreateEvent() {
         const endDate = dayjs(eventEndDateTime);
 
         const isStartDateValid =
-            eventStartDateTime !== "" && startDate.isValid();
+            eventStartDateTime !== "" && startDate.isValid() && startDate.isAfter(dayjs());
 
         const isEndDateValid =
             eventEndDateTime !== "" && endDate.isValid();
@@ -177,30 +161,7 @@ function CreateEvent() {
 
     //Event Genre and description Stepper
     const [eventDescription, setEventDescription] = useState("");
-    const eventGenres: string[] = [
-        'Meetup',
-        'Party',
-        'Official',
-        'Physical',
-        'Social',
-        'Sports',
-        'Conference',
-        'Workshop',
-        'Seminar',
-        'Webinar',
-        'Festival',
-        'Exhibition',
-        'Charity',
-        'Gaming',
-        'Music',
-        'Arts & Culture',
-        'Food & Drink',
-        'Networking',
-        'Education',
-        'Technology',
-        'Health & Wellness',
-        'Other',
-    ];
+
     const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
     const [tempGenres, setTempGenres] = useState<string[]>([]);
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -278,24 +239,6 @@ function CreateEvent() {
     const handleTicketAdded = (ticket: TicketCreationModel) => {
         setPaidTicketsAdded((prevTickets) => [...prevTickets, ticket]);
     };
-    const ticketTypeOptions: { value: TicketType; label: string; ticketFor: number }[] = [
-        { value: 'individual', label: 'Individual', ticketFor: 1 },
-        { value: 'group2', label: 'Group of 2', ticketFor: 2 },
-        { value: 'group3', label: 'Group of 3', ticketFor: 3 },
-        { value: 'group4', label: 'Group of 4', ticketFor: 4 },
-        { value: 'group5', label: 'Group of 5', ticketFor: 5 },
-        { value: 'group6', label: 'Group of 6', ticketFor: 6 },
-        { value: 'group7', label: 'Group of 7', ticketFor: 7 },
-        { value: 'group8', label: 'Group of 8', ticketFor: 8 },
-        { value: 'group9', label: 'Group of 9', ticketFor: 9 },
-        { value: 'group10', label: 'Group of 10', ticketFor: 10 },
-    ];
-
-    const ticketVisibilityOptions: { value: EventVisibilityType; label: string }[] = [
-        { value: 'public', label: 'Public - Anyone Can View' },
-        { value: 'institution', label: 'Institution - Specific Instituitions' },
-        { value: 'private', label: 'Private - Exclusive' },
-    ];
 
     const handleEventTypeChange = (type: EventTicketType) => {
         setEventTicketType(type);
@@ -339,7 +282,7 @@ function CreateEvent() {
         if (paidTicketsAdded.length === 0) return false;
 
         return paidTicketsAdded.every((ticket) => {
-            const errors = validateTicket(ticket);
+            const errors = validateTicket(ticket, eventStartDateTime, eventEndDateTime);
 
             return Object.keys(errors).length === 0;
         });
@@ -352,12 +295,7 @@ function CreateEvent() {
     const [tillNumber, setTillNumber] = useState<string>("");
     const [sendMoneyNumber, setSendMoneyNumber] = useState<string>("");
     const [pochiNumber, setPochiNumber] = useState<string>("");
-    const paymentOptions: { value: PaymentType; label: string }[] = [
-        { value: 'paybill', label: 'Paybill' },
-        { value: 'till', label: 'Till Number' },
-        { value: 'sendMoney', label: 'Send Money' },
-        { value: 'pochi', label: 'Pochi La Biashara' },
-    ];
+
     const paymentMethodProps: PaymentMethodProps = {
         paymentType,
         paybillNumber,
@@ -373,7 +311,7 @@ function CreateEvent() {
         setSendMoneyNumber,
         setPochiNumber,
         sxVariable,
-        paymentOptions
+        paymentOptions,
     };
 
     const validatePaymentDetails = () => {

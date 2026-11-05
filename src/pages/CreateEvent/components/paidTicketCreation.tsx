@@ -158,7 +158,7 @@ function PaidTicketCreation({
     };
 
     const getTicketErrors = (ticket: TicketCreationModel) =>
-        validateTicket(ticket);
+        validateTicket(ticket, eventStartDateTime, eventEndDateTime);
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -427,11 +427,14 @@ function PaidTicketCreation({
                                                     Ticket Validity Start
                                                 </label>
 
+
                                                 <DateTimePickerComponent
                                                     textFieldId={`ticket-start-${index}`}
                                                     textFieldName={`ticket-start-${index}`}
-                                                    error={hasAttemptedToContinue && Boolean(errors.startDate)}
-                                                    helperText={hasAttemptedToContinue ? errors.startDate ?? "" : ""}
+                                                    error={hasAttemptedToContinue && (Boolean(errors.startDate) || Boolean(errors.eventStartDateError))}
+                                                    helperText={hasAttemptedToContinue
+                                                        ? errors.startDate || errors.eventStartDateError || ""
+                                                        : ""}
                                                     minDateTime={dayjs(eventStartDateTime)}
                                                     maxDateTime={dayjs(eventEndDateTime)}
                                                     value={ticket.startDate
@@ -477,8 +480,8 @@ function PaidTicketCreation({
                                                 <DateTimePickerComponent
                                                     textFieldId={`ticket-end-${index}`}
                                                     textFieldName={`ticket-end-${index}`}
-                                                    error={hasAttemptedToContinue && Boolean(errors.endDate)}
-                                                    helperText={hasAttemptedToContinue ? errors.endDate ?? "" : ""}
+                                                    error={hasAttemptedToContinue && (Boolean(errors.endDate) || Boolean(errors.eventEndDateError))}
+                                                    helperText={hasAttemptedToContinue ? errors.endDate || errors.eventEndDateError || "" : ""}
                                                     minDateTime={dayjs(dayjs(ticket.startDate).add(1, "minute"))}
                                                     maxDateTime={dayjs(eventEndDateTime)}
                                                     value={ticket.endDate

@@ -112,6 +112,8 @@ function AboutEvent({
         hasAttemptedToContinue &&
         (!startDate || !startDate.isValid());
 
+    const isStartDatePast = hasAttemptedToContinue && !startDate?.isAfter(dayjs());
+
     const isEndDateInvalid =
         hasAttemptedToContinue &&
         (
@@ -171,10 +173,10 @@ function AboutEvent({
                 <DateTimePickerComponent
                     textFieldId="startDateTime"
                     textFieldName="startDateTime"
-                    error={isStartDateInvalid}
+                    error={isStartDateInvalid || isStartDatePast}
                     helperText={isStartDateInvalid
-                        ? "A valid start date is required."
-                        : ""}
+                        ? "A valid start date is required." : isStartDatePast ? "Start Date must be in the future"
+                            : ""}
                     minDateTime={dayjs()}
                     value={startDate}
                     onValueChange={(value: Dayjs | null) => {

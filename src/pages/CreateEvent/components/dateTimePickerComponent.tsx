@@ -53,6 +53,7 @@ function DateTimePickerComponent({ textFieldId, textFieldName, error, helperText
 
     return (
         <>
+
             <DateTimePicker
                 minDateTime={minDateTime}
                 maxDateTime={maxDateTime}
@@ -62,17 +63,25 @@ function DateTimePickerComponent({ textFieldId, textFieldName, error, helperText
                         name: textFieldName,
                         fullWidth: true,
                         sx: {
-                            '& .MuiPickersOutlinedInput-root': {
-                                '&:hover .MuiPickersOutlinedInput-notchedOutline': {
-                                    borderColor: 'var(--color-primary-70)',
-                                },
-                                '&.Mui-focused .MuiPickersOutlinedInput-notchedOutline': {
-                                    borderColor: 'var(--color-primary)',
-                                },
+                            // Default border
+                            "& .MuiPickersOutlinedInput-notchedOutline": {
+                                borderColor: "var(--color-gray-300)",
                             },
 
-                            '& .MuiInputLabel-root.Mui-focused': {
-                                color: 'var(--color-primary)',
+                            // Hover border
+                            "& .MuiPickersOutlinedInput-root:hover .MuiPickersOutlinedInput-notchedOutline": {
+                                borderColor: "var(--color-primary-70)",
+                            },
+
+                            // Focused border
+                            "& .MuiPickersOutlinedInput-root.Mui-focused .MuiPickersOutlinedInput-notchedOutline": {
+                                borderColor: "var(--color-primary) !important",
+                                borderWidth: "2px",
+                            },
+
+                            // Focused label
+                            "& .MuiInputLabel-root.Mui-focused": {
+                                color: "var(--color-primary)",
                             },
                         },
                         error: error,
