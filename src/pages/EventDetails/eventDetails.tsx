@@ -13,6 +13,7 @@ import {
 import useAttendeesStore from "../../stores/attendeeStore";
 import AttendeesListing from "./components/attendeesListing";
 import DateLocationComponent from "../EventBooking/components/dateLocationComponent";
+import GlobalErrorBoundary from "../../components/errorBoundary/globalErrorBoundary";
 
 function EventDetails() {
     const { id } = useParams();
@@ -32,11 +33,7 @@ function EventDetails() {
 
     if (!event) {
         return (
-            <div className="flex min-h-screen items-center justify-center px-4">
-                <p className="text-gray-600">
-                    Event not found
-                </p>
-            </div>
+            <GlobalErrorBoundary />
         );
     }
 

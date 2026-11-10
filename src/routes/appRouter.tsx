@@ -14,69 +14,77 @@ import TicketPage from "../pages/ticketPage/ticketPage";
 import EventAttendedEvents from "../pages/eventAttendedEvents/eventAttendedEvents";
 import OrganizerDashboard from "../pages/organizerDashboard/organizerDashboard";
 import RequireAuth from "./requireAuth";
+import RootLayout from "./routeLayout";
+import GlobalErrorBoundary from "../components/errorBoundary/globalErrorBoundary";
 
 export const router = createBrowserRouter([
     {
-        element: <AppLayout />,
+        element: <RootLayout />,
+        errorElement: <GlobalErrorBoundary />,
         children: [
             {
-                path: "dashboard",
-                element: <EventListing />,
-            },
-            {
-                path: "events/:id",
-                element: <EventDetails />,
-            },
-            {
-                element: <RequireAuth />,
+                element: <AppLayout />,
                 children: [
                     {
-                        path: "events/:id/booking",
-                        element: <EventBooking />,
+                        path: "dashboard",
+                        element: <EventListing />,
                     },
                     {
-                        path: "create-event",
-                        element: <CreateEvent />,
+                        path: "events/:id",
+                        element: <EventDetails />,
                     },
                     {
-                        path: "profile",
-                        element: <Profile />,
+                        element: <RequireAuth />,
+                        children: [
+                            {
+                                path: "events/:id/booking",
+                                element: <EventBooking />,
+                            },
+                            {
+                                path: "create-event",
+                                element: <CreateEvent />,
+                            },
+                            {
+                                path: "profile",
+                                element: <Profile />,
+                            },
+                            {
+                                path: "my-tickets",
+                                element: <MyTickets />,
+                            },
+                            {
+                                path: "my-ticket/:id",
+                                element: <TicketPage />,
+                            },
+                            {
+                                path: "my-ticket/event/:id",
+                                element: <EventAttendedEvents />,
+                            },
+                            {
+                                path: "my-organized-events",
+                                element: <MyOrganizedEvents />,
+                            },
+                            {
+                                path: "events/organized/:id",
+                                element: <OrganizerDashboard />,
+                            },
+                        ],
                     },
-                    {
-                        path: "my-tickets",
-                        element: <MyTickets />,
-                    },
-                    {
-                        path: "my-ticket/:id",
-                        element: <TicketPage />,
-                    },
-                    {
-                        path: "my-ticket/event/:id",
-                        element: <EventAttendedEvents />,
-                    },
-                    {
-                        path: "my-organized-events",
-                        element: <MyOrganizedEvents />,
-                    },
-                    {
-                        path: "events/organized/:id",
-                        element: <OrganizerDashboard />,
-                    },
+
                 ],
             },
-
+            {
+                path: "/",
+                element: <AuthLoadingScreen />,
+            },
+            {
+                path: "login",
+                element: < LoginScreen />
+            },
+            {
+                path: "auth/callback",
+                element: < AuthCallBack />
+            },
         ],
-    },
-    {
-        path: "/",
-        element: <AuthLoadingScreen />,
-    },
-    {
-        path: "login",
-        element: < LoginScreen />
-    },
-    {
-        path: "auth/callback",
-        element: < AuthCallBack />
     },
 ]);
