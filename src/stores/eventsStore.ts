@@ -3,16 +3,19 @@ import type { CreateEventPayload, EventModel, PaymentType } from "../models/even
 import type { PaginatedResponseModel } from "../models/paginatedResponseModel";
 import eventService from "../services/eventService";
 import { getErrorMessage } from "../utils/getErrorMessage";
+import type { DashboardStats } from "../models/dashboardStats";
 
 interface EventState {
     isLoading: boolean;
     error: string | null;
     paginatedEvents: PaginatedResponseModel<EventModel> | null;
     organizedEvents: EventModel[] | null;
+    dashboardStats: DashboardStats | null;
 
     getEvents: (page: number, limit?: number) => void;
     createEvent: (payload: CreateEventPayload, selectedPaymentType: PaymentType | null) => Promise<boolean>;
     getEventByOrganizerId(organizerId: string): Promise<void>;
+    getAttendeesAndScanners(eventId: string): Promise<void>;
 }
 
 const useEventsStore = create<EventState>()((set) => ({
@@ -20,6 +23,7 @@ const useEventsStore = create<EventState>()((set) => ({
     error: null,
     paginatedEvents: null,
     organizedEvents: null,
+    dashboardStats: null,
     getEvents: async (page, limit = 8) => {
         try {
             set({
@@ -126,7 +130,22 @@ const useEventsStore = create<EventState>()((set) => ({
                 organizedEvents: null,
             })
         }
-    }
+    },
+    getAttendeesAndScanners: async (eventId: string) => {
+        try {
+            set({
+                isLoading: true,
+                error: null,
+                dashboardStats: null,
+            });
+
+            await eventService.getEventByOrganizerId(eventId
+
+            );
+        } catch (error) {
+
+        }
+    },
 }));
 
 export default useEventsStore;

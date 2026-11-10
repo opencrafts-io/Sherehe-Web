@@ -1,3 +1,4 @@
+import type { DashboardStats } from "../models/dashboardStats";
 import { mapEventsDtoToEvents, type CreateEventPayload, type EventDto, type EventModel } from "../models/event";
 import type { PaginatedResponseModel } from "../models/paginatedResponseModel";
 import { shereheApis } from "./api";
@@ -148,6 +149,12 @@ class EventService {
         return response.data.data.map((eventDto) =>
             mapEventsDtoToEvents(eventDto)
         );
+    }
+
+    async getAttendeesAndScanners(eventId: string): Promise<DashboardStats> {
+        const response = await shereheApis.get<DashboardStats>(`/dashboard/events/${eventId}`);
+
+        return response.data;
     }
 }
 

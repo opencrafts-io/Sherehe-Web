@@ -6,14 +6,19 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router";
 import type { EventModel } from "../../../models/event";
-import { formatEventDateTime } from "../../../utils/EventsUtils/eventUtils";
+import { formatEventDateTime } from "../../CreateEvent/utils/eventUtils";
 import EventGenre from "../../../components/ui/eventGenre";
 import useAttendeesStore from "../../../stores/attendeeStore";
 import { useShallow } from "zustand/react/shallow";
 import { useEffect } from "react";
 import AttendeesSection from "./attendeesSection";
 
-function EventCard(event: EventModel) {
+export interface EventCardProps {
+    event: EventModel;
+    isOrganizedEvents?: boolean;
+}
+
+function EventCard({ event, isOrganizedEvents = false }: EventCardProps) {
     const { startDate, startTime } = formatEventDateTime(event.startDate, event.endDate);
 
     const { eventAttendees, getAttendees } = useAttendeesStore(
@@ -29,7 +34,7 @@ function EventCard(event: EventModel) {
 
     return (
         <>
-            <Link to={`/events/${event.id}`}
+            <Link to={isOrganizedEvents ? `/events/organized/${event.id}` : `/events/${event.id}`}
                 className="block w-full max-w-sm"
             >
                 <div className="w-full max-w-sm overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">

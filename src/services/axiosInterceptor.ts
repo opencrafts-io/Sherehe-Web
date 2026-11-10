@@ -3,7 +3,6 @@ import {
     type AxiosInstance,
     type InternalAxiosRequestConfig,
 } from "axios";
-
 import useAuthStore from "../stores/authStore";
 import appLocalStorage from "../utils/appLocalStorage";
 

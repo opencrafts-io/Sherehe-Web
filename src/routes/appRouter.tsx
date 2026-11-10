@@ -12,6 +12,8 @@ import MyTickets from "../pages/MyTickets/myTickets";
 import MyOrganizedEvents from "../pages/MyOrganizedEvents/myOrganizedEvents";
 import TicketPage from "../pages/ticketPage/ticketPage";
 import EventAttendedEvents from "../pages/eventAttendedEvents/eventAttendedEvents";
+import OrganizerDashboard from "../pages/organizerDashboard/organizerDashboard";
+import RequireAuth from "./requireAuth";
 
 export const router = createBrowserRouter([
     {
@@ -26,33 +28,43 @@ export const router = createBrowserRouter([
                 element: <EventDetails />,
             },
             {
-                path: "events/:id/booking",
-                element: <EventBooking />,
+                element: <RequireAuth />,
+                children: [
+                    {
+                        path: "events/:id/booking",
+                        element: <EventBooking />,
+                    },
+                    {
+                        path: "create-event",
+                        element: <CreateEvent />,
+                    },
+                    {
+                        path: "profile",
+                        element: <Profile />,
+                    },
+                    {
+                        path: "my-tickets",
+                        element: <MyTickets />,
+                    },
+                    {
+                        path: "my-ticket/:id",
+                        element: <TicketPage />,
+                    },
+                    {
+                        path: "my-ticket/event/:id",
+                        element: <EventAttendedEvents />,
+                    },
+                    {
+                        path: "my-organized-events",
+                        element: <MyOrganizedEvents />,
+                    },
+                    {
+                        path: "events/organized/:id",
+                        element: <OrganizerDashboard />,
+                    },
+                ],
             },
-            {
-                path: "create-event",
-                element: <CreateEvent />,
-            },
-            {
-                path: "profile",
-                element: <Profile />,
-            },
-            {
-                path: "my-tickets",
-                element: <MyTickets />,
-            },
-            {
-                path: "my-ticket/:id",
-                element: <TicketPage />,
-            },
-            {
-                path: "my-ticket/event/:id",
-                element: <EventAttendedEvents />,
-            },
-            {
-                path: "my-organized-events",
-                element: <MyOrganizedEvents />,
-            },
+
         ],
     },
     {
