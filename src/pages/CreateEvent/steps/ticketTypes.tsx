@@ -6,6 +6,7 @@ import PaidTicketCreation, { type PaidTicketCreationProps } from "../components/
 import type { TicketCreationModel } from "../../../models/ticket";
 import { Alert, type SxProps, type Theme } from "@mui/material";
 import type { EventTicketType, EventVisibilityType, TicketType } from "../components/data";
+import type { Institution } from "../../../models/institution";
 
 export interface TicketTypesProps {
     eventTicketType: EventTicketType | null;
@@ -28,6 +29,8 @@ export interface TicketTypesProps {
     }[];
     eventStartDateTime: string;
     eventEndDateTime: string;
+    eventIsInstutionVisibility?: boolean;
+    eventsInstitutions?: Institution[];
 }
 
 function TicketTypes({
@@ -43,6 +46,8 @@ function TicketTypes({
     ticketVisibilityOptions,
     eventStartDateTime,
     eventEndDateTime,
+    eventIsInstutionVisibility,
+    eventsInstitutions,
 }: TicketTypesProps) {
     const isQuantityValid =
         /^\d+$/.test(ticketQuantity) &&
@@ -69,6 +74,8 @@ function TicketTypes({
         ticketVisibilityOptions,
         eventStartDateTime,
         eventEndDateTime,
+        eventIsInstutionVisibility,
+        eventsInstitutions,
     };
 
     const isEventTypeInvalid = hasAttemptedToContinue && !eventTicketType;

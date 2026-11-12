@@ -191,6 +191,8 @@ function CreateEvent() {
         ticketVisibilityOptions,
         eventStartDateTime,
         eventEndDateTime,
+        eventIsInstutionVisibility: eventVisibility == 'institution',
+        eventsInstitutions: selectedInstitutions,
     };
     // Payment Section
     const [paymentType, setPaymentType] = useState<PaymentType | null>(null);

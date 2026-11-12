@@ -43,6 +43,8 @@ export interface PaidTicketCreationProps {
     eventStartDateTime: string;
     eventEndDateTime: string;
     hasAttemptedToContinue: boolean;
+    eventIsInstutionVisibility?: boolean;
+    eventsInstitutions?: Institution[];
 }
 
 function createEmptyTicket(isMultiDayEvent: boolean, eventStartDateTime: string, eventEndDateTime: string): TicketCreationModel {
@@ -70,6 +72,8 @@ function PaidTicketCreation({
     eventStartDateTime,
     eventEndDateTime,
     hasAttemptedToContinue,
+    eventIsInstutionVisibility,
+    eventsInstitutions,
 }: PaidTicketCreationProps) {
     const isMultiDayEvent = isEventMultiday(eventStartDateTime, eventEndDateTime);
     const tickets =
@@ -152,6 +156,8 @@ function PaidTicketCreation({
     const institutionDialogProps: InstitutionDialogProps = {
         institutionDialogOpen,
         pendingInstitutions,
+        eventsInstitutions,
+        eventIsInstutionVisibility,
         handleCloseInstitutionDialog,
         handleConfirmInstitutions,
         handleInstitutionToggle,

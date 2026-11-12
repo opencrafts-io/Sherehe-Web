@@ -1,30 +1,28 @@
 import { useEffect, useState } from "react";
-
 import {
     Alert,
     Button,
-    Checkbox,
     CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
-    FormControlLabel,
     IconButton,
     InputAdornment,
     TextField,
 } from "@mui/material";
-
 import { faSearch, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 import type { Institution } from "../../../models/institution";
 import useInstitutionStore from "../../../stores/institutionStore";
 import { useShallow } from "zustand/react/shallow";
+import InstitutionsList from "./institutionsList";
 
 export interface InstitutionDialogProps {
     institutionDialogOpen: boolean;
     pendingInstitutions: Institution[];
+    eventIsInstutionVisibility?: boolean;
+    eventsInstitutions?: Institution[];
 
     handleCloseInstitutionDialog: () => void;
     handleConfirmInstitutions: () => void;
@@ -34,6 +32,8 @@ export interface InstitutionDialogProps {
 function InstitutionDialog({
     institutionDialogOpen,
     pendingInstitutions,
+    eventIsInstutionVisibility = false,
+    eventsInstitutions,
     handleCloseInstitutionDialog,
     handleConfirmInstitutions,
     handleInstitutionToggle,
@@ -89,131 +89,102 @@ function InstitutionDialog({
 
             <DialogContent dividers>
                 <p className="mb-4 text-sm text-gray-600">
-                    Search for institutions that can access this event.
+                    {eventIsInstutionVisibility ? "Select from the Institutions below" : "Search for institutions that can access this event."}
                 </p>
 
                 {/* Search bar */}
-                <TextField
-                    fullWidth
-                    placeholder="Search institutions..."
-                    value={searchQuery}
-                    onChange={(event) =>
-                        setSearchQuery(event.target.value)
-                    }
-                    slotProps={{
-                        input: {
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <FontAwesomeIcon icon={faSearch} />
-                                </InputAdornment>
-                            ),
-                            endAdornment: searchQuery && (
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        onClick={() => setSearchQuery("")}
-                                        edge="end"
-                                        aria-label="Clear search"
-                                        size="small"
+                {!eventIsInstutionVisibility && (
+                    <>
+                        <TextField
+                            fullWidth
+                            placeholder="Search institutions..."
+                            value={searchQuery}
+                            onChange={(event) =>
+                                setSearchQuery(event.target.value)
+                            }
+                            slotProps={{
+                                input: {
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <FontAwesomeIcon icon={faSearch} />
+                                        </InputAdornment>
+                                    ),
+                                    endAdornment: searchQuery && (
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                onClick={() => setSearchQuery("")}
+                                                edge="end"
+                                                aria-label="Clear search"
+                                                size="small"
+                                            >
+                                                <FontAwesomeIcon icon={faXmark} />
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                },
+                            }}
+                        />
+
+                        {/* Search results */}
+                        <div className="mt-5 min-h-36">
+                            {isLoading ? (
+                                <div className="flex min-h-36 flex-col items-center justify-center gap-3">
+                                    <CircularProgress
+                                        size={32}
+                                        sx={{ color: "#7C3AED" }}
+                                    />
+
+                                    <p className="text-sm text-gray-500">
+                                        Searching institutions...
+                                    </p>
+                                </div>
+                            ) : error ? (
+                                <div className="py-4">
+                                    <Alert
+                                        severity="error"
                                     >
-                                        <FontAwesomeIcon icon={faXmark} />
-                                    </IconButton>
-                                </InputAdornment>
-                            ),
-                        },
-                    }}
-                />
+                                        {error}
+                                    </Alert>
+                                </div>
+                            ) : (institutions.length === 0 && searchQuery.trim()) ? (
+                                <div className="flex min-h-36 flex-col items-center justify-center text-center">
+                                    <p className="font-semibold text-gray-700">
+                                        No institutions found
+                                    </p>
 
-                {/* Search results */}
-                <div className="mt-5 min-h-36">
-                    {isLoading ? (
-                        <div className="flex min-h-36 flex-col items-center justify-center gap-3">
-                            <CircularProgress
-                                size={32}
-                                sx={{ color: "#7C3AED" }}
-                            />
+                                    <p className="mt-1 text-sm text-gray-500">
+                                        Try searching with a different name.
+                                    </p>
+                                </div>
+                            ) : institutions.length > 0 ? (
+                                <div>
+                                    <p className="mb-2 text-sm font-semibold text-gray-700">
+                                        Search Results ({institutions.length})
+                                    </p>
 
-                            <p className="text-sm text-gray-500">
-                                Searching institutions...
-                            </p>
+                                    <InstitutionsList institutions={institutions} pendingInstitutions={pendingInstitutions} handleInstitutionToggle={handleInstitutionToggle} />
+                                </div>
+                            ) : (
+                                <div className="flex min-h-36 flex-col items-center justify-center text-center">
+                                    <FontAwesomeIcon icon={faSearch} />
+
+                                    <p className="font-medium text-gray-700">
+                                        Start by searching for an institution
+                                    </p>
+
+                                    <p className="mt-1 text-sm text-gray-500">
+                                        Enter an institution name above.
+                                    </p>
+                                </div>
+                            )}
                         </div>
-                    ) : error ? (
-                        <div className="py-4">
-                            <Alert
-                                severity="error"
-                            >
-                                {error}
-                            </Alert>
-                        </div>
-                    ) : (institutions.length === 0 && searchQuery.trim()) ? (
-                        <div className="flex min-h-36 flex-col items-center justify-center text-center">
-                            <p className="font-semibold text-gray-700">
-                                No institutions found
-                            </p>
+                    </>
+                )}
 
-                            <p className="mt-1 text-sm text-gray-500">
-                                Try searching with a different name.
-                            </p>
-                        </div>
-                    ) : institutions.length > 0 ? (
-                        <div>
-                            <p className="mb-2 text-sm font-semibold text-gray-700">
-                                Search Results ({institutions.length})
-                            </p>
+                {eventIsInstutionVisibility && eventsInstitutions && (
+                    <InstitutionsList institutions={eventsInstitutions} pendingInstitutions={pendingInstitutions} handleInstitutionToggle={handleInstitutionToggle} />
+                )}
 
-                            <div className="flex max-h-56 flex-col overflow-y-auto">
-                                {institutions.map((institution) => {
-                                    const isSelected =
-                                        pendingInstitutions.some(
-                                            (selected) =>
-                                                selected.institutionId ===
-                                                institution.institutionId
-                                        );
-
-                                    return (
-                                        <FormControlLabel
-                                            key={institution.institutionId}
-                                            control={
-                                                <Checkbox
-                                                    checked={isSelected}
-                                                    onChange={() =>
-                                                        handleInstitutionToggle(
-                                                            institution
-                                                        )
-                                                    }
-                                                    sx={{
-                                                        color: "#A476FF",
-                                                        "&.Mui-checked": {
-                                                            color: "#7C3AED",
-                                                        },
-                                                    }}
-                                                />
-                                            }
-                                            label={institution.name}
-                                            sx={{
-                                                mx: 0,
-                                                py: 0.5,
-                                                borderBottom:
-                                                    "1px solid #F3F4F6",
-                                            }}
-                                        />
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="flex min-h-36 flex-col items-center justify-center text-center">
-                            <FontAwesomeIcon icon={faSearch} />
-
-                            <p className="font-medium text-gray-700">
-                                Start by searching for an institution
-                            </p>
-
-                            <p className="mt-1 text-sm text-gray-500">
-                                Enter an institution name above.
-                            </p>
-                        </div>
-                    )}
-                </div>
 
                 {/* Selected institutions */}
                 <div className="mt-5 border-t border-gray-200 pt-4">
