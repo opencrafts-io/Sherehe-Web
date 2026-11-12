@@ -413,13 +413,15 @@ function PaidTicketCreation({
                                                     ?.map((institution) => institution.name)
                                                     .join(", ") ?? ""}
                                                 placeholder="Choose institutions"
+                                                error={hasAttemptedToContinue && Boolean(errors.institutions)}
+                                                helperText={hasAttemptedToContinue && errors.institutions ? errors.institutions : "Click to select the institutions eligible for this ticket."}
                                                 slotProps={{
                                                     input: {
                                                         readOnly: true,
                                                     },
                                                 }}
                                                 onClick={() => handleOpenInstitutionDialog(index)}
-                                                helperText="Click to select the institutions eligible for this ticket." />
+                                            />
                                         </div>
                                     )}
 

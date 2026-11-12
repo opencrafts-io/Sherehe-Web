@@ -75,23 +75,6 @@ function CreateEvent() {
     const [eventVisibility, setEventVisibility] = useState<EventVisibilityType>("public");
     const [selectedInstitutions, setSelectedInstitutions] = useState<Institution[]>([]);
 
-    const aboutEventProps: AboutEventProps = {
-        sxVariable,
-        eventVisibilityOptions,
-        eventName,
-        eventStartDateTime,
-        eventEndDateTime,
-        eventLocation,
-        eventVisibility,
-        selectedInstitutions,
-        hasAttemptedToContinue,
-        setEventName,
-        setEventStartDateTime,
-        setEventEndDateTime,
-        setEventLocation,
-        setEventVisibility,
-        setSelectedInstitutions,
-    };
 
     //Event Genre and description Stepper
     const [eventDescription, setEventDescription] = useState("");
@@ -128,36 +111,10 @@ function CreateEvent() {
         setDialogOpen(false);
     };
 
-    const eventDescriptionProps: EventDescriptionProps = {
-        chooseGenres,
-        selectedGenres,
-        eventGenres,
-        removeGenre,
-        dialogOpen,
-        closeDialogue,
-        clearGenres,
-        applyGenres,
-        openDialogue,
-        tempGenres,
-        sxVariable,
-        hasAttemptedToContinue,
-        eventDescription,
-        setEventDescription,
-    };
-
     // Image Upload Section
     const [cardImage, setCardImage] = useState<File | null>(null);
     const [bannerImage, setBannerImage] = useState<File | null>(null);
     const [posterImage, setPosterImage] = useState<File | null>(null);
-
-    const imageUploadProps: ImageUploadProps = {
-        cardImage,
-        bannerImage,
-        posterImage,
-        setCardImage,
-        setBannerImage,
-        setPosterImage,
-    };
 
     //Ticket Types Section
     const [eventTicketType, setEventTicketType] = useState<EventTicketType | null>(null);
@@ -177,22 +134,21 @@ function CreateEvent() {
         setPochiNumber("");
         setSendMoneyNumber("");
     };
-    const ticketTypesProps: TicketTypesProps = {
-        eventTicketType,
-        handleEventTypeChange,
-        ticketQuantity,
-        setTicketQuantity,
-        hasAttemptedToContinue,
-        paidTicketsAdded,
-        setPaidTicketsAdded,
-        handleTicketAdded,
-        sxVariable,
-        ticketTypeOptions,
-        ticketVisibilityOptions,
-        eventStartDateTime,
-        eventEndDateTime,
-        eventIsInstutionVisibility: eventVisibility == 'institution',
-        eventsInstitutions: selectedInstitutions,
+    const handleEventSelectedInstitutions = (institutions: Institution[]) => {
+        setSelectedInstitutions(institutions);
+
+        if (eventTicketType === 'free' || eventVisibility !== 'institution' || paidTicketsAdded.length === 0) return;
+
+        const selectedIds = new Set(institutions.map((inst) => inst.institutionId));
+
+        const updatedTickets = paidTicketsAdded.map((ticket) => ({
+            ...ticket,
+            institutions: ticket.institutions ? ticket.institutions.filter((ticketInst) =>
+                selectedIds.has(ticketInst.institutionId)
+            ) : null,
+        }));
+
+        setPaidTicketsAdded(updatedTickets);
     };
     // Payment Section
     const [paymentType, setPaymentType] = useState<PaymentType | null>(null);
@@ -202,23 +158,6 @@ function CreateEvent() {
     const [sendMoneyNumber, setSendMoneyNumber] = useState<string>("");
     const [pochiNumber, setPochiNumber] = useState<string>("");
 
-    const paymentMethodProps: PaymentMethodProps = {
-        paymentType,
-        paybillNumber,
-        accountReference,
-        tillNumber,
-        sendMoneyNumber,
-        pochiNumber,
-        hasAttemptedToContinue,
-        setPaymentType,
-        setPaybillNumber,
-        setAccountReference,
-        setTillNumber,
-        setSendMoneyNumber,
-        setPochiNumber,
-        sxVariable,
-        paymentOptions,
-    };
     const steps = getEventSteps(eventTicketType);
     const userId = useUserStore((state) => state.user?.id);
     const { isLoading, error, createEvent } = useEventsStore(
@@ -306,6 +245,87 @@ function CreateEvent() {
             setSnackbarOpen(true);
         }
 
+    };
+
+    //props
+    const aboutEventProps: AboutEventProps = {
+        sxVariable,
+        eventVisibilityOptions,
+        eventName,
+        eventStartDateTime,
+        eventEndDateTime,
+        eventLocation,
+        eventVisibility,
+        selectedInstitutions,
+        hasAttemptedToContinue,
+        setEventName,
+        setEventStartDateTime,
+        setEventEndDateTime,
+        setEventLocation,
+        setEventVisibility,
+        handleEventSelectedInstitutions,
+    };
+
+    const eventDescriptionProps: EventDescriptionProps = {
+        chooseGenres,
+        selectedGenres,
+        eventGenres,
+        removeGenre,
+        dialogOpen,
+        closeDialogue,
+        clearGenres,
+        applyGenres,
+        openDialogue,
+        tempGenres,
+        sxVariable,
+        hasAttemptedToContinue,
+        eventDescription,
+        setEventDescription,
+    };
+
+    const imageUploadProps: ImageUploadProps = {
+        cardImage,
+        bannerImage,
+        posterImage,
+        setCardImage,
+        setBannerImage,
+        setPosterImage,
+    };
+
+    const ticketTypesProps: TicketTypesProps = {
+        eventTicketType,
+        handleEventTypeChange,
+        ticketQuantity,
+        setTicketQuantity,
+        hasAttemptedToContinue,
+        paidTicketsAdded,
+        setPaidTicketsAdded,
+        handleTicketAdded,
+        sxVariable,
+        ticketTypeOptions,
+        ticketVisibilityOptions,
+        eventStartDateTime,
+        eventEndDateTime,
+        eventIsInstutionVisibility: eventVisibility == 'institution',
+        eventsInstitutions: selectedInstitutions,
+    };
+
+    const paymentMethodProps: PaymentMethodProps = {
+        paymentType,
+        paybillNumber,
+        accountReference,
+        tillNumber,
+        sendMoneyNumber,
+        pochiNumber,
+        hasAttemptedToContinue,
+        setPaymentType,
+        setPaybillNumber,
+        setAccountReference,
+        setTillNumber,
+        setSendMoneyNumber,
+        setPochiNumber,
+        sxVariable,
+        paymentOptions,
     };
 
     return (

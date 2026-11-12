@@ -30,7 +30,7 @@ export interface AboutEventProps {
     setEventEndDateTime: (value: string) => void;
     setEventLocation: (value: string) => void;
     setEventVisibility: (value: EventVisibilityType) => void;
-    setSelectedInstitutions: (value: Institution[]) => void;
+    handleEventSelectedInstitutions: (value: Institution[]) => void;
 }
 
 function AboutEvent({
@@ -48,7 +48,7 @@ function AboutEvent({
     setEventEndDateTime,
     setEventLocation,
     setEventVisibility,
-    setSelectedInstitutions,
+    handleEventSelectedInstitutions,
 }: AboutEventProps) {
     const [institutionDialogOpen, setInstitutionDialogOpen] = useState(false);
 
@@ -73,7 +73,7 @@ function AboutEvent({
     };
 
     const handleConfirmInstitutions = () => {
-        setSelectedInstitutions(pendingInstitutions);
+        handleEventSelectedInstitutions(pendingInstitutions);
         setInstitutionDialogOpen(false);
     };
 
@@ -266,7 +266,7 @@ function AboutEvent({
                         setEventVisibility(visibility);
 
                         if (visibility !== "institution") {
-                            setSelectedInstitutions([]);
+                            handleEventSelectedInstitutions([]);
                             setPendingInstitutions([]);
                         }
                     }}
